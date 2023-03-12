@@ -9,6 +9,7 @@ import SwiftUI
 
 struct Home: View {
     
+    @State var isPagingViewShowing = false
     @State var onBreak: [Controller] = [
         Controller(initials: "RR", beBackTime: 25, isPagedBack: false),
         Controller(initials: "XO", beBackTime: 25, isPagedBack: false),
@@ -25,6 +26,8 @@ struct Home: View {
         "AS", "TR", "HY", "BS", "VM"
     ]
     
+    @State var controllerToPage = Controller(initials: "RR", beBackTime: 35, isPagedBack: true)
+    
     
     var body: some View {
         VStack {
@@ -38,7 +41,8 @@ struct Home: View {
                 
                 List {
                     ForEach(onBreak) { controller in
-                        StripView(controller: controller)
+                        StripView(controller: controller, isPagingViewShowing: $isPagingViewShowing, controllerToEdit: $controllerToPage)
+                            
                     }
                     .listRowSeparator(.hidden)
                 }
@@ -50,9 +54,11 @@ struct Home: View {
             } label: {
                 Text("SIGN IN")
             }
-
             
-        }  // Vstack
+        } // Vstack
+        .sheet(isPresented: $isPagingViewShowing) {
+            PagingView(controller: controllerToPage)
+        }
     }
     
 //    func signIn() {

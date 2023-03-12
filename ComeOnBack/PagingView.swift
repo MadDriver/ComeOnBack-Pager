@@ -9,8 +9,9 @@ import SwiftUI
 
 struct PagingView: View {
     
+    @Environment(\.dismiss) var dismiss
     @StateObject var pagingVM = PagingViewModel()
-    
+    var controller: Controller
     
     @State var beBackPosition = "_____"
     @State var beBackTime = "_____"
@@ -23,7 +24,7 @@ struct PagingView: View {
     var body: some View {
         VStack {
                         
-            Text("Page RR?")
+            Text("Page \(controller.initials)?")
                 .font(.title).bold()
                 .padding(.bottom)
                 
@@ -55,6 +56,7 @@ struct PagingView: View {
             LazyHGrid(rows: pagingVM.positionRows, spacing: 20) {
                 ForEach(pagingVM.positions, id: \.self) { position in
                     Text(position)
+                        .font(.system(size: 20, weight: .bold))
                         .frame(width: 100, height: 50)
                         .background(Color.red).opacity(0.5)
                         .onTapGesture {
@@ -65,7 +67,7 @@ struct PagingView: View {
             .frame(maxWidth: .infinity)
             .frame(height:250)
             
-            Text("Page back RR at \(beBackTime) for \(beBackPosition)")
+            Text("Page back \(controller.initials) at \(beBackTime) for \(beBackPosition)")
                 .padding(.vertical)
                         
             
@@ -94,18 +96,18 @@ struct PagingView: View {
     }
     
     func cancelPage() {
-        
+        dismiss()
     }
     
     func pageBack() {
-        
+        dismiss()
     }
     
 }
 
 struct PagingView_Previews: PreviewProvider {
     static var previews: some View {
-        PagingView()
+        PagingView(controller: Controller(initials: "RR", beBackTime: 45, isPagedBack: true))
             .previewInterfaceOrientation(.landscapeLeft)
     }
 }
