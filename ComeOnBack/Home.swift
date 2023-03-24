@@ -9,35 +9,24 @@ import SwiftUI
 
 struct Home: View {
     
-    @StateObject var pagingVM = PagingViewModel()
+    @ObservedObject var pagingVM = PagingViewModel()
     
     var body: some View {
         
-        NavigationStack(path: $pagingVM.path) {
-            VStack {
-                HStack {
+        NavigationStack {
+            List {
+                ForEach($pagingVM.onBreakControllers) { $controller in
                     
-                    List {
-                        ForEach(pagingVM.onPosition) { controller in
-                            Text(controller.initials)
-                        }
+                    NavigationLink {
+                        PagingView(controller: $controller)
+                    } label: {
+                        StripView(controller: controller)
                     }
-                    
-                    List {
-                        ForEach($pagingVM.onBreakControllers) { $controller in
-                            
-                            NavigationLink(value: controller) {
-                                StripView(controller: controller)
-                            }
-                            .navigationDestination(for: Controller.self) { controller in
-                                PagingView(pagingVM: pagingVM, controller: $controller)
-                            }
-                        }
-                    }
+
                 }
-                
             }
         }
+        .environmentObject(pagingVM)
     }
 }
 

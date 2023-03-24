@@ -9,11 +9,11 @@ import SwiftUI
 
 struct PagingView: View {
     
-    @ObservedObject var pagingVM: PagingViewModel
+    @Environment(\.dismiss) var dismiss
+    @EnvironmentObject var pagingVM: PagingViewModel
     @Binding var controller: Controller
-
-    @State var beBackPosition = "_____"
-    @State var beBackTime = "_____"
+    @State var beBackPosition: String?
+    @State var beBackTime: String?
     @State var isShowingCustomPicker = false
     @State var customBeBackTime = 0
     
@@ -63,7 +63,7 @@ struct PagingView: View {
             .frame(maxWidth: .infinity)
             .frame(height:250)
             
-            Text("Page back \(controller.initials) at \(beBackTime) for \(beBackPosition)")
+            Text("Page back \(controller.initials) at \(beBackTime ?? "  ") for \(beBackPosition ?? "  ")")
                 .padding(.vertical)
                         
             
@@ -82,6 +82,7 @@ struct PagingView: View {
             
             Spacer()
         }
+        .navigationBarBackButtonHidden()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.black.opacity(0.1))
         .onChange(of: customBeBackTime) { time in
@@ -95,23 +96,22 @@ struct PagingView: View {
     }
     
     func cancelPage() {
-        print(pagingVM.path)
-        pagingVM.path = []
+        dismiss()
     }
     
     func pageBack() {
         controller.isPagedBack = true
         controller.positionAssigned = beBackPosition
         controller.beBackTime = beBackTime
-        pagingVM.path = []
-        
+        dismiss()
+
     }
     
     func reset() {
         controller.isPagedBack = false
         controller.positionAssigned = ""
         controller.beBackTime = nil
-        pagingVM.path = []
+        dismiss()
     }
     
 }
