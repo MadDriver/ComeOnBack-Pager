@@ -10,49 +10,68 @@ import SwiftUI
 struct StripView: View {
     
     var controller: Controller
-    @Binding var isPagingViewShowing: Bool
-    @Binding var controllerToEdit: Controller
     
     var body: some View {
         VStack {
             Rectangle()
-                .frame(width: 300, height: 5)
+                .frame(width: 500, height: 5)
             
             HStack(spacing: 30) {
                 
-                Button {
-                    isPagingViewShowing = true
-                    controllerToEdit = controller
-                } label: {
-                    Text("PAGE")
+                ZStack {
+                    Text(controller.initials)
+                        .bold()
                 }
-                .buttonStyle(.borderedProminent)
-
+                .frame(width: 50)
                 
-                Text(controller.initials)
-                    .bold()
                 
-                Text("\(controller.beBackTime)")
-                
-                Text(controller.positionAssigned ?? "    ")
-                
-                if controller.isPagedBack {
-                    Image(systemName: "checkmark.square")
-                        .foregroundColor(.green).bold()
+                ZStack {
+                    if let beBackTime = controller.beBackTime {
+                        Text("\(beBackTime)")
+                    }
                 }
+                .frame(width: 50)
+                
+                ZStack {
+                    if let position = controller.positionAssigned {
+                        Text(position)
+                    }
+                }
+                .frame(width: 50)
+                
+                ZStack {
+                    if controller.isPagedBack {
+                        Image(systemName: "checkmark.square")
+                            .foregroundColor(.green).bold()
+                    }
+                }
+                .frame(width: 50)
+                
+                ZStack {
+                    Button {
+                        print(controller.initials)
+                    } label: {
+                        Image(systemName: "pencil")
+                    }
+                        
+                }
+                .buttonStyle(PlainButtonStyle())
+                .frame(width: 50)
+                .zIndex(1)
+                
+               
                 
                 
             }
             
             Rectangle()
-                .frame(width: 300, height: 5)
+                .frame(width: 500, height: 5)
         }
     }
-    
 }
 
 struct StripView_Previews: PreviewProvider {
     static var previews: some View {
-        StripView(controller: Controller(initials: "RR", beBackTime: 35, isPagedBack: true), isPagingViewShowing: .constant(false), controllerToEdit: .constant(Controller(initials: "RR", beBackTime: 35, isPagedBack: true)))
+        StripView(controller: Controller(initials: "RR", beBackTime: "35", isPagedBack: true))
     }
 }

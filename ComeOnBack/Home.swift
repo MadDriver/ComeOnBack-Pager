@@ -9,81 +9,38 @@ import SwiftUI
 
 struct Home: View {
     
-    @State var isPagingViewShowing = false
-    @State var onBreak: [Controller] = [
-        Controller(initials: "RR", beBackTime: 25, isPagedBack: false),
-        Controller(initials: "XO", beBackTime: 25, isPagedBack: false),
-        Controller(initials: "LG", beBackTime: 25, isPagedBack: false),
-        Controller(initials: "PZ", beBackTime: 25, isPagedBack: false),
-        Controller(initials: "MG", beBackTime: 25, isPagedBack: false),
-        Controller(initials: "DF", beBackTime: 25, isPagedBack: false),
-        Controller(initials: "VV", beBackTime: 25, isPagedBack: false),
-        
-    
-    ]
-    
-    @State var onPosition = [
-        "AS", "TR", "HY", "BS", "VM"
-    ]
-    
-    @State var controllerToPage = Controller(initials: "RR", beBackTime: 35, isPagedBack: true)
-    
+    @StateObject var pagingVM = PagingViewModel()
     
     var body: some View {
-        VStack {
-            HStack {
-                List {
-                    ForEach(onPosition, id: \.self) { initials in
-                        Text(initials)
+        
+        NavigationStack(path: $pagingVM.path) {
+            VStack {
+                HStack {
+                    
+                    List {
+                        ForEach(pagingVM.onPosition) { controller in
+                            Text(controller.initials)
+                        }
+                    }
+                    
+                    List {
+                        ForEach($pagingVM.onBreakControllers) { $controller in
                             
+                            NavigationLink(value: controller) {
+                                StripView(controller: controller)
+                            }
+                            .navigationDestination(for: Controller.self) { controller in
+                                PagingView(pagingVM: pagingVM, controller: $controller)
+                            }
+                        }
                     }
                 }
                 
-                List {
-                    ForEach(onBreak) { controller in
-                        StripView(controller: controller, isPagingViewShowing: $isPagingViewShowing, controllerToEdit: $controllerToPage)
-                            
-                    }
-                    .listRowSeparator(.hidden)
-                }
-
-            } // Hstack
-            
-            Button {
-//                signIn()
-            } label: {
-                Text("SIGN IN")
             }
-            
-        } // Vstack
-        .sheet(isPresented: $isPagingViewShowing) {
-            PagingView(controller: controllerToPage)
         }
     }
-    
-//    func signIn() {
-//        let initials = "BB"
-//        if onBreak.contains(initials) { return }
-//        if onPosition.contains(initials) { return }
-//        onBreak.append(initials)
-//
-//    }
-//
-//    func swapToOnPosition(initials: String) {
-//        if let index = onBreak.firstIndex(of: initials) {
-//            onBreak.remove(at: index)
-//            onPosition.append(initials)
-//        }
-//    }
-//
-//    func swapToOnBreak(initials: String) {
-//        if let index = onPosition.firstIndex(of: initials) {
-//            onPosition.remove(at: index)
-//            onBreak.append(initials)
-//        }
-//    }
-    
 }
+
 
 struct Home_Previews: PreviewProvider {
     static var previews: some View {

@@ -7,12 +7,12 @@
 
 import Foundation
 
-struct Controller: Identifiable {
+struct Controller: Hashable, Identifiable  {
     
     var id = UUID()
     var initials: String
     var positionAssigned: String?
-    var beBackTime: Int
+    var beBackTime: String?
     var isPagedBack: Bool
     
 }

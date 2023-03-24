@@ -9,17 +9,13 @@ import SwiftUI
 
 struct PagingView: View {
     
-    @Environment(\.dismiss) var dismiss
-    @StateObject var pagingVM = PagingViewModel()
-    var controller: Controller
-    
+    @ObservedObject var pagingVM: PagingViewModel
+    @Binding var controller: Controller
+
     @State var beBackPosition = "_____"
     @State var beBackTime = "_____"
     @State var isShowingCustomPicker = false
     @State var customBeBackTime = 0
-    
-    
-    
     
     var body: some View {
         VStack {
@@ -76,6 +72,9 @@ struct PagingView: View {
                 Button("CANCEL", role: .cancel, action: cancelPage)
                     .buttonStyle(.bordered)
                 
+                Button("RESET", role: .cancel, action: reset)
+                    .buttonStyle(.bordered)
+                
                 Button("PAGE", action: pageBack)
                     .buttonStyle(.borderedProminent)
             }
@@ -96,21 +95,33 @@ struct PagingView: View {
     }
     
     func cancelPage() {
-        dismiss()
+        print(pagingVM.path)
+        pagingVM.path = []
     }
     
     func pageBack() {
-        dismiss()
+        controller.isPagedBack = true
+        controller.positionAssigned = beBackPosition
+        controller.beBackTime = beBackTime
+        pagingVM.path = []
+        
+    }
+    
+    func reset() {
+        controller.isPagedBack = false
+        controller.positionAssigned = ""
+        controller.beBackTime = nil
+        pagingVM.path = []
     }
     
 }
 
-struct PagingView_Previews: PreviewProvider {
-    static var previews: some View {
-        PagingView(controller: Controller(initials: "RR", beBackTime: 45, isPagedBack: true))
-            .previewInterfaceOrientation(.landscapeLeft)
-    }
-}
+//struct PagingView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        PagingView(pagingVM: PagingViewModel(), controller: .constant(Controller(initials: "RR", beBackTime: "45", isPagedBack: true)))
+//            .previewInterfaceOrientation(.landscapeLeft)
+//    }
+//}
 
 enum AssignedPosition {
     case DR1, DR2, DR3, DR4, AR1, AR2, AR3, AR4, FR1, FR2, FR3, FR4, MO1, MO2, MO3, GJT, PUB, CI, FDCD
