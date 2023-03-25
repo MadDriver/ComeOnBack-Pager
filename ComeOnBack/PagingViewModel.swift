@@ -30,7 +30,7 @@ final class PagingViewModel: ObservableObject {
         Controller(initials: "GG", isPagedBack: false)
     ]
     @Published var date = Date()
-    @Published var onPosition = [
+    @Published var onPosition: [Controller] = [
         Controller(initials: "YY", isPagedBack: false),
         Controller(initials: "XX", isPagedBack: false),
         Controller(initials: "PP", isPagedBack: false),

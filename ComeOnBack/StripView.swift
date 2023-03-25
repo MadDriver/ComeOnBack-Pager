@@ -9,6 +9,7 @@ import SwiftUI
 
 struct StripView: View {
     
+    @EnvironmentObject var pagingVM: PagingViewModel
     var controller: Controller
     
     var body: some View {
@@ -49,9 +50,9 @@ struct StripView: View {
                 
                 ZStack {
                     Button {
-                        print(controller.initials)
+                        moveControllerToOnPosition()
                     } label: {
-                        Image(systemName: "pencil")
+                        Image(systemName: "rectangle.2.swap")
                     }
                         
                 }
@@ -68,6 +69,14 @@ struct StripView: View {
                 .frame(width: 500, height: 5)
         }
     }
+    
+    func moveControllerToOnPosition() {
+        if let index = pagingVM.onBreakControllers.firstIndex(of: controller) {
+            pagingVM.onPosition.append(controller)
+            pagingVM.onBreakControllers.remove(at: index)
+        }
+    }
+    
 }
 
 struct StripView_Previews: PreviewProvider {

@@ -14,17 +14,32 @@ struct Home: View {
     var body: some View {
         
         NavigationStack {
-            List {
-                ForEach($pagingVM.onBreakControllers) { $controller in
+            
+            VStack {
+                HStack {
                     
-                    NavigationLink {
-                        PagingView(controller: $controller)
-                    } label: {
-                        StripView(controller: controller)
+                    List {
+                        ForEach(pagingVM.onPosition) { controller in
+                            OnPositionCellView(controller: controller)
+                        }
                     }
+                    
+                    List {
+                        ForEach($pagingVM.onBreakControllers) { $controller in
+                            
+                            NavigationLink {
+                                PagingView(controller: $controller)
+                            } label: {
+                                StripView(controller: controller)
+                            }
 
+                        }
+                    }
                 }
             }
+            
+            
+            
         }
         .environmentObject(pagingVM)
     }

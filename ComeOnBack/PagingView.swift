@@ -116,12 +116,13 @@ struct PagingView: View {
     
 }
 
-//struct PagingView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        PagingView(pagingVM: PagingViewModel(), controller: .constant(Controller(initials: "RR", beBackTime: "45", isPagedBack: true)))
-//            .previewInterfaceOrientation(.landscapeLeft)
-//    }
-//}
+struct PagingView_Previews: PreviewProvider {
+    static var previews: some View {
+        PagingView(controller: .constant(Controller(initials: "RR", beBackTime: "45", isPagedBack: true)))
+            .environmentObject(PagingViewModel())
+            .previewInterfaceOrientation(.landscapeLeft)
+    }
+}
 
 enum AssignedPosition {
     case DR1, DR2, DR3, DR4, AR1, AR2, AR3, AR4, FR1, FR2, FR3, FR4, MO1, MO2, MO3, GJT, PUB, CI, FDCD
