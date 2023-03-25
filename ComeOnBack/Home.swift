@@ -52,7 +52,7 @@ struct Home: View {
                                 NavigationLink {
                                     PagingView(controller: $controller)
                                 } label: {
-                                    StripView(controller: controller)
+                                    StripView(controller: $controller)
                                 }
 
                             }
