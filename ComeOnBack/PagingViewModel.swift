@@ -98,7 +98,6 @@ final class PagingViewModel: ObservableObject {
         let calendar = Calendar.current
         let dateOne = calendar.date(bySetting: .minute, value: time, of: date)!
         let dateString = beBackTimeFormat.string(from: dateOne)
-        print(dateString)
         return dateString
     }
     

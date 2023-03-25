@@ -23,12 +23,6 @@ struct PagingView: View {
             Text("Page \(controller.initials)?")
                 .font(.title).bold()
                 .padding(.bottom)
-                
-            Text("\(pagingVM.timeString(date: pagingVM.date))")
-                .font(.system(size: 32, weight: .bold))
-                .onAppear {
-                    let _ = pagingVM.updateTimer
-                }
             
             HStack {
                 ForEach(pagingVM.beBackTimes, id: \.self) { time in
@@ -82,6 +76,7 @@ struct PagingView: View {
             
             Spacer()
         }
+        .padding(.top)
         .navigationBarBackButtonHidden()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.black.opacity(0.1))

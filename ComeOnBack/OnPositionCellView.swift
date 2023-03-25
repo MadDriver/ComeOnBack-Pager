@@ -18,7 +18,10 @@ struct OnPositionCellView: View {
             Spacer()
             ZStack {
                 Button {
-                    putControllerOnBreakList()
+                    withAnimation {
+                        putControllerOnBreakList()
+                    }
+                    
                 } label: {
                     Image(systemName: "arrow.right")
 

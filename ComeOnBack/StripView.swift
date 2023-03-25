@@ -50,7 +50,10 @@ struct StripView: View {
                 
                 ZStack {
                     Button {
-                        moveControllerToOnPosition()
+                        withAnimation {
+                            moveControllerToOnPosition()
+                        }
+                        
                     } label: {
                         Image(systemName: "rectangle.2.swap")
                     }

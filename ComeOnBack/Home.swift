@@ -13,35 +13,45 @@ struct Home: View {
     
     var body: some View {
         
-        NavigationStack {
+        VStack {
             
-            VStack {
-                HStack {
+            Text("\(pagingVM.timeString(date: pagingVM.date))")
+                .font(.system(size: 32, weight: .bold))
+                .onAppear {
+                    let _ = pagingVM.updateTimer
+                }
+            
+            NavigationStack {
+                
+                VStack {
                     
-                    List {
-                        ForEach(pagingVM.onPosition) { controller in
-                            OnPositionCellView(controller: controller)
-                        }
-                    }
-                    
-                    List {
-                        ForEach($pagingVM.onBreakControllers) { $controller in
-                            
-                            NavigationLink {
-                                PagingView(controller: $controller)
-                            } label: {
-                                StripView(controller: controller)
+                    HStack {
+                        
+                        List {
+                            ForEach(pagingVM.onPosition) { controller in
+                                OnPositionCellView(controller: controller)
                             }
+                        }
+                        
+                        List {
+                            ForEach($pagingVM.onBreakControllers) { $controller in
+                                
+                                NavigationLink {
+                                    PagingView(controller: $controller)
+                                } label: {
+                                    StripView(controller: controller)
+                                }
 
+                            }
                         }
                     }
                 }
+                
+                
+                
             }
-            
-            
-            
+            .environmentObject(pagingVM)
         }
-        .environmentObject(pagingVM)
     }
 }
 
