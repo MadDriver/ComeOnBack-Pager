@@ -9,6 +9,7 @@ import SwiftUI
 
 final class PagingViewModel: ObservableObject {
     
+    @Published var timeType: TimeType = .standard
     @Published var onBreakControllers: [Controller] = [
         Controller(initials: "RR", isPagedBack: false),
         Controller(initials: "MJ", isPagedBack: false),
@@ -55,7 +56,12 @@ final class PagingViewModel: ObservableObject {
     
     var timeFormat: DateFormatter {
         let formatter = DateFormatter()
-        formatter.dateFormat = "hh:mm:ss a"
+        switch timeType {
+            case .military:
+                formatter.dateFormat = "HH:mm:ss"
+            case .standard:
+                formatter.dateFormat = "hh:mm:ss a"
+        }
         return formatter
     }
     
