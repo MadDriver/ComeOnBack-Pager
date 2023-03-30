@@ -10,13 +10,9 @@ import SwiftUI
 final class PagingViewModel: ObservableObject {
     
     @Published var timeType: TimeType = .standard
-    @Published var onBreakControllers: [Controller] = [
-        
-    ]
+    @Published var onBreakControllers: [Controller] = []
     @Published var date = Date()
-    @Published var onPosition: [Controller] = [
-        
-    ]
+    @Published var onPosition: [Controller] = []
     
     var totalControllerList: [Controller] = []
     

@@ -98,6 +98,16 @@ struct PagingView: View {
         controller.isPagedBack = true
         controller.positionAssigned = beBackPosition
         controller.beBackTime = beBackTime
+        
+        let tmpController = controller
+        
+        if let controllerIndex = pagingVM.onBreakControllers.firstIndex(of: controller) {
+            pagingVM.onBreakControllers.remove(at: controllerIndex)
+            pagingVM.onBreakControllers.insert(tmpController, at: 0)
+        }
+        
+        
+        
         dismiss()
 
     }
