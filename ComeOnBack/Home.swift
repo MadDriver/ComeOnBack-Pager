@@ -42,24 +42,31 @@ struct Home: View {
                     HStack {
                         
                         List {
-                            ForEach(pagingVM.onPosition) { controller in
-                                OnPositionCellView(controller: controller)
+                            Section(header: Text("ON POSITION")) {
+                                ForEach(pagingVM.onPosition) { controller in
+                                    OnPositionCellView(controller: controller)
+                                }
                             }
+                            
                         }
                         
                         List {
-                            ForEach($pagingVM.onBreakControllers) { $controller in
+                            Section(header: Text("ON BREAK")) {
+                                ForEach($pagingVM.onBreakControllers) { $controller in
 
-                                NavigationLink {
-                                    PagingView(controller: $controller)
-                                } label: {
-                                    StripView(controller: $controller)
+                                    NavigationLink {
+                                        PagingView(controller: $controller)
+                                    } label: {
+                                        StripView(controller: $controller)
+                                    }
+                                    .listRowSeparator(.hidden)
+
                                 }
-
+                                .onDelete(perform: delete)
                             }
-                            .onDelete(perform: delete)
                         }
                     }
+                    .listStyle(.inset)
                 }
                 
                 
@@ -69,10 +76,6 @@ struct Home: View {
                 SignInView()
             }
             
-//            HStack {
-//                Button("SIGN IN", action: signInController)
-//                    .buttonStyle(.borderedProminent)
-//            }
             HStack {
                 Button("SIGN IN", action: signInController)
                     .buttonStyle(.borderedProminent)

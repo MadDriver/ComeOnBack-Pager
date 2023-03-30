@@ -18,7 +18,6 @@ struct SignInView: View {
         VStack {
             ScrollView {
                 LazyVGrid(columns: columns) {
-                    
                     ForEach(sortedControllerList) { controller in
                         Text("\(controller.firstName) \(controller.lastName) - \(controller.initials)")
                             .frame(width: 250, height: 50)
@@ -28,17 +27,24 @@ struct SignInView: View {
                                 dismiss()
                             }
                     }
-                    
                 }
             }
+            
+            Button("CANCEL", action: dismissSignInSheet)
+                .buttonStyle(.borderedProminent)
+            
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .onAppear {
             sortedControllerList = pagingVM.totalControllerList.sorted(by: {
                 $0.lastName < $1.lastName
             })
         }
     }
+    
+    func dismissSignInSheet() {
+        dismiss()
+    }
+    
 }
 
 struct SignInView_Previews: PreviewProvider {
