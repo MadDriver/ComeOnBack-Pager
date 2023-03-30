@@ -9,11 +9,20 @@ import SwiftUI
 
 struct SignInView: View {
     
-    @State var controllerInitials = ""
+    @EnvironmentObject var pagingVM: PagingViewModel
+    @Environment(\.dismiss) var dismiss
     
     var body: some View {
         VStack {
-            TextField("Enter Controller Initials", text: $controllerInitials)
+            List {
+                ForEach(pagingVM.totalControllerList) { controller in
+                    Text("\(controller.firstName) \(controller.lastName) - \(controller.initials)")
+                        .onTapGesture {
+                            pagingVM.onBreakControllers.append(controller)
+                            dismiss()
+                        }
+                }
+            }
                 
         }
         .frame(width: 300)

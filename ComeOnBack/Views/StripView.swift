@@ -87,6 +87,6 @@ struct StripView: View {
 
 struct StripView_Previews: PreviewProvider {
     static var previews: some View {
-        StripView(controller: .constant(Controller(initials: "RR", beBackTime: "35", isPagedBack: true)))
+        StripView(controller: .constant(Controller(firstName: "Calvin", lastName: "Shultz", initials: "RR", isPagedBack: false)))
     }
 }

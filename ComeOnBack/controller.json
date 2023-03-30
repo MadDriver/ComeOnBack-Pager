@@ -1,0 +1,38 @@
+[
+    {
+        "name" : "Calvin Shultz",
+        "initials" : "RR",
+        "phoneNumber" : 9072325859,
+        "isPagedBack" : false
+    },
+    {
+        "name" : "Luke Garner",
+        "initials" : "LG",
+        "phoneNumber" : 9072325859,
+        "isPagedBack" : false
+    },
+    {
+        "name" : "Mark Wanersdorfer",
+        "initials" : "MJ",
+        "phoneNumber" : 9072325859,
+        "isPagedBack" : false
+    },
+    {
+        "name" : "Dennis Collins",
+        "initials" : "XO",
+        "phoneNumber" : 9072325859,
+        "isPagedBack" : false
+    },
+    {
+        "name" : "Jason Graber",
+        "initials" : "KU",
+        "phoneNumber" : 9072325859,
+        "isPagedBack" : false
+    },
+    {
+        "name" : "Sarah Barnett",
+        "initials" : "PZ",
+        "phoneNumber" : 9072325859,
+        "isPagedBack" : false
+    }
+]

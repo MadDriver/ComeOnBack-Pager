@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3717B67B29D2181B00370E88 /* controllerList.html in Resources */ = {isa = PBXBuildFile; fileRef = 3717B67A29D2181B00370E88 /* controllerList.html */; };
+		3717B67E29D218F100370E88 /* SwiftSoup in Frameworks */ = {isa = PBXBuildFile; productRef = 3717B67D29D218F100370E88 /* SwiftSoup */; };
+		3717B68029D2190C00370E88 /* ControllerParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3717B67F29D2190C00370E88 /* ControllerParser.swift */; };
 		374D8C4B29BA7E5B002A690D /* ComeOnBackApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 374D8C4A29BA7E5B002A690D /* ComeOnBackApp.swift */; };
 		374D8C4F29BA7E5D002A690D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 374D8C4E29BA7E5D002A690D /* Assets.xcassets */; };
 		374D8C5229BA7E5D002A690D /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 374D8C5129BA7E5D002A690D /* Preview Assets.xcassets */; };
@@ -20,9 +23,13 @@
 		37A0135629CE79E60083FD3C /* MockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37A0135529CE79E60083FD3C /* MockData.swift */; };
 		37A0135829CE7F080083FD3C /* SignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37A0135729CE7F080083FD3C /* SignInView.swift */; };
 		37A0135B29CE80990083FD3C /* TimeTypeEnum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37A0135A29CE80990083FD3C /* TimeTypeEnum.swift */; };
+		37A0136129CFD0F90083FD3C /* Bundle+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37A0136029CFD0F90083FD3C /* Bundle+Ext.swift */; };
+		37A0136329CFD20E0083FD3C /* controller.json in Resources */ = {isa = PBXBuildFile; fileRef = 37A0136229CFD20E0083FD3C /* controller.json */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		3717B67A29D2181B00370E88 /* controllerList.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = controllerList.html; sourceTree = "<group>"; };
+		3717B67F29D2190C00370E88 /* ControllerParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControllerParser.swift; sourceTree = "<group>"; };
 		374D8C4729BA7E5B002A690D /* ComeOnBack.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ComeOnBack.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		374D8C4A29BA7E5B002A690D /* ComeOnBackApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComeOnBackApp.swift; sourceTree = "<group>"; };
 		374D8C4E29BA7E5D002A690D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -38,6 +45,8 @@
 		37A0135529CE79E60083FD3C /* MockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockData.swift; sourceTree = "<group>"; };
 		37A0135729CE7F080083FD3C /* SignInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInView.swift; sourceTree = "<group>"; };
 		37A0135A29CE80990083FD3C /* TimeTypeEnum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeTypeEnum.swift; sourceTree = "<group>"; };
+		37A0136029CFD0F90083FD3C /* Bundle+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bundle+Ext.swift"; sourceTree = "<group>"; };
+		37A0136229CFD20E0083FD3C /* controller.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = controller.json; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -45,6 +54,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3717B67E29D218F100370E88 /* SwiftSoup in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -71,20 +81,21 @@
 			isa = PBXGroup;
 			children = (
 				37A0135029CE4CDF0083FD3C /* Extensions */,
-				374D8C6229BDC54B002A690D /* Info.plist */,
-				374D8C4A29BA7E5B002A690D /* ComeOnBackApp.swift */,
 				37A0135929CE80830083FD3C /* Enums */,
-				37A0135529CE79E60083FD3C /* MockData.swift */,
-				37A0135329CE79A70083FD3C /* OnPositionCellView.swift */,
-				374D8C6329BDD130002A690D /* CustomPickerView.swift */,
-				37A0135729CE7F080083FD3C /* SignInView.swift */,
-				374D8C5829BA7FE5002A690D /* Home.swift */,
+				37A0135C29CFC9CB0083FD3C /* Models */,
+				37A0135F29CFCA010083FD3C /* Data */,
+				374D8C6229BDC54B002A690D /* Info.plist */,
+				37A0135D29CFC9E10083FD3C /* Views */,
 				374D8C4E29BA7E5D002A690D /* Assets.xcassets */,
 				374D8C5029BA7E5D002A690D /* Preview Content */,
-				374D8C5A29BB86EB002A690D /* StripView.swift */,
-				374D8C5C29BB880C002A690D /* Controller.swift */,
+				37A0135729CE7F080083FD3C /* SignInView.swift */,
 				374D8C5E29BCC2D7002A690D /* PagingView.swift */,
 				374D8C6029BCF73B002A690D /* PagingViewModel.swift */,
+				374D8C5829BA7FE5002A690D /* Home.swift */,
+				374D8C4A29BA7E5B002A690D /* ComeOnBackApp.swift */,
+				37A0136229CFD20E0083FD3C /* controller.json */,
+				3717B67A29D2181B00370E88 /* controllerList.html */,
+				3717B67F29D2190C00370E88 /* ControllerParser.swift */,
 			);
 			path = ComeOnBack;
 			sourceTree = "<group>";
@@ -100,6 +111,7 @@
 		37A0135029CE4CDF0083FD3C /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				37A0136029CFD0F90083FD3C /* Bundle+Ext.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -110,6 +122,32 @@
 				37A0135A29CE80990083FD3C /* TimeTypeEnum.swift */,
 			);
 			path = Enums;
+			sourceTree = "<group>";
+		};
+		37A0135C29CFC9CB0083FD3C /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				374D8C5C29BB880C002A690D /* Controller.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		37A0135D29CFC9E10083FD3C /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				37A0135329CE79A70083FD3C /* OnPositionCellView.swift */,
+				374D8C6329BDD130002A690D /* CustomPickerView.swift */,
+				374D8C5A29BB86EB002A690D /* StripView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		37A0135F29CFCA010083FD3C /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				37A0135529CE79E60083FD3C /* MockData.swift */,
+			);
+			path = Data;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -128,6 +166,9 @@
 			dependencies = (
 			);
 			name = ComeOnBack;
+			packageProductDependencies = (
+				3717B67D29D218F100370E88 /* SwiftSoup */,
+			);
 			productName = ComeOnBack;
 			productReference = 374D8C4729BA7E5B002A690D /* ComeOnBack.app */;
 			productType = "com.apple.product-type.application";
@@ -156,6 +197,9 @@
 				Base,
 			);
 			mainGroup = 374D8C3E29BA7E5B002A690D;
+			packageReferences = (
+				3717B67C29D218F100370E88 /* XCRemoteSwiftPackageReference "SwiftSoup" */,
+			);
 			productRefGroup = 374D8C4829BA7E5B002A690D /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -171,6 +215,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				374D8C5229BA7E5D002A690D /* Preview Assets.xcassets in Resources */,
+				37A0136329CFD20E0083FD3C /* controller.json in Resources */,
+				3717B67B29D2181B00370E88 /* controllerList.html in Resources */,
 				374D8C4F29BA7E5D002A690D /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -185,12 +231,14 @@
 				37A0135429CE79A70083FD3C /* OnPositionCellView.swift in Sources */,
 				374D8C5D29BB880C002A690D /* Controller.swift in Sources */,
 				374D8C5929BA7FE5002A690D /* Home.swift in Sources */,
+				3717B68029D2190C00370E88 /* ControllerParser.swift in Sources */,
 				374D8C6129BCF73B002A690D /* PagingViewModel.swift in Sources */,
 				37A0135829CE7F080083FD3C /* SignInView.swift in Sources */,
 				37A0135629CE79E60083FD3C /* MockData.swift in Sources */,
 				374D8C6429BDD130002A690D /* CustomPickerView.swift in Sources */,
 				374D8C4B29BA7E5B002A690D /* ComeOnBackApp.swift in Sources */,
 				37A0135B29CE80990083FD3C /* TimeTypeEnum.swift in Sources */,
+				37A0136129CFD0F90083FD3C /* Bundle+Ext.swift in Sources */,
 				374D8C5F29BCC2D7002A690D /* PagingView.swift in Sources */,
 				374D8C5B29BB86EB002A690D /* StripView.swift in Sources */,
 			);
@@ -391,6 +439,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		3717B67C29D218F100370E88 /* XCRemoteSwiftPackageReference "SwiftSoup" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/scinfu/SwiftSoup";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		3717B67D29D218F100370E88 /* SwiftSoup */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3717B67C29D218F100370E88 /* XCRemoteSwiftPackageReference "SwiftSoup" */;
+			productName = SwiftSoup;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 374D8C3F29BA7E5B002A690D /* Project object */;
 }

@@ -113,7 +113,7 @@ struct PagingView: View {
 
 struct PagingView_Previews: PreviewProvider {
     static var previews: some View {
-        PagingView(controller: .constant(Controller(initials: "RR", beBackTime: "45", isPagedBack: true)))
+        PagingView(controller: .constant(Controller(firstName: "Calvin", lastName: "Shultz", initials: "RR", isPagedBack: false)))
             .environmentObject(PagingViewModel())
             .previewInterfaceOrientation(.landscapeLeft)
     }

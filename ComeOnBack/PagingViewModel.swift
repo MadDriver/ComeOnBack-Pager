@@ -11,35 +11,15 @@ final class PagingViewModel: ObservableObject {
     
     @Published var timeType: TimeType = .standard
     @Published var onBreakControllers: [Controller] = [
-        Controller(initials: "RR", isPagedBack: false),
-        Controller(initials: "MJ", isPagedBack: false),
-        Controller(initials: "KT", isPagedBack: false),
-        Controller(initials: "GM", isPagedBack: false),
-        Controller(initials: "PZ", isPagedBack: false),
-        Controller(initials: "SW", isPagedBack: false),
-        Controller(initials: "KW", isPagedBack: false),
-        Controller(initials: "GC", isPagedBack: false),
-        Controller(initials: "TO", isPagedBack: false),
-        Controller(initials: "AA", isPagedBack: false),
-        Controller(initials: "BB", isPagedBack: false),
-        Controller(initials: "CC", isPagedBack: false),
-        Controller(initials: "DD", isPagedBack: false),
-        Controller(initials: "EE", isPagedBack: false),
-        Controller(initials: "EG", isPagedBack: false),
-        Controller(initials: "PL", isPagedBack: false),
-        Controller(initials: "FF", isPagedBack: false),
-        Controller(initials: "GG", isPagedBack: false)
+        
     ]
     @Published var date = Date()
     @Published var onPosition: [Controller] = [
-        Controller(initials: "YY", isPagedBack: false),
-        Controller(initials: "XX", isPagedBack: false),
-        Controller(initials: "PP", isPagedBack: false),
-        Controller(initials: "RB", isPagedBack: false),
-        Controller(initials: "BR", isPagedBack: false),
-        Controller(initials: "YT", isPagedBack: false),
-        Controller(initials: "VM", isPagedBack: false)
+        
     ]
+    
+    @Published var totalControllerList: [Controller] = []
+    
     let positions = [
         "DR1", "DR2", "DR3", "DR4", "AR1", "AR2", "AR3", "AR4", "FR1", "FR2", "FR3", "FR4", "SR1", "SR2", "SR4", "FDCD", "MO1", "MO2", "MO3", "CI", "GJT", "PUB", "TBD"
     
@@ -53,7 +33,6 @@ final class PagingViewModel: ObservableObject {
     let beBackTimeRows = [
         GridItem(), GridItem()
     ]
-    
     var timeFormat: DateFormatter {
         let formatter = DateFormatter()
         switch timeType {
@@ -64,7 +43,6 @@ final class PagingViewModel: ObservableObject {
         }
         return formatter
     }
-    
     var beBackTimeFormat: DateFormatter {
         let formatter = DateFormatter()
         formatter.dateFormat = "HH:mm"

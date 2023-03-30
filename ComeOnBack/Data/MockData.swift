@@ -8,5 +8,5 @@
 import Foundation
 
 struct MockData {
-    static let controller = Controller(initials: "TT", isPagedBack: true)
+    static let controller = Controller(firstName: "Calvin", lastName: "Shultz", initials: "RR", isPagedBack: false)
 }

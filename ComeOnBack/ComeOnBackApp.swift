@@ -9,9 +9,13 @@ import SwiftUI
 
 @main
 struct ComeOnBackApp: App {
+    
+    @StateObject var pagingVM = PagingViewModel()
+    
     var body: some Scene {
         WindowGroup {
             Home()
+                .environmentObject(pagingVM)
         }
     }
 }
