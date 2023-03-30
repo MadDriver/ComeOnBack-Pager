@@ -9,23 +9,35 @@ import SwiftUI
 
 struct SignInView: View {
     
-    @EnvironmentObject var pagingVM: PagingViewModel
     @Environment(\.dismiss) var dismiss
+    @EnvironmentObject var pagingVM: PagingViewModel
+    @State var sortedControllerList: [Controller] = []
+    let columns = Array(repeating: GridItem(.flexible()), count: 5)
     
     var body: some View {
         VStack {
-            List {
-                ForEach(pagingVM.totalControllerList) { controller in
-                    Text("\(controller.firstName) \(controller.lastName) - \(controller.initials)")
-                        .onTapGesture {
-                            pagingVM.onBreakControllers.append(controller)
-                            dismiss()
-                        }
+            ScrollView {
+                LazyVGrid(columns: columns) {
+                    
+                    ForEach(sortedControllerList) { controller in
+                        Text("\(controller.firstName) \(controller.lastName) - \(controller.initials)")
+                            .frame(width: 250, height: 50)
+                            .background(Color.black.opacity(0.2))
+                            .onTapGesture {
+                                pagingVM.onBreakControllers.append(controller)
+                                dismiss()
+                            }
+                    }
+                    
                 }
             }
-                
         }
-        .frame(width: 300)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .onAppear {
+            sortedControllerList = pagingVM.totalControllerList.sorted(by: {
+                $0.lastName < $1.lastName
+            })
+        }
     }
 }
 

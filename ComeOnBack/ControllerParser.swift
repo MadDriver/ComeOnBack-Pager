@@ -18,18 +18,6 @@ class ControllerParser {
             return "jlfjsdlksfld"
         }
         return htmlString
-        
-//        do {
-//            let doc: Document = try SwiftSoup.parse(htmlString)
-//            return try doc.text()
-//
-//
-//        } catch Exception.Error(_, let message) {
-//            print(message)
-//        } catch {
-//            print("error")
-//        }
-//        return "Shit is fucked up"
     }
     
 }

@@ -12,7 +12,6 @@ struct Home: View {
     
     @EnvironmentObject var pagingVM: PagingViewModel
     @State var signInViewIsActive = false
-    var controllerParser = ControllerParser()
     
     var body: some View {
         
@@ -48,12 +47,6 @@ struct Home: View {
                             }
                         }
                         
-//                        List {
-//                            ForEach(controllers, id: \.name) { controller in
-//                                /*@START_MENU_TOKEN@*/Text(controller.initials)/*@END_MENU_TOKEN@*/
-//                            }
-//                        }
-                        
                         List {
                             ForEach($pagingVM.onBreakControllers) { $controller in
 
@@ -64,13 +57,15 @@ struct Home: View {
                                 }
 
                             }
+                            .onDelete(perform: delete)
                         }
                     }
                 }
                 
                 
                 
-            }.sheet(isPresented: $signInViewIsActive) {
+            }
+            .fullScreenCover(isPresented: $signInViewIsActive) {
                 SignInView()
             }
             
@@ -85,13 +80,17 @@ struct Home: View {
             
         }
         .onAppear {
-            printControllerTest()
+            getControllers()
         }
         .environmentObject(pagingVM)
         
     }
     
-    func printControllerTest() {
+    func delete(at offsets: IndexSet) {
+        pagingVM.onBreakControllers.remove(atOffsets: offsets)
+    }
+    
+    func getControllers() {
         
         var html = ""
         var x = 0
@@ -117,7 +116,6 @@ struct Home: View {
 //
 //                            controllers.append(stripControllerName(name: try name.text(), initials: try initials.text()))
                         }
-                        
                         x += 1
                     }
                 })
@@ -140,10 +138,10 @@ struct Home: View {
         let lastName = nameStripped[0]
         let firstName = nameStripped[1]
         
-        let secFirstName = firstName.trimmingCharacters(in: .whitespaces)
-        let secLastName = lastName.replacingOccurrences(of: "@", with: "")
+        let firstNameTrimmed = firstName.trimmingCharacters(in: .whitespaces)
+        let lastNameTrimmed = lastName.replacingOccurrences(of: "@", with: "")
         
-        pagingVM.totalControllerList.append(Controller(firstName: secFirstName, lastName: secLastName, initials: initials, isPagedBack: false))
+        pagingVM.totalControllerList.append(Controller(firstName: firstNameTrimmed, lastName: lastNameTrimmed, initials: initials, isPagedBack: false))
         
         
     }
@@ -155,11 +153,4 @@ struct Home_Previews: PreviewProvider {
         Home()
             .previewInterfaceOrientation(.landscapeLeft)
     }
-}
-
-
-struct ControllerObject {
-    var firstName: String
-    var lastName: String
-    var initials: String
 }
