@@ -14,8 +14,8 @@ struct StripView: View {
     
     var body: some View {
         VStack {
-            Rectangle()
-                .frame(width: 500, height: 5)
+//            Rectangle()
+//                .frame(width: 500, height: 5)
             
             HStack(spacing: 30) {
                 
@@ -68,8 +68,8 @@ struct StripView: View {
                 
             }
             
-            Rectangle()
-                .frame(width: 500, height: 5)
+//            Rectangle()
+//                .frame(width: 500, height: 5)
         }
     }
     
