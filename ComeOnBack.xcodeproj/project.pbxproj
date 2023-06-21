@@ -69,7 +69,6 @@
 		374D8C4929BA7E5B002A690D /* ComeOnBack */ = {
 			isa = PBXGroup;
 			children = (
-				37A0135029CE4CDF0083FD3C /* Extensions */,
 				374D8C4A29BA7E5B002A690D /* ComeOnBackApp.swift */,
 				37A0135929CE80830083FD3C /* Enums */,
 				37A0135529CE79E60083FD3C /* MockData.swift */,
@@ -93,13 +92,6 @@
 				374D8C5129BA7E5D002A690D /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
-			sourceTree = "<group>";
-		};
-		37A0135029CE4CDF0083FD3C /* Extensions */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Extensions;
 			sourceTree = "<group>";
 		};
 		37A0135929CE80830083FD3C /* Enums */ = {
