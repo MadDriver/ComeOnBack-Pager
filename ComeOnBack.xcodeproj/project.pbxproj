@@ -32,7 +32,6 @@
 		374D8C5C29BB880C002A690D /* Controller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Controller.swift; sourceTree = "<group>"; };
 		374D8C5E29BCC2D7002A690D /* PagingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagingView.swift; sourceTree = "<group>"; };
 		374D8C6029BCF73B002A690D /* PagingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagingViewModel.swift; sourceTree = "<group>"; };
-		374D8C6229BDC54B002A690D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		374D8C6329BDD130002A690D /* CustomPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomPickerView.swift; sourceTree = "<group>"; };
 		37A0135329CE79A70083FD3C /* OnPositionCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnPositionCellView.swift; sourceTree = "<group>"; };
 		37A0135529CE79E60083FD3C /* MockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockData.swift; sourceTree = "<group>"; };
@@ -71,7 +70,6 @@
 			isa = PBXGroup;
 			children = (
 				37A0135029CE4CDF0083FD3C /* Extensions */,
-				374D8C6229BDC54B002A690D /* Info.plist */,
 				374D8C4A29BA7E5B002A690D /* ComeOnBackApp.swift */,
 				37A0135929CE80830083FD3C /* Enums */,
 				37A0135529CE79E60083FD3C /* MockData.swift */,
@@ -324,7 +322,6 @@
 				DEVELOPMENT_TEAM = F3JXPYW3V6;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = ComeOnBack/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -352,7 +349,6 @@
 				DEVELOPMENT_TEAM = F3JXPYW3V6;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = ComeOnBack/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
