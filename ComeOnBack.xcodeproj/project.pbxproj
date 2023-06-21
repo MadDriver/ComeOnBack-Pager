@@ -70,18 +70,16 @@
 			isa = PBXGroup;
 			children = (
 				374D8C4A29BA7E5B002A690D /* ComeOnBackApp.swift */,
-				37A0135929CE80830083FD3C /* Enums */,
-				37A0135529CE79E60083FD3C /* MockData.swift */,
-				37A0135329CE79A70083FD3C /* OnPositionCellView.swift */,
-				374D8C6329BDD130002A690D /* CustomPickerView.swift */,
-				37A0135729CE7F080083FD3C /* SignInView.swift */,
 				374D8C5829BA7FE5002A690D /* Home.swift */,
+				37A0135329CE79A70083FD3C /* OnPositionCellView.swift */,
+				374D8C5A29BB86EB002A690D /* StripView.swift */,
+				CE9E84792A43A7CC00141062 /* Paging Views */,
+				37A0135929CE80830083FD3C /* Enums */,
+				37A0135729CE7F080083FD3C /* SignInView.swift */,
+				374D8C5C29BB880C002A690D /* Controller.swift */,
+				37A0135529CE79E60083FD3C /* MockData.swift */,
 				374D8C4E29BA7E5D002A690D /* Assets.xcassets */,
 				374D8C5029BA7E5D002A690D /* Preview Content */,
-				374D8C5A29BB86EB002A690D /* StripView.swift */,
-				374D8C5C29BB880C002A690D /* Controller.swift */,
-				374D8C5E29BCC2D7002A690D /* PagingView.swift */,
-				374D8C6029BCF73B002A690D /* PagingViewModel.swift */,
 			);
 			path = ComeOnBack;
 			sourceTree = "<group>";
@@ -100,6 +98,16 @@
 				37A0135A29CE80990083FD3C /* TimeTypeEnum.swift */,
 			);
 			path = Enums;
+			sourceTree = "<group>";
+		};
+		CE9E84792A43A7CC00141062 /* Paging Views */ = {
+			isa = PBXGroup;
+			children = (
+				374D8C5E29BCC2D7002A690D /* PagingView.swift */,
+				374D8C6029BCF73B002A690D /* PagingViewModel.swift */,
+				374D8C6329BDD130002A690D /* CustomPickerView.swift */,
+			);
+			path = "Paging Views";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -311,7 +319,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"ComeOnBack/Preview Content\"";
-				DEVELOPMENT_TEAM = F3JXPYW3V6;
+				DEVELOPMENT_TEAM = 9XKN747L88;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -338,7 +346,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"ComeOnBack/Preview Content\"";
-				DEVELOPMENT_TEAM = F3JXPYW3V6;
+				DEVELOPMENT_TEAM = 9XKN747L88;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
