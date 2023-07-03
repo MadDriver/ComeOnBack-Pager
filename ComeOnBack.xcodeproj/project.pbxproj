@@ -20,6 +20,7 @@
 		37A0135629CE79E60083FD3C /* MockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37A0135529CE79E60083FD3C /* MockData.swift */; };
 		37A0135829CE7F080083FD3C /* SignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37A0135729CE7F080083FD3C /* SignInView.swift */; };
 		37A0135B29CE80990083FD3C /* TimeTypeEnum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37A0135A29CE80990083FD3C /* TimeTypeEnum.swift */; };
+		CE934E102A52F54700FFE5BE /* API.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE934E0F2A52F54700FFE5BE /* API.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -37,6 +38,7 @@
 		37A0135529CE79E60083FD3C /* MockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockData.swift; sourceTree = "<group>"; };
 		37A0135729CE7F080083FD3C /* SignInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInView.swift; sourceTree = "<group>"; };
 		37A0135A29CE80990083FD3C /* TimeTypeEnum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeTypeEnum.swift; sourceTree = "<group>"; };
+		CE934E0F2A52F54700FFE5BE /* API.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = API.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -70,14 +72,13 @@
 			isa = PBXGroup;
 			children = (
 				374D8C4A29BA7E5B002A690D /* ComeOnBackApp.swift */,
+				CE934E112A52F64A00FFE5BE /* Data */,
 				374D8C5829BA7FE5002A690D /* Home.swift */,
 				37A0135329CE79A70083FD3C /* OnPositionCellView.swift */,
 				374D8C5A29BB86EB002A690D /* StripView.swift */,
 				CE9E84792A43A7CC00141062 /* Paging Views */,
 				37A0135929CE80830083FD3C /* Enums */,
 				37A0135729CE7F080083FD3C /* SignInView.swift */,
-				374D8C5C29BB880C002A690D /* Controller.swift */,
-				37A0135529CE79E60083FD3C /* MockData.swift */,
 				374D8C4E29BA7E5D002A690D /* Assets.xcassets */,
 				374D8C5029BA7E5D002A690D /* Preview Content */,
 			);
@@ -100,11 +101,21 @@
 			path = Enums;
 			sourceTree = "<group>";
 		};
+		CE934E112A52F64A00FFE5BE /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				CE934E0F2A52F54700FFE5BE /* API.swift */,
+				374D8C5C29BB880C002A690D /* Controller.swift */,
+				374D8C6029BCF73B002A690D /* PagingViewModel.swift */,
+				37A0135529CE79E60083FD3C /* MockData.swift */,
+			);
+			path = Data;
+			sourceTree = "<group>";
+		};
 		CE9E84792A43A7CC00141062 /* Paging Views */ = {
 			isa = PBXGroup;
 			children = (
 				374D8C5E29BCC2D7002A690D /* PagingView.swift */,
-				374D8C6029BCF73B002A690D /* PagingViewModel.swift */,
 				374D8C6329BDD130002A690D /* CustomPickerView.swift */,
 			);
 			path = "Paging Views";
@@ -190,6 +201,7 @@
 				374D8C4B29BA7E5B002A690D /* ComeOnBackApp.swift in Sources */,
 				37A0135B29CE80990083FD3C /* TimeTypeEnum.swift in Sources */,
 				374D8C5F29BCC2D7002A690D /* PagingView.swift in Sources */,
+				CE934E102A52F54700FFE5BE /* API.swift in Sources */,
 				374D8C5B29BB86EB002A690D /* StripView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
