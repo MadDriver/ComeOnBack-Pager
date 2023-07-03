@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import OSLog
 
 @main
 struct ComeOnBackApp: App {
@@ -14,4 +15,8 @@ struct ComeOnBackApp: App {
             Home()
         }
     }
+}
+
+extension Logger {
+    public static var subsystem = Bundle.main.bundleIdentifier!
 }
