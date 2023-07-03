@@ -16,6 +16,16 @@ struct PagingView: View {
     @State var beBackTime: String?
     @State var isShowingCustomPicker = false
     @State var customBeBackTime = 0
+    var beBackText: String {
+        if beBackTime == nil {
+            return ""
+        }
+        if beBackPosition == nil {
+            return "Page back \(controller.initials) at \(beBackTime ?? "  ")"
+            
+        }
+        return "Page back \(controller.initials) at \(beBackTime ?? "  ") for \(beBackPosition ?? "  ")"
+    }
     
     var body: some View {
         VStack {
@@ -57,7 +67,7 @@ struct PagingView: View {
             .frame(maxWidth: .infinity)
             .frame(height:250)
             
-            Text("Page back \(controller.initials) at \(beBackTime ?? "  ") for \(beBackPosition ?? "  ")")
+            Text(beBackText)
                 .padding(.vertical)
                         
             
