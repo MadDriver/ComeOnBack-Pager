@@ -6,8 +6,10 @@
 //
 
 import SwiftUI
+import OSLog
 
 struct PagingView: View {
+    private let logger = Logger(subsystem: Logger.subsystem, category: "PagingView")
     
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var pagingVM: PagingViewModel
@@ -16,6 +18,9 @@ struct PagingView: View {
     @State var beBackTime: String?
     @State var isShowingCustomPicker = false
     @State var customBeBackTime = 0
+    
+    var isSubmittable: Bool { beBackTime != nil }
+    
     var beBackText: String {
         if beBackTime == nil {
             return ""
@@ -81,6 +86,7 @@ struct PagingView: View {
                 
                 Button("PAGE", action: pageBack)
                     .buttonStyle(.borderedProminent)
+                    .disabled(!isSubmittable)
             }
             
             
@@ -105,25 +111,50 @@ struct PagingView: View {
     }
     
     func pageBack() {
-        controller.isPagedBack = true
-        controller.positionAssigned = beBackPosition
-        controller.beBackTime = beBackTime
-        dismiss()
-
+        Task {
+            do {
+                try await submitBeBack()
+            } catch is APIError {
+                logger.error("APIError in pageBack()")
+            } catch {
+                logger.error("Unexpected error in pageBack(): \(error)")
+            }
+        }
     }
     
     func reset() {
-        controller.isPagedBack = false
-        controller.positionAssigned = ""
-        controller.beBackTime = nil
-        dismiss()
+        // TODO: Impl
+    }
+    
+    func submitBeBack() async throws {
+        logger.info("In submitBeBack()")
+        guard let beBackTime = beBackTime else {
+            logger.error("beBackTime must be defined before calling submitBeBack()")
+            return
+        }
+        let beBack = try await API().submitBeBack(initials: controller.initials,
+                                     time: beBackTime,
+                                     forPosition: beBackPosition)
+        DispatchQueue.main.async {
+            self.controller.status = .PAGED_BACK
+            self.controller.beBack = beBack
+            dismiss()
+        }
     }
     
 }
 
 struct PagingView_Previews: PreviewProvider {
     static var previews: some View {
-        PagingView(controller: .constant(Controller(initials: "RR", beBackTime: "45", isPagedBack: true)))
+        let beBack = BeBack(initials: "RR", time: "10:00", forPosition: "FR1")
+        PagingView(controller:
+                .constant(Controller(initials: "RR",
+                                     area: "",
+                                     isDev: false,
+                                     status: .PAGED_BACK,
+                                     beBack: beBack
+                                    )
+                ))
             .environmentObject(PagingViewModel())
             .previewInterfaceOrientation(.landscapeLeft)
     }

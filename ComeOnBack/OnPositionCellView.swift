@@ -24,19 +24,19 @@ struct OnPositionCellView: View {
                     
                 } label: {
                     Image(systemName: "arrow.right")
-
+                    
                 }
                 .buttonStyle(PlainButtonStyle())
             }
         }
         .padding()
         .frame(width: 200)
-//        .background(Color.red)
+        //        .background(Color.red)
     }
     
     func putControllerOnBreakList() {
         if let index = pagingVM.onPosition.firstIndex(of: controller) {
-            pagingVM.onBreakControllers.append(controller)
+            pagingVM.onBreak.append(controller)
             pagingVM.onPosition.remove(at: index)
         }
     }
@@ -45,6 +45,11 @@ struct OnPositionCellView: View {
 
 struct OnPositionCellView_Previews: PreviewProvider {
     static var previews: some View {
-        OnPositionCellView(controller: MockData.controller)
+        OnPositionCellView(controller:
+                            Controller(initials: "TT",
+                                       area: "",
+                                       isDev: false,
+                                       status: .AVAILABLE
+                                      ))
     }
 }

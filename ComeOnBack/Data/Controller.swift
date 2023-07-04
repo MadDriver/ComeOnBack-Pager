@@ -7,12 +7,30 @@
 
 import Foundation
 
-struct Controller: Hashable, Identifiable  {
-    
+enum ControllerStatus: String, Codable {
+    case AVAILABLE
+    case PAGED_BACK
+    case ON_POSITION
+    case OTHER_DUTIES
+}
+
+struct Controller: Hashable, Identifiable, Codable  {
     var id = UUID()
     var initials: String
-    var positionAssigned: String?
-    var beBackTime: String?
-    var isPagedBack: Bool
+    var area: String
+    var isDev: Bool
+    var status: ControllerStatus// = .AVAILABLE
+    var beBack: BeBack? = nil
     
+    var isPagedBack: Bool {
+        return beBack != nil
+    }
+    
+    enum CodingKeys: String, CodingKey {
+        case initials
+        case area
+        case isDev
+        case status
+        case beBack
+    }
 }

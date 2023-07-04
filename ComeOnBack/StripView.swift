@@ -27,15 +27,16 @@ struct StripView: View {
                 
                 
                 ZStack {
-                    if let beBackTime = controller.beBackTime {
-                        Text("\(beBackTime)")
+                    if let beBack = controller.beBack {
+                        Text("\(beBack.time)")
                     }
                 }
                 .frame(width: 50)
                 
                 ZStack {
-                    if let position = controller.positionAssigned {
-                        Text(position)
+                    if let beBack = controller.beBack,
+                       let forPosition = beBack.forPosition {
+                        Text(forPosition)
                     }
                 }
                 .frame(width: 50)
@@ -74,9 +75,9 @@ struct StripView: View {
     }
     
     func moveControllerToOnPosition() {
-        if let index = pagingVM.onBreakControllers.firstIndex(of: controller) {
+        if let index = pagingVM.onBreak.firstIndex(of: controller) {
             pagingVM.onPosition.append(controller)
-            pagingVM.onBreakControllers.remove(at: index)
+            pagingVM.onBreak.remove(at: index)
         }
     }
     
@@ -84,6 +85,6 @@ struct StripView: View {
 
 struct StripView_Previews: PreviewProvider {
     static var previews: some View {
-        StripView(controller: Controller(initials: "RR", beBackTime: "35", isPagedBack: true))
+        StripView(controller: Controller(initials: "RR", area: "", isDev: false, status: .AVAILABLE))
     }
 }

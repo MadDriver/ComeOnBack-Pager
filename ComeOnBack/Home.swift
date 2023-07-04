@@ -6,9 +6,10 @@
 //
 
 import SwiftUI
+import OSLog
 
 struct Home: View {
-    
+    private let logger = Logger(subsystem: Logger.subsystem, category: "Home View")
     @ObservedObject var pagingVM = PagingViewModel()
     @State var signInViewIsActive = false
     
@@ -43,7 +44,7 @@ struct Home: View {
                             }
                             
                             List {
-                                ForEach($pagingVM.onBreakControllers) { $controller in
+                                ForEach($pagingVM.onBreak) { $controller in
                                     
                                     NavigationLink {
                                         PagingView(controller: $controller)
@@ -66,6 +67,21 @@ struct Home: View {
         .environmentObject(pagingVM)
         .sheet(isPresented: $signInViewIsActive) {
             Text("DFADFDSAFSFS")
+        }
+        .task{
+            do {
+                pagingVM.allControllers = try await API().getControllerList()
+            } catch {
+                logger.error("Error getting controller list: \(error)")
+            }
+            
+            do {
+//                try await API().signInController(initials: "SO")
+                try await pagingVM.shortPoll()
+            } catch {
+                logger.error("\(error)")
+            }
+            
         }
     }// body
     

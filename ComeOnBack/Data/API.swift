@@ -1,21 +1,119 @@
 import Foundation
+import OSLog
+
+enum APIError: Error {
+    case invalidServerResponse
+    case invalidParameters
+}
 
 class API {
-    static let logger = Logger(subsystem: Logger.subsystem, category: "API")
-    static let serverURL = "http://127.0.0.1:5000"
+    private let logger = Logger(subsystem: Logger.subsystem, category: "API")
+    static let serverURL = "http://127.0.0.1:5000/"
     
-    enum endPoints: String {
+    enum endPoint: String {
         case beBack = "beback"
+        case controllerList = "controllers"
+        case signIn = "signin"
+        case signOut = "signout"
+        case signedIn = "signedin"
         
         func getURL() -> URL {
             return URL(string: serverURL + self.rawValue)!
         }
     }
     
-    func submitBeBack(initials: String, time: String, forPosition: String?) async throws {
-        var request = URLRequest(url: endPoints.beBack.getURL())
-        request.httpMethod = "POST"
-        let data = URLSession.shared.dataTask(with: request)
+    func buildGETRequest(forEndpoint endPoint: endPoint) -> URLRequest {
+        return URLRequest(url: endPoint.getURL())
     }
     
+    func buildPOSTRequest(forEndpoint endPoint: endPoint, json: [String: Any]) throws -> URLRequest  {
+        guard let jsonData = try? JSONSerialization.data(withJSONObject: json) else {
+            logger.error("Error encoding JSON string \(json)")
+            throw APIError.invalidParameters
+        }
+        var request = URLRequest(url: endPoint.getURL())
+        request.httpMethod = "POST"
+        request.httpBody = jsonData
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        return request
+    }
+    
+    func submitBeBack(initials: String, time: String, forPosition: String?) async throws -> BeBack{
+        logger.info("submitBeBack(initials: \(initials) time: \(time) forPosition: \(forPosition ?? "nil")")
+        
+        var json: [String: Any] = ["initials": initials, "time": time]
+        if forPosition != nil {
+            json["forPosition"] = forPosition
+        }
+        
+        let request = try buildPOSTRequest(forEndpoint: .beBack, json: json)
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        let returnString = String(data: data, encoding: .utf8) ?? "could not decode return data"
+        logger.debug("Got server response: \(returnString)")
+        
+        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+            logger.error("Invalid server response in submitBeBack()")
+            throw APIError.invalidServerResponse
+        }
+        
+        return BeBack(initials: initials, time: time, forPosition: forPosition)
+    }
+    
+    func signInController(initials: String) async throws {
+        logger.info("Signing in \(initials)")
+        let json = ["initials": initials]
+        let request = try buildPOSTRequest(forEndpoint: .signIn, json: json)
+        let (data, response) = try await URLSession.shared.data(for: request)
+        let returnString = String(data: data, encoding: .utf8) ?? "could not decode return data"
+        logger.debug("Got server response: \(returnString)")
+        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+            logger.error("Invalid server response in signInController(\(initials))")
+            throw APIError.invalidServerResponse
+        }
+    }
+    
+    func signOutController(initials: String) async throws {
+        logger.info("Signing out \(initials)")
+        let json = ["initials": initials]
+        let request = try buildPOSTRequest(forEndpoint: .signOut, json: json)
+        let (data, response) = try await URLSession.shared.data(for: request)
+        let returnString = String(data: data, encoding: .utf8) ?? "could not decode return data"
+        logger.debug("Got server response: \(returnString)")
+        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+            logger.error("Invalid server response in signOutController(\(initials)")
+            throw APIError.invalidServerResponse
+        }
+    }
+    
+    func getControllerList() async throws -> [Controller]{
+        logger.info("Getting controller list")
+        let request = buildGETRequest(forEndpoint: .controllerList)
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+            logger.error("Invalid server response in getControllerList")
+            throw APIError.invalidServerResponse
+        }
+        
+        let controllers = try JSONDecoder().decode([Controller].self, from: data)
+        logger.info("Got \(controllers.count) controllers")
+        return controllers
+    }
+    
+    func getSignedInControllers() async throws -> [Controller] {
+        logger.info("Getting signed in controllers")
+        let request = buildGETRequest(forEndpoint: .signedIn)
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+            logger.error("Invalid server response in getControllerList")
+            throw APIError.invalidServerResponse
+        }
+        
+        let siControllers = try JSONDecoder().decode([Controller].self, from: data)
+        logger.info("Got \(siControllers.count) signed in controllers")
+        return siControllers
+    }
 }

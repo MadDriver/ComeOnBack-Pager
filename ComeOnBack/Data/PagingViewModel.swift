@@ -6,40 +6,32 @@
 //
 
 import SwiftUI
+import OSLog
 
 final class PagingViewModel: ObservableObject {
-    
+    private let logger = Logger(subsystem: Logger.subsystem, category: "PagingViewModel")
     @Published var timeType: TimeType = .standard
-    @Published var onBreakControllers: [Controller] = [
-        Controller(initials: "RR", isPagedBack: false),
-        Controller(initials: "MJ", isPagedBack: false),
-        Controller(initials: "KT", isPagedBack: false),
-        Controller(initials: "GM", isPagedBack: false),
-        Controller(initials: "PZ", isPagedBack: false),
-        Controller(initials: "SW", isPagedBack: false),
-        Controller(initials: "KW", isPagedBack: false),
-        Controller(initials: "GC", isPagedBack: false),
-        Controller(initials: "TO", isPagedBack: false),
-        Controller(initials: "AA", isPagedBack: false),
-        Controller(initials: "BB", isPagedBack: false),
-        Controller(initials: "CC", isPagedBack: false),
-        Controller(initials: "DD", isPagedBack: false),
-        Controller(initials: "EE", isPagedBack: false),
-        Controller(initials: "EG", isPagedBack: false),
-        Controller(initials: "PL", isPagedBack: false),
-        Controller(initials: "FF", isPagedBack: false),
-        Controller(initials: "GG", isPagedBack: false)
-    ]
+    @Published var allControllers: [Controller] = []
+    @Published var onBreak: [Controller] = []
+    @Published var onPosition: [Controller] = []
     @Published var date = Date()
-    @Published var onPosition: [Controller] = [
-        Controller(initials: "YY", isPagedBack: false),
-        Controller(initials: "XX", isPagedBack: false),
-        Controller(initials: "PP", isPagedBack: false),
-        Controller(initials: "RB", isPagedBack: false),
-        Controller(initials: "BR", isPagedBack: false),
-        Controller(initials: "YT", isPagedBack: false),
-        Controller(initials: "VM", isPagedBack: false)
-    ]
+    
+    func getControllers(withInitials initials: [String]) -> [Controller] {
+        return allControllers.filter {initials.contains($0.initials) }
+    }
+    
+    func shortPoll() async throws {
+        logger.info("shortPoll()")
+        let controllers = try await API().getSignedInControllers()
+        DispatchQueue.main.async {
+            self.onPosition = controllers.filter { $0.status == .ON_POSITION }
+            self.onBreak = controllers.filter { $0.status == .PAGED_BACK }
+            self.onBreak.append(contentsOf: controllers.filter { $0.status == .AVAILABLE })
+            self.logger.info("onPositionn count: \(self.onPosition.count)")
+            self.logger.info("onBreak count: \(self.onBreak.count)")
+        }
+    }
+    
     let positions = [
         "DR1", "DR2", "DR3", "DR4", "AR1", "AR2", "AR3", "AR4", "FR1", "FR2", "FR3", "FR4", "SR1", "SR2", "SR4", "FDCD", "MO1", "MO2", "MO3", "CI", "GJT", "PUB", "TBD"
     
