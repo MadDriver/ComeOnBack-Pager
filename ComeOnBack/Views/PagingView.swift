@@ -13,29 +13,23 @@ struct PagingView: View {
     
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var pagingVM: PagingViewModel
-    @Binding var controller: Controller
     @State var beBackPosition: String?
     @State var beBackTime: String?
     @State var isShowingCustomPicker = false
     @State var customBeBackTime = 0
+    var controller: Controller
     
     var isSubmittable: Bool { beBackTime != nil }
     
     var beBackText: String {
-        if beBackTime == nil {
-            return ""
-        }
-        if beBackPosition == nil {
-            return "Page back \(controller.initials) at \(beBackTime ?? "  ")"
-            
-        }
+        if beBackTime == nil { return "" }
+        if beBackPosition == nil { return "Page back \(controller.initials) at \(beBackTime ?? "  ")" }
         return "Page back \(controller.initials) at \(beBackTime ?? "  ") for \(beBackPosition ?? "  ")"
     }
     
     var body: some View {
         VStack {
-                        
-            Text("Page \(controller.initials)?")
+            Text("Page \(controller.initials)")
                 .font(.title).bold()
                 .padding(.bottom)
             
@@ -55,17 +49,21 @@ struct PagingView: View {
                     CustomPickerView(customBeBackTime: $customBeBackTime)
                 }
                 .padding(.vertical)
-            
+
             Spacer()
-            
             LazyHGrid(rows: pagingVM.positionRows, spacing: 20) {
                 ForEach(pagingVM.positions, id: \.self) { position in
                     Text(position)
                         .font(.system(size: 20, weight: .bold))
                         .frame(width: 100, height: 50)
                         .background(Color.red).opacity(0.5)
+                        .border(Color.blue, width: beBackPosition == position ? 2.5 : 0)
                         .onTapGesture {
-                            beBackPosition = position
+                            if beBackPosition == position {
+                                beBackPosition = nil
+                            } else {
+                                beBackPosition = position
+                            }
                         }
                 }
             }
@@ -75,18 +73,22 @@ struct PagingView: View {
             Text(beBackText)
                 .padding(.vertical)
                         
+            Button("PAGE", action: pageBack)
+                .font(.title).bold()
+                .background(.green)
+                .buttonStyle(.borderedProminent)
+                .disabled(!isSubmittable)
+            
+            Spacer()
             
             HStack(spacing: 75) {
-                
-                Button("CANCEL", role: .cancel, action: cancelPage)
-                    .buttonStyle(.bordered)
+                if (controller.status == .PAGED_BACK) {
+                    Button("CANCEL PAGE", role: .cancel, action: cancelPage)
+                        .buttonStyle(.bordered)
+                }
                 
                 Button("RESET", role: .cancel, action: reset)
                     .buttonStyle(.bordered)
-                
-                Button("PAGE", action: pageBack)
-                    .buttonStyle(.borderedProminent)
-                    .disabled(!isSubmittable)
             }
             
             
@@ -107,15 +109,27 @@ struct PagingView: View {
     }
     
     func cancelPage() {
+        pagingVM.removeBeBack(forController: controller)
         dismiss()
     }
     
     func pageBack() {
+        logger.info("In pageBack()")
+        guard let beBackTime = beBackTime else {
+            logger.error("beBackTime must be defined before calling submitBeBack()")
+            return
+        }
+        
         Task {
             do {
-                try await submitBeBack()
-            } catch is APIError {
-                logger.error("APIError in pageBack()")
+                let time = try Time(beBackTime)
+                try await pagingVM.createAndSubmitBeBack(forController: controller, time: time, forPosition: beBackPosition)
+                
+                await MainActor.run { dismiss() }
+            } catch APIError.invalidParameters {
+                logger.error("Invalid parameters in pageBack()")
+            } catch APIError.invalidServerResponse {
+                logger.error("Invalid server response in pageBack()")
             } catch {
                 logger.error("Unexpected error in pageBack(): \(error)")
             }
@@ -125,36 +139,11 @@ struct PagingView: View {
     func reset() {
         // TODO: Impl
     }
-    
-    func submitBeBack() async throws {
-        logger.info("In submitBeBack()")
-        guard let beBackTime = beBackTime else {
-            logger.error("beBackTime must be defined before calling submitBeBack()")
-            return
-        }
-        let beBack = try await API().submitBeBack(initials: controller.initials,
-                                     time: beBackTime,
-                                     forPosition: beBackPosition)
-        DispatchQueue.main.async {
-            self.controller.status = .PAGED_BACK
-            self.controller.beBack = beBack
-            dismiss()
-        }
-    }
-    
 }
 
 struct PagingView_Previews: PreviewProvider {
     static var previews: some View {
-        let beBack = BeBack(initials: "RR", time: "10:00", forPosition: "FR1")
-        PagingView(controller:
-                .constant(Controller(initials: "RR",
-                                     area: "",
-                                     isDev: false,
-                                     status: .PAGED_BACK,
-                                     beBack: beBack
-                                    )
-                ))
+        PagingView(controller: Controller.mock_data.first!)
             .environmentObject(PagingViewModel())
             .previewInterfaceOrientation(.landscapeLeft)
     }

@@ -8,7 +8,8 @@ enum APIError: Error {
 
 class API {
     private let logger = Logger(subsystem: Logger.subsystem, category: "API")
-    static let serverURL = "http://127.0.0.1:5000/"
+//    static let serverURL = "http://127.0.0.1:5000/"
+    static let serverURL = "http://d01.org/pager/"
     
     enum endPoint: String {
         case beBack = "beback"
@@ -39,10 +40,10 @@ class API {
         return request
     }
     
-    func submitBeBack(initials: String, time: String, forPosition: String?) async throws -> BeBack{
+    func submitBeBack(initials: String, time: Time, forPosition: String?) async throws -> BeBack{
         logger.info("submitBeBack(initials: \(initials) time: \(time) forPosition: \(forPosition ?? "nil")")
         
-        var json: [String: Any] = ["initials": initials, "time": time]
+        var json: [String: Any] = ["initials": initials, "time": time.stringValue]
         if forPosition != nil {
             json["forPosition"] = forPosition
         }
@@ -53,7 +54,7 @@ class API {
         let returnString = String(data: data, encoding: .utf8) ?? "could not decode return data"
         logger.debug("Got server response: \(returnString)")
         
-        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 201 else {
             logger.error("Invalid server response in submitBeBack()")
             throw APIError.invalidServerResponse
         }

@@ -4,7 +4,7 @@ import OSLog
 struct BeBack: Hashable, Identifiable, Codable {
     var id = UUID()
     var initials: String
-    var time: String
+    var time: Time
     var forPosition: String?
     
     enum CodingKeys: String, CodingKey {

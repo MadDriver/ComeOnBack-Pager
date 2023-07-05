@@ -10,26 +10,92 @@ import OSLog
 
 final class PagingViewModel: ObservableObject {
     private let logger = Logger(subsystem: Logger.subsystem, category: "PagingViewModel")
-    @Published var timeType: TimeType = .standard
     @Published var allControllers: [Controller] = []
-    @Published var onBreak: [Controller] = []
     @Published var onPosition: [Controller] = []
-    @Published var date = Date()
+    @Published var pagedBack: [Controller] = []
+    @Published var onBreak: [Controller] = []
+    var rightHandList: [Controller] {
+        get {
+            return pagedBack + onBreak
+        }
+    }
     
-    func getControllers(withInitials initials: [String]) -> [Controller] {
-        return allControllers.filter {initials.contains($0.initials) }
+    
+    func getController(withInitials initials: String) -> Controller? {
+        return allControllers.first { $0.initials == initials}
+    }
+    
+    func sortPagedBack() {
+        pagedBack.sort(by: { lhs, rhs in
+            guard let lhsTime = lhs.beBack?.time, let rhsTime = rhs.beBack?.time else {
+                logger.error("Trying to sort controllers without beBacks defined. \(lhs)-\(rhs)")
+                return false
+            }
+            return lhsTime < rhsTime
+        })
     }
     
     func shortPoll() async throws {
         logger.info("shortPoll()")
         let controllers = try await API().getSignedInControllers()
-        DispatchQueue.main.async {
+        await MainActor.run {
             self.onPosition = controllers.filter { $0.status == .ON_POSITION }
-            self.onBreak = controllers.filter { $0.status == .PAGED_BACK }
-            self.onBreak.append(contentsOf: controllers.filter { $0.status == .AVAILABLE })
+            self.pagedBack = controllers.filter { $0.status == .PAGED_BACK }
+            self.onBreak = controllers.filter { $0.status == .AVAILABLE }
+            sortPagedBack()
             self.logger.info("onPositionn count: \(self.onPosition.count)")
+            self.logger.info("pagedBack count: \(self.pagedBack.count)")
             self.logger.info("onBreak count: \(self.onBreak.count)")
         }
+    }
+    
+    @MainActor
+    func processBeBack(_ beBack: BeBack) {
+        logger.info("processBeBack: \(beBack)")
+        guard var controller = getController(withInitials: beBack.initials) else {
+            logger.error("Could not find conotroller with initials \(beBack.initials)")
+            return
+        }
+        controller.status = .PAGED_BACK
+        controller.beBack = beBack
+        onBreak.removeAll(where: { $0.initials == beBack.initials })
+        pagedBack.removeAll(where: { $0.initials == beBack.initials })
+        pagedBack.append(controller)
+        sortPagedBack()
+    }
+    
+    func createAndSubmitBeBack(forController controller: Controller, time: Time, forPosition: String?) async throws {
+        let beBack = try await API().submitBeBack(initials: controller.initials,
+                                     time: time,
+                                     forPosition: forPosition)
+        await processBeBack(beBack)
+    }
+    
+    @MainActor
+    func moveControllerToOnPosition(_ controller: Controller) {
+        var controller = controller
+        controller.beBack = nil
+        controller.status = .ON_POSITION
+        pagedBack.removeAll(where: { $0.initials == controller.initials })
+        onBreak.removeAll(where: { $0.initials == controller.initials })
+        onPosition.append(controller)
+    }
+    
+    @MainActor
+    func moveControllerToOnBreak(_ controller: Controller) {
+        var controller = controller
+        controller.status = .AVAILABLE
+        onPosition.removeAll(where: { $0.initials == controller.initials })
+        onBreak.append(controller)
+    }
+    
+    @MainActor
+    func removeBeBack(forController controller: Controller) {
+        var controller = controller
+        controller.status = .AVAILABLE
+        controller.beBack = nil
+        pagedBack.removeAll(where: { $0.initials == controller.initials })
+        onBreak.insert(controller, at: 0)
     }
     
     let positions = [
@@ -46,17 +112,6 @@ final class PagingViewModel: ObservableObject {
         GridItem(), GridItem()
     ]
     
-    var timeFormat: DateFormatter {
-        let formatter = DateFormatter()
-        switch timeType {
-            case .military:
-                formatter.dateFormat = "HH:mm:ss"
-            case .standard:
-                formatter.dateFormat = "hh:mm:ss a"
-        }
-        return formatter
-    }
-    
     var beBackTimeFormat: DateFormatter {
         let formatter = DateFormatter()
         formatter.dateFormat = "HH:mm"
@@ -64,37 +119,24 @@ final class PagingViewModel: ObservableObject {
     }
     
     func getBeBackTime(minute: String) -> String {
-        
         let calendar = Calendar.current
         let timeToAdd = Int(minute)!
-        let dateToEdit = calendar.date(byAdding: .minute, value: timeToAdd, to: date)!
+        let dateToEdit = calendar.date(byAdding: .minute, value: timeToAdd, to: Date())!
         let m = calendar.component(.minute, from: dateToEdit)
         
         if m % 5 != 0 {
             let r = 5 - (m % 5)
             let minuteToAdd = timeToAdd + r
-            let actualDate = calendar.date(byAdding: .minute, value: minuteToAdd, to: date)!
+            let actualDate = calendar.date(byAdding: .minute, value: minuteToAdd, to: Date())!
             return beBackTimeFormat.string(from: actualDate)
         } else {
             return beBackTimeFormat.string(from: dateToEdit)
         }
-        
-    }
-    
-    func timeString(date: Date) -> String {
-        let time = timeFormat.string(from: date)
-        return time
-    }
-    
-    var updateTimer: Timer {
-        Timer.scheduledTimer(withTimeInterval: 1, repeats: true, block: { _ in
-            self.date = Date()
-        })
     }
     
     func customBeBackTimeChanged(time: Int) -> String {
         let calendar = Calendar.current
-        let dateOne = calendar.date(bySetting: .minute, value: time, of: date)!
+        let dateOne = calendar.date(bySetting: .minute, value: time, of: Date())!
         let dateString = beBackTimeFormat.string(from: dateOne)
         return dateString
     }
