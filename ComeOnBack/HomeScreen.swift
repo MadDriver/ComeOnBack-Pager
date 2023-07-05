@@ -32,9 +32,17 @@ struct HomeScreen: View {
                 } // Nav Stack
             } // V Stack
             
-            Button("SIGN IN/OUT", action: signInController)
-                .buttonStyle(.borderedProminent)
-                .padding()
+            HStack {
+                Button("SIGN IN", action: signInController)
+                    .buttonStyle(.borderedProminent)
+                    .padding()
+                
+                Spacer()
+                
+                Button("SIGN OUT", action: signInController)
+                    .buttonStyle(.borderedProminent)
+                    .padding()
+            }
             
         } // Z Stack
         .environmentObject(pagingVM)
