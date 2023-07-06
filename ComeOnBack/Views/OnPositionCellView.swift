@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 //
 //  OnPositionCellView.swift
 //  ComeOnBack
@@ -9,10 +10,17 @@ import SwiftUI
 
 struct OnPositionCellView: View {
     
+=======
+import SwiftUI
+import OSLog
+
+struct OnPositionCellView: View {
+>>>>>>> pullrequests/lunoho/main
     @EnvironmentObject var pagingVM: PagingViewModel
     var controller: Controller
     
     var body: some View {
+<<<<<<< HEAD
         HStack {
             Text(controller.initials)
             Spacer()
@@ -41,10 +49,40 @@ struct OnPositionCellView: View {
         }
     }
     
+=======
+        ZStack { // ZStack for a tapGesture for the entire row
+            HStack {
+                Text("") // To get the underline all the way across the row
+                Spacer()
+                Text(controller.initials)
+                Spacer()
+                Image(systemName: "arrowshape.right")
+            }
+            .padding()
+        }
+        .onTapGesture {
+            Task {
+                do {
+                    try await pagingVM.moveControllerToOnBreak(controller)
+                } catch {
+                    Logger(subsystem: Logger.subsystem, category: "OnPositionCellView").error("With controller \(controller): \(error)")
+                }
+            }
+        }
+    }
+>>>>>>> pullrequests/lunoho/main
 }
 
 struct OnPositionCellView_Previews: PreviewProvider {
     static var previews: some View {
+<<<<<<< HEAD
         OnPositionCellView(controller: MockData.controller)
+=======
+        VStack {
+            OnPositionCellView(controller: Controller.mock_data[0])
+            OnPositionCellView(controller: Controller.mock_data[1])
+            OnPositionCellView(controller: Controller.mock_data[2])
+        }
+>>>>>>> pullrequests/lunoho/main
     }
 }

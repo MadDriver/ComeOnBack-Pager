@@ -6,16 +6,17 @@
 //
 
 import SwiftUI
+import OSLog
 
 @main
 struct ComeOnBackApp: App {
-    
-    @StateObject var pagingVM = PagingViewModel()
-    
     var body: some Scene {
         WindowGroup {
-            Home()
-                .environmentObject(pagingVM)
+            HomeScreen()
         }
     }
+}
+
+extension Logger {
+    public static var subsystem = Bundle.main.bundleIdentifier!
 }

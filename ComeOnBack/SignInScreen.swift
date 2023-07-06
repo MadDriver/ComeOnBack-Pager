@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct SignInView: View {
+struct SignInScreen: View {
     
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var pagingVM: PagingViewModel
@@ -49,6 +49,6 @@ struct SignInView: View {
 
 struct SignInView_Previews: PreviewProvider {
     static var previews: some View {
-        SignInView()
+        SignInScreen()
     }
 }
