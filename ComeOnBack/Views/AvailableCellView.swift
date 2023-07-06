@@ -4,13 +4,10 @@ import OSLog
 struct AvailableCellView: View {
     
     @EnvironmentObject var pagingVM: PagingViewModel
-    @Binding var controller: Controller
+    var controller: Controller
     
     var body: some View {
         VStack {
-            //            Rectangle()
-            //                .frame(width: 500, height: 5)
-            
             HStack(spacing: 30) {
                 Text("")
                 ZStack {
@@ -29,7 +26,6 @@ struct AvailableCellView: View {
                     
                 }
                 .buttonStyle(PlainButtonStyle())
-//                .frame(width: 50)
                 .zIndex(1)
                 
                 ZStack {
@@ -64,32 +60,14 @@ struct AvailableCellView: View {
             }
         }
     }
-<<<<<<<< HEAD:ComeOnBack/Views/StripView.swift
-    
-    func moveControllerToOnPosition() {
-        if let index = pagingVM.onBreakControllers.firstIndex(of: controller) {
-            controller.beBackTime = nil
-            controller.positionAssigned = nil
-            controller.isPagedBack = false
-            pagingVM.onPosition.append(controller)
-            pagingVM.onBreakControllers.remove(at: index)
-        }
-    }
-    
-========
->>>>>>>> pullrequests/lunoho/main:ComeOnBack/Views/AvailableCellView.swift
 }
 
 struct StripView_Previews: PreviewProvider {
     static var previews: some View {
-<<<<<<<< HEAD:ComeOnBack/Views/StripView.swift
-        StripView(controller: .constant(Controller(firstName: "Calvin", lastName: "Shultz", initials: "RR", isPagedBack: false)))
-========
         List {
             AvailableCellView(controller: Controller.mock_data[0])
             AvailableCellView(controller: Controller.mock_data[1])
             AvailableCellView(controller: Controller.mock_data[2])
         }
->>>>>>>> pullrequests/lunoho/main:ComeOnBack/Views/AvailableCellView.swift
     }
 }
