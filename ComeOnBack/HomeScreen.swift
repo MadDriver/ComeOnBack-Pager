@@ -18,6 +18,7 @@ struct HomeScreen: View {
     @ObservedObject var displaySettings = DisplaySettings()
     @State var signInViewIsActive = false
     @State var signOutViewIsActive = false
+    @State var isLoading = false
     
     
     var body: some View {
@@ -43,19 +44,21 @@ struct HomeScreen: View {
                 Button("SIGN IN", action: signInController)
                     .buttonStyle(.borderedProminent)
                     .padding()
+                    .disabled(isLoading)
                 
                 Spacer()
                 
                 Button("SIGN OUT", action: signInController)
                     .buttonStyle(.borderedProminent)
                     .padding()
+                    .disabled(isLoading)
             }
             
         } // Z Stack
         .environmentObject(pagingVM)
         .environmentObject(displaySettings)
         .sheet(isPresented: $signInViewIsActive) {
-            Text("DFADFDSAFSFS")
+            SignInScreen(controllers: pagingVM.allControllers)
         }
         .sheet(isPresented: $signOutViewIsActive) {
             Text("DFADFDSAFSFS")
@@ -63,6 +66,9 @@ struct HomeScreen: View {
         .task{
             do {
                 pagingVM.allControllers = try await API().getControllerList()
+                await MainActor.run {
+                    isLoading = false
+                }
             } catch {
                 logger.error("Error getting controller list: \(error)")
             }
