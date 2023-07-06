@@ -17,7 +17,6 @@
 		374D8C6429BDD130002A690D /* CustomPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 374D8C6329BDD130002A690D /* CustomPickerView.swift */; };
 		37A0135429CE79A70083FD3C /* OnPositionCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37A0135329CE79A70083FD3C /* OnPositionCellView.swift */; };
 		37A0135829CE7F080083FD3C /* SignInScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37A0135729CE7F080083FD3C /* SignInScreen.swift */; };
-		37A0135B29CE80990083FD3C /* TimeTypeEnum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37A0135A29CE80990083FD3C /* TimeTypeEnum.swift */; };
 		CE934E102A52F54700FFE5BE /* API.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE934E0F2A52F54700FFE5BE /* API.swift */; };
 		CE934E152A5462C000FFE5BE /* BeBack.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE934E142A5462C000FFE5BE /* BeBack.swift */; };
 		CE934E172A54ABD700FFE5BE /* AvailableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE934E162A54ABD700FFE5BE /* AvailableView.swift */; };
@@ -38,7 +37,6 @@
 		374D8C6329BDD130002A690D /* CustomPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomPickerView.swift; sourceTree = "<group>"; };
 		37A0135329CE79A70083FD3C /* OnPositionCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnPositionCellView.swift; sourceTree = "<group>"; };
 		37A0135729CE7F080083FD3C /* SignInScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInScreen.swift; sourceTree = "<group>"; };
-		37A0135A29CE80990083FD3C /* TimeTypeEnum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeTypeEnum.swift; sourceTree = "<group>"; };
 		CE146CF42A54EE8D0096B1B6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CE934E0F2A52F54700FFE5BE /* API.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = API.swift; sourceTree = "<group>"; };
 		CE934E142A5462C000FFE5BE /* BeBack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeBack.swift; sourceTree = "<group>"; };
@@ -83,19 +81,10 @@
 				374D8C5829BA7FE5002A690D /* HomeScreen.swift */,
 				37A0135729CE7F080083FD3C /* SignInScreen.swift */,
 				CE9E84792A43A7CC00141062 /* Views */,
-				37A0135929CE80830083FD3C /* Enums */,
 				374D8C4E29BA7E5D002A690D /* Assets.xcassets */,
 				CE146CF42A54EE8D0096B1B6 /* Info.plist */,
 			);
 			path = ComeOnBack;
-			sourceTree = "<group>";
-		};
-		37A0135929CE80830083FD3C /* Enums */ = {
-			isa = PBXGroup;
-			children = (
-				37A0135A29CE80990083FD3C /* TimeTypeEnum.swift */,
-			);
-			path = Enums;
 			sourceTree = "<group>";
 		};
 		CE934E112A52F64A00FFE5BE /* Data */ = {
@@ -202,7 +191,6 @@
 				374D8C6429BDD130002A690D /* CustomPickerView.swift in Sources */,
 				CE934E172A54ABD700FFE5BE /* AvailableView.swift in Sources */,
 				374D8C4B29BA7E5B002A690D /* ComeOnBackApp.swift in Sources */,
-				37A0135B29CE80990083FD3C /* TimeTypeEnum.swift in Sources */,
 				CE934E192A54BE9C00FFE5BE /* OnPositionView.swift in Sources */,
 				374D8C5F29BCC2D7002A690D /* PagingView.swift in Sources */,
 				CE934E1B2A54C2DF00FFE5BE /* Time.swift in Sources */,
