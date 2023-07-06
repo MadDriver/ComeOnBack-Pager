@@ -12,6 +12,7 @@ struct HomeScreen: View {
     private let logger = Logger(subsystem: Logger.subsystem, category: "Home View")
     @ObservedObject var pagingVM = PagingViewModel()
     @State var signInViewIsActive = false
+    @State var signOutViewIsActive = false
     
     var body: some View {
         ZStack(alignment: .topLeading) {
@@ -47,6 +48,9 @@ struct HomeScreen: View {
         } // Z Stack
         .environmentObject(pagingVM)
         .sheet(isPresented: $signInViewIsActive) {
+            Text("DFADFDSAFSFS")
+        }
+        .sheet(isPresented: $signOutViewIsActive) {
             Text("DFADFDSAFSFS")
         }
         .task{
