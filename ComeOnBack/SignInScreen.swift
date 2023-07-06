@@ -1,14 +1,8 @@
-//
-//  SignInView.swift
-//  ComeOnBack
-//
-//  Created by Calvin Shultz on 3/24/23.
-//
-
 import SwiftUI
+import OSLog
 
 struct SignInScreen: View {
-    
+    private let logger = Logger(subsystem: Logger.subsystem, category: "SignInScreen")
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var pagingVM: PagingViewModel
     var controllers: [Controller] = []
@@ -23,7 +17,13 @@ struct SignInScreen: View {
                             .frame(width: 250, height: 50)
                             .background(Color.black.opacity(0.2))
                             .onTapGesture {
-                                // TODO: Sign In
+                                Task {
+                                    do {
+                                        try await pagingVM.signIn(controller: controller)
+                                    } catch {
+                                        logger.error("\(error)")
+                                    }
+                                }
                             }
                     }
                 }
