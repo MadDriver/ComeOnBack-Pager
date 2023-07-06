@@ -9,11 +9,11 @@ import SwiftUI
 
 struct HeaderView: View {
     @State var now = Date()
-    @State var useMilitaryTime = false
+    @EnvironmentObject var displaySettings: DisplaySettings
     
     var localTimeFormat: DateFormatter {
         let formatter = DateFormatter()
-        if useMilitaryTime {
+        if displaySettings.useMilitaryTime {
             formatter.dateFormat = "HH:mm"
         } else {
             formatter.dateFormat = "h:mm a"
@@ -42,7 +42,7 @@ struct HeaderView: View {
         HStack {
             Text("\(localTimeString)")
                 .font(.system(size: 32, weight: .bold))
-                .onTapGesture { useMilitaryTime.toggle() }
+                .onTapGesture { displaySettings.useMilitaryTime.toggle() }
             Text(" -- ")
             Text("\(utcTimeString)z")
                 .font(.system(size: 32, weight: .bold))

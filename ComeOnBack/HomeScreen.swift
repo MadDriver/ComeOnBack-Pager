@@ -8,11 +8,17 @@
 import SwiftUI
 import OSLog
 
+class DisplaySettings: ObservableObject {
+    @Published var useMilitaryTime = false
+}
+
 struct HomeScreen: View {
     private let logger = Logger(subsystem: Logger.subsystem, category: "Home View")
     @ObservedObject var pagingVM = PagingViewModel()
+    @ObservedObject var displaySettings = DisplaySettings()
     @State var signInViewIsActive = false
     @State var signOutViewIsActive = false
+    
     
     var body: some View {
         ZStack(alignment: .topLeading) {
@@ -47,6 +53,7 @@ struct HomeScreen: View {
             
         } // Z Stack
         .environmentObject(pagingVM)
+        .environmentObject(displaySettings)
         .sheet(isPresented: $signInViewIsActive) {
             Text("DFADFDSAFSFS")
         }
