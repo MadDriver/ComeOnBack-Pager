@@ -55,14 +55,15 @@ struct HomeScreen: View {
             }
             
         } // Z Stack
-        .environmentObject(pagingVM)
-        .environmentObject(displaySettings)
+        
         .sheet(isPresented: $signInViewIsActive) {
             SignInScreen(controllers: pagingVM.allControllers)
         }
         .sheet(isPresented: $signOutViewIsActive) {
             Text("DFADFDSAFSFS")
         }
+        .environmentObject(pagingVM)
+        .environmentObject(displaySettings)
         .task{
             do {
                 pagingVM.allControllers = try await API().getControllerList()
