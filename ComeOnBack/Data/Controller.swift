@@ -29,6 +29,15 @@ struct Controller: Hashable, Identifiable, Codable  {
         case status
         case beBack
     }
+    
+    static func newControllerFrom(_ controller: Controller, withStatus status: ControllerStatus) -> Controller {
+        var newController = controller
+        newController.status = status
+        if status == .AVAILABLE {
+            newController.beBack = nil
+        }
+        return newController
+    }
 }
 
 extension Controller: CustomStringConvertible {
