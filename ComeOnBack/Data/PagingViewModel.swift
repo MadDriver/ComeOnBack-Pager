@@ -14,12 +14,12 @@ final class PagingViewModel: ObservableObject {
     @Published var onPosition: [Controller] = []
     @Published var pagedBack: [Controller] = []
     @Published var onBreak: [Controller] = []
+    
     var rightHandList: [Controller] {
         get {
             return pagedBack + onBreak
         }
     }
-    
     
     func getController(withInitials initials: String) -> Controller? {
         return allControllers.first { $0.initials == initials}
@@ -66,41 +66,42 @@ final class PagingViewModel: ObservableObject {
     
     func createAndSubmitBeBack(forController controller: Controller, time: Time, forPosition: String?) async throws {
         let beBack = try await API().submitBeBack(initials: controller.initials,
-                                     time: time,
-                                     forPosition: forPosition)
+                                                  time: time,
+                                                  forPosition: forPosition)
         await processBeBack(beBack)
     }
     
-    @MainActor
-    func moveControllerToOnPosition(_ controller: Controller) {
-        var controller = controller
-        controller.beBack = nil
-        controller.status = .ON_POSITION
-        pagedBack.removeAll(where: { $0.initials == controller.initials })
-        onBreak.removeAll(where: { $0.initials == controller.initials })
-        onPosition.append(controller)
+    func moveControllerToOnPosition(_ controller: Controller) async throws {
+        let controller = Controller.newControllerFrom(controller, withStatus: .ON_POSITION)
+        try await API().moveOnPosition(initials: controller.initials)
+        await MainActor.run {
+            pagedBack.removeAll(where: { $0.initials == controller.initials })
+            onBreak.removeAll(where: { $0.initials == controller.initials })
+            onPosition.append(controller)
+        }
     }
     
-    @MainActor
-    func moveControllerToOnBreak(_ controller: Controller) {
-        var controller = controller
-        controller.status = .AVAILABLE
-        onPosition.removeAll(where: { $0.initials == controller.initials })
-        onBreak.append(controller)
+    func moveControllerToOnBreak(_ controller: Controller) async throws {
+        let controller = Controller.newControllerFrom(controller, withStatus: .AVAILABLE)
+        try await API().moveOffPosition(initials: controller.initials)
+        await MainActor.run {
+            onPosition.removeAll(where: { $0.initials == controller.initials })
+            onBreak.append(controller)
+        }
     }
     
-    @MainActor
-    func removeBeBack(forController controller: Controller) {
-        var controller = controller
-        controller.status = .AVAILABLE
-        controller.beBack = nil
-        pagedBack.removeAll(where: { $0.initials == controller.initials })
-        onBreak.insert(controller, at: 0)
+    func removeBeBack(forController controller: Controller) async throws {
+        let controller = Controller.newControllerFrom(controller, withStatus: .AVAILABLE)
+        try await API().removeBeBack(initials: controller.initials)
+        await MainActor.run {
+            pagedBack.removeAll(where: { $0.initials == controller.initials })
+            onBreak.insert(controller, at: 0)
+        }
     }
     
     let positions = [
         "DR1", "DR2", "DR3", "DR4", "AR1", "AR2", "AR3", "AR4", "FR1", "FR2", "FR3", "FR4", "SR1", "SR2", "SR4", "FDCD", "MO1", "MO2", "MO3", "CI", "GJT", "PUB", "TBD"
-    
+        
     ]
     let beBackTimes = [
         "10", "15", "30", "45"
