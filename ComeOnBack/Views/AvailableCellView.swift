@@ -1,4 +1,5 @@
 import SwiftUI
+import OSLog
 
 struct AvailableCellView: View {
     
@@ -14,8 +15,12 @@ struct AvailableCellView: View {
                 Text("")
                 ZStack {
                     Button {
-                        withAnimation {
-                            pagingVM.moveControllerToOnPosition(controller)
+                        Task {
+                            do {
+                                try await pagingVM.moveControllerToOnPosition(controller)
+                            } catch {
+                                Logger(subsystem: Logger.subsystem, category: "AvailableCellView").error("With controller \(controller): \(error)")
+                            }
                         }
                         
                     } label: {

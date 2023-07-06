@@ -1,7 +1,7 @@
 import SwiftUI
+import OSLog
 
 struct OnPositionCellView: View {
-    
     @EnvironmentObject var pagingVM: PagingViewModel
     var controller: Controller
     
@@ -16,11 +16,13 @@ struct OnPositionCellView: View {
             }
             .padding()
         }
-//        .contentShape(Rectangle())
-//        .frame(maxWidth: .infinity)
         .onTapGesture {
-            withAnimation {
-                pagingVM.moveControllerToOnBreak(controller)
+            Task {
+                do {
+                    try await pagingVM.moveControllerToOnBreak(controller)
+                } catch {
+                    Logger(subsystem: Logger.subsystem, category: "OnPositionCellView").error("With controller \(controller): \(error)")
+                }
             }
         }
     }
