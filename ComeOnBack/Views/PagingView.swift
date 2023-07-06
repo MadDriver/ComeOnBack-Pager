@@ -17,100 +17,127 @@ struct PagingView: View {
     @State var beBackTime: String?
     @State var isShowingCustomPicker = false
     @State var customBeBackTime = 0
+    @State var selectedBeBackTime: String?
     var controller: Controller
     
     var isSubmittable: Bool { beBackTime != nil }
     
     var beBackText: String {
-        if beBackTime == nil { return "" }
+        if beBackTime == nil { return "Page \(controller.initials)" }
         if beBackPosition == nil { return "Page back \(controller.initials) at \(beBackTime ?? "  ")" }
         return "Page back \(controller.initials) at \(beBackTime ?? "  ") for \(beBackPosition ?? "  ")"
     }
     
     var body: some View {
-        VStack {
-            Text("Page \(controller.initials)")
-                .font(.title).bold()
-                .padding(.bottom)
-            
-            HStack {
-                ForEach(pagingVM.beBackTimes, id: \.self) { time in
-                    Text(time + " mins")
-                        .frame(width: 100, height: 50)
-                        .background(Color.blue.opacity(0.5))
-                        .onTapGesture {
-                            self.beBackTime = pagingVM.getBeBackTime(minute: time)
-                        }
+        ZStack(alignment: .topTrailing) {
+            VStack {
+                Button {
+                    dismiss()
+                } label: {
+                    Image(systemName: "x.circle")
+                        .font(.system(size: 48))
+                        .padding()
+                    
                 }
-            }
-            
-            Button("SELECT TIME", action: toggleCustomPicker)
-                .sheet(isPresented: $isShowingCustomPicker) {
-                    CustomPickerView(customBeBackTime: $customBeBackTime)
-                }
-                .padding(.vertical)
-
-            Spacer()
-            LazyHGrid(rows: pagingVM.positionRows, spacing: 20) {
-                ForEach(pagingVM.positions, id: \.self) { position in
-                    Text(position)
-                        .font(.system(size: 20, weight: .bold))
-                        .frame(width: 100, height: 50)
-                        .background(Color.red).opacity(0.5)
-                        .border(Color.blue, width: beBackPosition == position ? 2.5 : 0)
-                        .onTapGesture {
-                            if beBackPosition == position {
-                                beBackPosition = nil
-                            } else {
-                                beBackPosition = position
-                            }
-                        }
-                }
-            }
-            .frame(maxWidth: .infinity)
-            .frame(height:250)
-            
-            Text(beBackText)
-                .padding(.vertical)
-                        
-            Button("PAGE", action: pageBack)
-                .font(.title).bold()
-                .background(.green)
-                .buttonStyle(.borderedProminent)
-                .disabled(!isSubmittable)
-            
-            Spacer()
-            
-            HStack(spacing: 75) {
+                .buttonStyle(.plain)
+                
+                Spacer()
+                
                 if (controller.status == .PAGED_BACK) {
-                    Button("CANCEL PAGE", role: .cancel, action: cancelPage)
-                        .buttonStyle(.bordered)
+                    Button(role: .destructive, action: cancelPage) {
+                        Label("Cancel Page", systemImage: "trash")
+                    }
+                    .padding(.horizontal, 30)
+                }
+            }
+        
+            
+            VStack {
+                Text("\(beBackText)")
+                    .font(.title).bold()
+                    .padding(.bottom)
+                
+                HStack {
+                    ForEach(pagingVM.beBackTimes, id: \.self) { time in
+                        Text(time + " mins")
+                            .frame(width: 100, height: 50)
+                            .background(Color.blue.opacity(0.5))
+                            .border(Color.red, width: selectedBeBackTime == time ? 2.5 : 0)
+                            .onTapGesture {
+                                selectedBeBackTime = time
+                                self.beBackTime = pagingVM.getBeBackTime(minute: time)
+                            }
+                    }
                 }
                 
-                Button("RESET", role: .cancel, action: reset)
-                    .buttonStyle(.bordered)
-            }
-            
-            
-            Spacer()
-        }
-        .padding(.top)
+                Button("SELECT TIME", action: { isShowingCustomPicker.toggle() })
+                    .sheet(isPresented: $isShowingCustomPicker) {
+                        CustomPickerView(customBeBackTime: $customBeBackTime)
+                    }
+                    .padding(.vertical)
+                
+                Spacer()
+                LazyHGrid(rows: pagingVM.positionRows, spacing: 20) {
+                    ForEach(pagingVM.positions, id: \.self) { position in
+                        Text(position)
+                            .font(.system(size: 20, weight: .bold))
+                            .frame(width: 100, height: 50)
+                            .background(Color.red).opacity(0.5)
+                            .border(Color.blue, width: beBackPosition == position ? 2.5 : 0)
+                            .onTapGesture {
+                                if beBackPosition == position {
+                                    beBackPosition = nil
+                                } else {
+                                    beBackPosition = position
+                                }
+                            }
+                    }
+                }
+                .frame(maxWidth: .infinity)
+                .frame(height:250)
+                
+                Spacer()
+                
+                Button(action: pageBack) {
+                    Text("PAGE")
+                        .foregroundColor(isSubmittable ? .black : .gray)
+                        .frame(width: 500, height: 100)
+                        .font(.title).bold()
+                        .background(Color.blue.opacity(0.8))
+                        .cornerRadius(20)
+                        
+                }
+                .disabled(!isSubmittable)
+                
+                Spacer()
+            } // VStack
+            .padding(.top)
+        } // ZStack
         .navigationBarBackButtonHidden()
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.black.opacity(0.1))
         .onChange(of: customBeBackTime) { time in
+            selectedBeBackTime = nil
             beBackTime = pagingVM.customBeBackTimeChanged(time: time)
         }
+        .onAppear {
+            beBackTime = controller.beBack?.time.stringValue
+            beBackPosition = controller.beBack?.forPosition
+        }
         
-    }
-    
-    func toggleCustomPicker() {
-        isShowingCustomPicker.toggle()
-    }
+    } // body view
     
     func cancelPage() {
-        pagingVM.removeBeBack(forController: controller)
-        dismiss()
+        Task {
+            do {
+                try await pagingVM.removeBeBack(forController: controller)
+            } catch {
+                Logger(subsystem: Logger.subsystem, category: "PagingView").error("With controller: \(controller): \(error)")
+            }
+            await MainActor.run {
+                dismiss()
+            }
+        }
+        
     }
     
     func pageBack() {
@@ -124,7 +151,6 @@ struct PagingView: View {
             do {
                 let time = try Time(beBackTime)
                 try await pagingVM.createAndSubmitBeBack(forController: controller, time: time, forPosition: beBackPosition)
-                
                 await MainActor.run { dismiss() }
             } catch APIError.invalidParameters {
                 logger.error("Invalid parameters in pageBack()")
@@ -135,10 +161,6 @@ struct PagingView: View {
             }
         }
     }
-    
-    func reset() {
-        // TODO: Impl
-    }
 }
 
 struct PagingView_Previews: PreviewProvider {
@@ -148,8 +170,3 @@ struct PagingView_Previews: PreviewProvider {
             .previewInterfaceOrientation(.landscapeLeft)
     }
 }
-
-enum AssignedPosition {
-    case DR1, DR2, DR3, DR4, AR1, AR2, AR3, AR4, FR1, FR2, FR3, FR4, MO1, MO2, MO3, GJT, PUB, CI, FDCD
-}
-
