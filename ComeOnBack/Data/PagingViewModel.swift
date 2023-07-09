@@ -35,22 +35,28 @@ final class PagingViewModel: ObservableObject {
         })
     }
     
-    func signIn(controller: Controller) async throws {
-        logger.info("Signing in \(controller)")
-        try await API().signIn(initials: controller.initials)
-        let controller = Controller.newControllerFrom(controller, withStatus: .AVAILABLE)
-        await MainActor.run {
-            onBreak.append(controller)
+    func signIn(controllers: [Controller]) async throws {
+        
+        for controller in controllers {
+            logger.info("Signing in \(controller)")
+            try await API().signIn(initials: controller.initials)
+            let controller = Controller.newControllerFrom(controller, withStatus: .AVAILABLE)
+            await MainActor.run {
+                onBreak.append(controller)
+            }
         }
     }
     
-    func signOut(controller: Controller) async throws {
-        logger.info("Signing out \(controller)")
-        try await API().signOut(initials: controller.initials)
-        await MainActor.run {
-            onBreak.removeAll(where: { $0.initials == controller.initials })
-            pagedBack.removeAll(where: { $0.initials == controller.initials })
-            onPosition.removeAll(where: { $0.initials == controller.initials })
+    func signOut(controllers: [Controller]) async throws {
+        
+        for controller in controllers {
+            logger.info("Signing out \(controller)")
+            try await API().signOut(initials: controller.initials)
+            await MainActor.run {
+                onBreak.removeAll(where: { $0.initials == controller.initials })
+                pagedBack.removeAll(where: { $0.initials == controller.initials })
+                onPosition.removeAll(where: { $0.initials == controller.initials })
+            }
         }
     }
     

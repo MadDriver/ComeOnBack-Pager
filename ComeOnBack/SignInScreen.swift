@@ -28,13 +28,7 @@ struct SignInScreen: View {
                                     print(controllersToSignIn)
                                 }
                                
-//                                Task {
-//                                    do {
-//                                        try await pagingVM.signIn(controller: controller)
-//                                    } catch {
-//                                        logger.error("\(error)")
-//                                    }
-//                                }
+                                
                             }
                     }
                 }
@@ -46,13 +40,18 @@ struct SignInScreen: View {
                 Button("SIGN IN", action: signInControllers)
                     .buttonStyle(.borderedProminent)
             }
-            
-            
-            
         }
     }
     
     func signInControllers() {
+        Task {
+            do {
+                try await pagingVM.signIn(controllers: controllersToSignIn)
+            } catch {
+                logger.error("\(error)")
+            }
+        }
+        
         dismiss()
     }
     

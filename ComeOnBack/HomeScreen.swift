@@ -41,14 +41,14 @@ struct HomeScreen: View {
             } // V Stack
             
             HStack {
-                Button("SIGN IN", action: signInController)
+                Button("SIGN IN", action: signInControllers)
                     .buttonStyle(.borderedProminent)
                     .padding()
                     .disabled(isLoading)
                 
                 Spacer()
                 
-                Button("SIGN OUT", action: signInController)
+                Button("SIGN OUT", action: signOutControllers)
                     .buttonStyle(.borderedProminent)
                     .padding()
                     .disabled(isLoading)
@@ -83,8 +83,18 @@ struct HomeScreen: View {
         }
     }// body
     
-    func signInController() {
+    func signInControllers() {
         signInViewIsActive = true
+    }
+    
+    func signOutControllers() {
+        Task {
+            do {
+                try await pagingVM.signOut(controllers: pagingVM.rightHandList)
+            } catch {
+                logger.error("\(error)")
+            }
+        }
     }
 }
 
