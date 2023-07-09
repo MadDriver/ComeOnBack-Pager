@@ -57,10 +57,10 @@ struct HomeScreen: View {
         } // Z Stack
         
         .fullScreenCover(isPresented: $signInViewIsActive) {
-            SignInScreen(controllers: pagingVM.allControllers)
+            SignInScreen()
         }
-        .sheet(isPresented: $signOutViewIsActive) {
-            Text("DFADFDSAFSFS")
+        .fullScreenCover(isPresented: $signOutViewIsActive) {
+            SignOutView()
         }
         .environmentObject(pagingVM)
         .environmentObject(displaySettings)
@@ -88,13 +88,9 @@ struct HomeScreen: View {
     }
     
     func signOutControllers() {
-        Task {
-            do {
-                try await pagingVM.signOut(controllers: pagingVM.rightHandList)
-            } catch {
-                logger.error("\(error)")
-            }
-        }
+        
+        signOutViewIsActive = true
+        
     }
 }
 

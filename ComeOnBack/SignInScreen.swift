@@ -5,7 +5,7 @@ struct SignInScreen: View {
     private let logger = Logger(subsystem: Logger.subsystem, category: "SignInScreen")
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var pagingVM: PagingViewModel
-    var controllers: [Controller] = []
+//    var controllers: [Controller] = []
     @State var controllersToSignIn: [Controller] = []
     let columns = Array(repeating: GridItem(.flexible()), count: 5)
     
@@ -13,7 +13,7 @@ struct SignInScreen: View {
         VStack {
             ScrollView {
                 LazyVGrid(columns: columns) {
-                    ForEach(controllers) { controller in
+                    ForEach(pagingVM.allControllers) { controller in
                         Text("\(controller.initials)")
                             .frame(width: 250, height: 50)
                             .background(isControllerInSignInArray(controller: controller) ? Color.red :  Color.primary.opacity(0.2))
@@ -67,6 +67,9 @@ struct SignInScreen: View {
 
 struct SignInView_Previews: PreviewProvider {
     static var previews: some View {
-        SignInScreen(controllers: [Controller(initials: "RR", area: "D", isDev: false, status: .AVAILABLE), Controller(initials: "LG", area: "D", isDev: false, status: .AVAILABLE), Controller(initials: "RR", area: "D", isDev: false, status: .AVAILABLE)])
+        
+        SignInScreen()
+        
+//        SignInScreen(controllers: [Controller(initials: "RR", area: "D", isDev: false, status: .AVAILABLE), Controller(initials: "LG", area: "D", isDev: false, status: .AVAILABLE), Controller(initials: "RR", area: "D", isDev: false, status: .AVAILABLE)])
     }
 }
