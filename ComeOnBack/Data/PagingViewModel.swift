@@ -122,12 +122,15 @@ final class PagingViewModel: ObservableObject {
         "DR1", "DR2", "DR3", "DR4", "AR1", "AR2", "AR3", "AR4", "FR1", "FR2", "FR3", "FR4", "SR1", "SR2", "SR4", "FDCD", "MO1", "MO2", "MO3", "CI", "GJT", "PUB", "TBD"
         
     ]
+    
     let beBackTimes = [
         "10", "15", "30", "45"
     ]
+    
     let positionRows = [
         GridItem(), GridItem(), GridItem(), GridItem()
     ]
+    
     let beBackTimeRows = [
         GridItem(), GridItem()
     ]

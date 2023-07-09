@@ -56,7 +56,7 @@ struct HomeScreen: View {
             
         } // Z Stack
         
-        .sheet(isPresented: $signInViewIsActive) {
+        .fullScreenCover(isPresented: $signInViewIsActive) {
             SignInScreen(controllers: pagingVM.allControllers)
         }
         .sheet(isPresented: $signOutViewIsActive) {
