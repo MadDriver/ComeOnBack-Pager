@@ -31,7 +31,7 @@ struct SignOutView: View {
                                     }
                                 } else {
                                     controllersToSignOut.append(controller)
-                                    print(controllersToSignOut)
+                                    logger.info("Signing out (\(controllersToSignOut) ")
                                 }
                             }
                     }

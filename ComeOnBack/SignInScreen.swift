@@ -21,11 +21,11 @@ struct SignInScreen: View {
                                 if isControllerInSignInArray(controller: controller) {
                                     if let index = controllersToSignIn.firstIndex(of: controller) {
                                         controllersToSignIn.remove(at: index)
-                                        print(controllersToSignIn)
+                                        logger.info("Signing in (\(controllersToSignIn) ")
                                     }
                                 } else {
                                     controllersToSignIn.append(controller)
-                                    print(controllersToSignIn)
+                                    logger.info("Signing in (\(controllersToSignIn) ")
                                 }
                                
                                 
