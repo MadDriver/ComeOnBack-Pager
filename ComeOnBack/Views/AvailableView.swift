@@ -11,8 +11,7 @@ struct AvailableView: View {
     var controllerList: [Controller]
     var body: some View {
         VStack {
-            Text("Available")
-                .fontWeight(.heavy)
+            
             List {
                 ForEach(controllerList) { controller in
                     NavigationLink {

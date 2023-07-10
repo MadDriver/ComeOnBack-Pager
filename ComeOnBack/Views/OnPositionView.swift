@@ -11,8 +11,7 @@ struct OnPositionView: View {
     var controllers: [Controller]
     var body: some View {
         VStack {
-            Text("On Position")
-                .fontWeight(.heavy)
+            
             List {
                 ForEach(controllers) { controller in
                     OnPositionCellView(controller: controller)

@@ -30,10 +30,36 @@ struct HomeScreen: View {
                     VStack {
                         GeometryReader { geometry in
                             HStack(spacing: 0) {
-                                OnPositionView(controllers: pagingVM.onPosition)
-                                    .frame(width: geometry.size.width * 0.33)
-                                AvailableView(controllerList: pagingVM.rightHandList)
-                                    .frame(width: geometry.size.width * 0.67)
+                                
+                                VStack {
+                                    Text("ON POSITION")
+                                        .fontWeight(.heavy)
+                                    if pagingVM.onPosition.isEmpty {
+                                        EmptyControllerView()
+                                    } else {
+                                        OnPositionView(controllers: pagingVM.onPosition)
+                                            
+                                    }
+                                }
+                                .frame(width: geometry.size.width * 0.33)
+                                
+                                VStack {
+                                    Text("AVAILABLE")
+                                        .fontWeight(.heavy)
+
+                                    if pagingVM.rightHandList.isEmpty {
+                                        EmptyControllerView()
+                                    } else {
+                                        AvailableView(controllerList: pagingVM.rightHandList)
+                                            
+                                    }
+                                }
+                                .frame(width: geometry.size.width * 0.67)
+                                
+                                
+                                
+                                
+                                
                             }
                         }
                     }

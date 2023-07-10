@@ -23,9 +23,9 @@ struct SignOutView: View {
                     ForEach(pagingVM.rightHandList) { controller in
                         Text("\(controller.initials)")
                             .frame(width: 250, height: 50)
-                            .background(isControllerInSignOutArray(controller: controller) ? Color.red : Color.primary.opacity(0.5))
+                            .background(controllerIsInSignOutArray(controller: controller) ? Color.red : Color.primary.opacity(0.5))
                             .onTapGesture {
-                                if isControllerInSignOutArray(controller: controller) {
+                                if controllerIsInSignOutArray(controller: controller) {
                                     if let index = controllersToSignOut.firstIndex(of: controller) {
                                         controllersToSignOut.remove(at: index)
                                     }
@@ -64,7 +64,7 @@ struct SignOutView: View {
         dismiss()
     }
     
-    func isControllerInSignOutArray(controller: Controller) -> Bool {
+    func controllerIsInSignOutArray(controller: Controller) -> Bool {
         controllersToSignOut.contains(controller)
     }
     
