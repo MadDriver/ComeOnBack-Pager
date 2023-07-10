@@ -13,7 +13,7 @@ struct SignInScreen: View {
         VStack {
             ScrollView {
                 LazyVGrid(columns: columns) {
-                    ForEach(pagingVM.allControllers) { controller in
+                    ForEach(pagingVM.allControllers.sorted(by: { $0.initials < $1.initials })) { controller in
                         Text("\(controller.initials)")
                             .frame(width: 250, height: 50)
                             .background(isControllerInSignInArray(controller: controller) ? Color.red :  Color.primary.opacity(0.2))
@@ -67,9 +67,7 @@ struct SignInScreen: View {
 
 struct SignInView_Previews: PreviewProvider {
     static var previews: some View {
-        
         SignInScreen()
-        
-//        SignInScreen(controllers: [Controller(initials: "RR", area: "D", isDev: false, status: .AVAILABLE), Controller(initials: "LG", area: "D", isDev: false, status: .AVAILABLE), Controller(initials: "RR", area: "D", isDev: false, status: .AVAILABLE)])
+            .environmentObject(PagingViewModel())
     }
 }
