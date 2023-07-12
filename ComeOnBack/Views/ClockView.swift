@@ -9,40 +9,45 @@ import SwiftUI
 
 struct ClockView: View {
     
-    let borderWidth: CGFloat = 20
+    // minutes start at 30 since the numbers start at the 6 o'clock position.  Probably an easy fix but I don't know it.
+    let minutes = [30, 35, 40, 45, 50, 55, 0, 5, 10, 15, 20, 25]
+    @State var selectedMinutes: Int?
     
     var body: some View {
-        GeometryReader { geometry in
-            let radius = geometry.size.width / 4
-            let innerRadius = radius - borderWidth
-            
-            let centerX = geometry.size.width / 2
-            let centerY = geometry.size.height / 2
-            
-            let center = CGPoint(x: centerX, y: centerY)
-            
-            Circle()
-                .foregroundColor(.red)
-            Circle()
-                .foregroundColor(.white)
-                .padding(borderWidth)
-            
-            Path { path in
-                
-                for index in 0..<60 {
-                    let radian = Angle(degrees: CGFloat(index) * 5).radians
-                    
-                    let lineHeight = index % 5 == 0 ? 25 : 10
-                    
-                    let x1  = center
-                    
-                }
+        ZStack {
+            ForEach(1...60, id: \.self) { index in
+                Rectangle()
+                    .fill(index % 5 == 0 ? .black : .gray)
+                    .frame(width: 2, height: index % 5 == 0 ? 15 : 5)
+                    .offset(y: (200 - 60))
+                    .rotationEffect(.init(degrees: Double(index) * 6))
                 
             }
             
+            ForEach(minutes.indices, id: \.self) { index in
+                Text("\(minutes[index])")
+                    .frame(width: 100, height: 100)
+                    .background(selectedMinutes == minutes[index] ? .blue: .clear)
+                    .font(.system(size: 30))
+                    .font(.caption.bold())
+                    .foregroundColor(.black)
+                    .clipShape(Circle())
+                    .rotationEffect(.init(degrees: Double(index) * -30))
+                    .offset(y: (450-30) / 2)
+                    .rotationEffect(.init(degrees: Double(index) * 30))
+                    .onTapGesture {
+                        
+                        if selectedMinutes == minutes[index] {
+                            selectedMinutes = nil
+                        } else {
+                            selectedMinutes = minutes[index]
+                            print(String(minutes[index]))
+                        }
+                        
+                    }
+            }
+            
         }
-        .aspectRatio(1, contentMode: .fit)
-        .padding(30)
     }
 }
 
