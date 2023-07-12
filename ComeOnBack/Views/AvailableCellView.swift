@@ -26,7 +26,13 @@ struct AvailableCellView: View {
                         }
                         
                     } label: {
-                        Image(systemName: "arrowshape.left")
+                        if movingController {
+                            ProgressView()
+                                .progressViewStyle(CircularProgressViewStyle(tint: .blue))
+                        } else {
+                            Image(systemName: "arrowshape.left")
+                        }
+                        
                     }
                     
                 }
