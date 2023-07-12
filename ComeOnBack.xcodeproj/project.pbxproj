@@ -17,6 +17,7 @@
 		374D8C6429BDD130002A690D /* CustomPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 374D8C6329BDD130002A690D /* CustomPickerView.swift */; };
 		3766D38F2A5B05E7002B64BA /* SignOutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3766D38E2A5B05E7002B64BA /* SignOutView.swift */; };
 		3766D3912A5B9132002B64BA /* EmptyControllerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3766D3902A5B9132002B64BA /* EmptyControllerView.swift */; };
+		378B1AAB2A5E31920053332A /* ClockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 378B1AAA2A5E31920053332A /* ClockView.swift */; };
 		37A0135429CE79A70083FD3C /* OnPositionCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37A0135329CE79A70083FD3C /* OnPositionCellView.swift */; };
 		37A0135829CE7F080083FD3C /* SignInScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37A0135729CE7F080083FD3C /* SignInScreen.swift */; };
 		CE934E102A52F54700FFE5BE /* API.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE934E0F2A52F54700FFE5BE /* API.swift */; };
@@ -39,6 +40,7 @@
 		374D8C6329BDD130002A690D /* CustomPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomPickerView.swift; sourceTree = "<group>"; };
 		3766D38E2A5B05E7002B64BA /* SignOutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignOutView.swift; sourceTree = "<group>"; };
 		3766D3902A5B9132002B64BA /* EmptyControllerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyControllerView.swift; sourceTree = "<group>"; };
+		378B1AAA2A5E31920053332A /* ClockView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockView.swift; sourceTree = "<group>"; };
 		37A0135329CE79A70083FD3C /* OnPositionCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnPositionCellView.swift; sourceTree = "<group>"; };
 		37A0135729CE7F080083FD3C /* SignInScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInScreen.swift; sourceTree = "<group>"; };
 		CE146CF42A54EE8D0096B1B6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -108,6 +110,7 @@
 			isa = PBXGroup;
 			children = (
 				3766D3902A5B9132002B64BA /* EmptyControllerView.swift */,
+				378B1AAA2A5E31920053332A /* ClockView.swift */,
 				CE934E182A54BE9C00FFE5BE /* OnPositionView.swift */,
 				37A0135329CE79A70083FD3C /* OnPositionCellView.swift */,
 				CE934E162A54ABD700FFE5BE /* AvailableView.swift */,
@@ -195,6 +198,7 @@
 				374D8C5929BA7FE5002A690D /* HomeScreen.swift in Sources */,
 				374D8C6129BCF73B002A690D /* PagingViewModel.swift in Sources */,
 				37A0135829CE7F080083FD3C /* SignInScreen.swift in Sources */,
+				378B1AAB2A5E31920053332A /* ClockView.swift in Sources */,
 				3766D3912A5B9132002B64BA /* EmptyControllerView.swift in Sources */,
 				374D8C6429BDD130002A690D /* CustomPickerView.swift in Sources */,
 				CE934E172A54ABD700FFE5BE /* AvailableView.swift in Sources */,
