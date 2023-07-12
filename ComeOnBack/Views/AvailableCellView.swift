@@ -4,6 +4,7 @@ import OSLog
 struct AvailableCellView: View {
     
     @EnvironmentObject var pagingVM: PagingViewModel
+    @State var movingController: Bool = false
     var controller: Controller
     
     var body: some View {
@@ -12,10 +13,14 @@ struct AvailableCellView: View {
                 Text("")
                 ZStack {
                     Button {
+                        if (movingController) { return }
+                        movingController = true
                         Task {
                             do {
                                 try await pagingVM.moveControllerToOnPosition(controller)
+                                await MainActor.run { movingController = false }
                             } catch {
+                                await MainActor.run { movingController = false }
                                 Logger(subsystem: Logger.subsystem, category: "AvailableCellView").error("With controller \(controller): \(error)")
                             }
                         }

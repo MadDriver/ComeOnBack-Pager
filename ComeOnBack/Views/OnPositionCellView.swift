@@ -3,6 +3,7 @@ import OSLog
 
 struct OnPositionCellView: View {
     @EnvironmentObject var pagingVM: PagingViewModel
+    @State var performingTapGesture: Bool = false
     var controller: Controller
     
     var body: some View {
@@ -17,10 +18,15 @@ struct OnPositionCellView: View {
             .padding()
         }
         .onTapGesture {
+            if (performingTapGesture) { return }
+            performingTapGesture = true
+            
             Task {
                 do {
                     try await pagingVM.moveControllerToOnBreak(controller)
+                    await MainActor.run { performingTapGesture = false }
                 } catch {
+                    await MainActor.run { performingTapGesture = false }
                     Logger(subsystem: Logger.subsystem, category: "OnPositionCellView").error("With controller \(controller): \(error)")
                 }
             }
