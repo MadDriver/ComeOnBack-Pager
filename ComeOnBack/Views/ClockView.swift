@@ -11,48 +11,126 @@ struct ClockView: View {
     
     // minutes start at 30 since the numbers start at the 6 o'clock position.  Probably an easy fix but I don't know it.
     let minutes = [30, 35, 40, 45, 50, 55, 0, 5, 10, 15, 20, 25]
+    let width = UIScreen.main.bounds.width
     @State var selectedMinutes: Int?
-    
+    @State var currentTime = TimeClock(sec: 0, min: 0, hour: 0)
+    @State var receiver = Timer.publish(every: 1, on: .current, in: .default).autoconnect()
+
     var body: some View {
-        ZStack {
-            ForEach(1...60, id: \.self) { index in
-                Rectangle()
-                    .fill(index % 5 == 0 ? .black : .gray)
-                    .frame(width: 2, height: index % 5 == 0 ? 15 : 5)
-                    .offset(y: (200 - 60))
-                    .rotationEffect(.init(degrees: Double(index) * 6))
+        VStack {
+            
+            HStack {
+                Text("\(currentTime.hour)")
+                Text("\(currentTime.min)")
                 
             }
             
-            ForEach(minutes.indices, id: \.self) { index in
-                Text("\(minutes[index])")
-                    .frame(width: 100, height: 100)
-                    .background(selectedMinutes == minutes[index] ? .blue: .clear)
-                    .font(.system(size: 30))
-                    .font(.caption.bold())
-                    .foregroundColor(.black)
-                    .clipShape(Circle())
-                    .rotationEffect(.init(degrees: Double(index) * -30))
-                    .offset(y: (450-30) / 2)
-                    .rotationEffect(.init(degrees: Double(index) * 30))
-                    .onTapGesture {
-                        
-                        if selectedMinutes == minutes[index] {
-                            selectedMinutes = nil
-                        } else {
-                            selectedMinutes = minutes[index]
-                            print(String(minutes[index]))
-                        }
-                        
-                    }
-            }
             
+            
+            ZStack {
+                ForEach(1...60, id: \.self) { index in
+                    Rectangle()
+                        .fill(index % 5 == 0 ? .black : .gray)
+                        .frame(width: 2, height: index % 5 == 0 ? 15 : 5)
+                        .offset(y: (200 - 60))
+                        .rotationEffect(.init(degrees: Double(index) * 6))
+                    
+                }
+                
+                ForEach(minutes.indices, id: \.self) { index in
+                    Text("\(minutes[index])")
+                        .frame(width: 100, height: 100)
+                        .background(selectedMinutes == minutes[index] ? .blue: .clear)
+                        .font(.system(size: 30))
+                        .font(.caption.bold())
+                        .foregroundColor(.black)
+                        .clipShape(Circle())
+                        .rotationEffect(.init(degrees: Double(index) * -30))
+                        .offset(y: (400 - 30) / 2)
+                        .rotationEffect(.init(degrees: Double(index) * 30))
+                        .onTapGesture {
+                            
+                            if selectedMinutes == minutes[index] {
+                                selectedMinutes = nil
+                            } else {
+                                selectedMinutes = minutes[index]
+                                print(String(minutes[index]))
+                            }
+                            
+                        }
+                }
+//                Rectangle() // Second hand
+//                    .fill(.primary)
+//                    .frame(width: 150, height: 2)
+//                    .rotationEffect(.init(degrees: (Double(currentTime.sec) * 6) - 90), anchor: .leading)
+//                    .offset(x: 75)
+    
+                Rectangle() // Minute hand
+                    .fill(.primary)
+                    .frame(width: 140, height: 2)
+                    .rotationEffect(.init(degrees: ((Double(currentTime.min) * 6) + (Double(currentTime.sec) / 10))  - 90), anchor: .leading)
+                    .offset(x: 70)
+                
+                Rectangle()
+                    .fill(.primary)
+                    .frame(width: 100, height: 2)
+                    .rotationEffect(Angle(degrees: (Double(currentTime.hour) * 30) + (Double(currentTime.min) * 0.5) - 90), anchor: .leading)
+                    .offset(x: 50)
+                
+                Circle()
+                    .fill(.primary)
+                    .frame(width: 15, height: 15)
+            } // Zstack
+//            .animation(foreverAnimation, value: currentTime)
+            
+            .onAppear {
+                let calendar  = Calendar.current
+                let sec = calendar.component(.second, from: Date())
+                let min = calendar.component(.minute, from: Date())
+                let hour = calendar.component(.hour, from: Date())
+                
+                self.currentTime = TimeClock(sec: sec, min: min, hour: hour)
+                
+//                withAnimation {
+//                    self.currentTime = TimeClock(sec: sec, min: min, hour: hour)
+//                }
+            }
+            .onReceive(receiver) { (_) in
+                let calendar  = Calendar.current
+                let sec = calendar.component(.second, from: Date())
+                let min = calendar.component(.minute, from: Date())
+                let hour = calendar.component(.hour, from: Date())
+                
+                self.currentTime = TimeClock(sec: sec, min: min, hour: hour)
+                
+//                withAnimation {
+//                    self.currentTime = TimeClock(sec: sec, min: min, hour: hour)
+//                }
+                
+//                print(currentTime.sec)
+            }
         }
     }
+    
+    func showNumber() -> Bool {
+        
+        
+        
+        
+        return true
+    }
+    
 }
 
 struct ClockView_Previews: PreviewProvider {
     static var previews: some View {
         ClockView()
     }
+}
+
+struct TimeClock: Equatable {
+    var sec: Int
+    var min: Int
+    var hour: Int
+    
 }
