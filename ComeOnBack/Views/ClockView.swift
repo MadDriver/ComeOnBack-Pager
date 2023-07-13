@@ -17,31 +17,30 @@ struct ClockView: View {
     @State var receiver = Timer.publish(every: 1, on: .current, in: .default).autoconnect()
 
     var body: some View {
-        VStack {
+        GeometryReader { proxy in
             
+            let width = proxy.size.width
             
-            Text("\(currentTime.hour) : \(currentTime.min)")
-         
             ZStack {
                 ForEach(1...60, id: \.self) { index in
                     Rectangle()
                         .fill(index % 5 == 0 ? .black : .gray)
                         .frame(width: 2, height: index % 5 == 0 ? 15 : 5)
-                        .offset(y: (200 - 60))
+                        .offset(y: width / 3)
                         .rotationEffect(.init(degrees: Double(index) * 6))
                     
                 }
                 
                 ForEach(minutes.indices, id: \.self) { index in
                     Text("\(minutes[index])")
-                        .frame(width: 100, height: 100)
+                        .frame(width: 60, height: 60)
                         .background(selectedMinutes == minutes[index] ? .blue: .clear)
                         .font(.system(size: 30))
                         .font(.caption.bold())
                         .foregroundColor(.black)
                         .clipShape(Circle())
                         .rotationEffect(.init(degrees: Double(index) * -30))
-                        .offset(y: (400 - 30) / 2)
+                        .offset(y: width / 2.5)
                         .rotationEffect(.init(degrees: Double(index) * 30))
                         .opacity(showNumber(minute: minutes[index]) ? 1 : 0)
                         .onTapGesture {
@@ -58,21 +57,21 @@ struct ClockView: View {
     
                 Rectangle() // Minute hand
                     .fill(.primary)
-                    .frame(width: 140, height: 2)
+                    .frame(width: width / 2.9, height: 2)
                     .rotationEffect(.init(degrees: ((Double(currentTime.min) * 6) + (Double(currentTime.sec) / 10))  - 90), anchor: .leading)
-                    .offset(x: 70)
+                    .offset(x: (width / 2.9) / 2)
                 
                 Rectangle()
                     .fill(.primary)
-                    .frame(width: 100, height: 2)
+                    .frame(width: width / 4.5, height: 2)
                     .rotationEffect(Angle(degrees: (Double(currentTime.hour) * 30) + (Double(currentTime.min) * 0.5) - 90), anchor: .leading)
-                    .offset(x: 50)
+                    .offset(x: (width / 4.5) / 2)
                 
                 Circle()
                     .fill(.primary)
                     .frame(width: 15, height: 15)
             } // Zstack
-//            .animation(foreverAnimation, value: currentTime)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
             
             .onAppear {
                 let calendar  = Calendar.current

@@ -12,7 +12,7 @@ import OSLog
 struct ComeOnBackApp: App {
     var body: some Scene {
         WindowGroup {
-            ClockView()
+            HomeScreen()
         }
     }
 }
