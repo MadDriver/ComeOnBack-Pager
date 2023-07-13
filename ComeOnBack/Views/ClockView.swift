@@ -19,14 +19,9 @@ struct ClockView: View {
     var body: some View {
         VStack {
             
-            HStack {
-                Text("\(currentTime.hour)")
-                Text("\(currentTime.min)")
-                
-            }
             
-            
-            
+            Text("\(currentTime.hour) : \(currentTime.min)")
+         
             ZStack {
                 ForEach(1...60, id: \.self) { index in
                     Rectangle()
@@ -48,6 +43,7 @@ struct ClockView: View {
                         .rotationEffect(.init(degrees: Double(index) * -30))
                         .offset(y: (400 - 30) / 2)
                         .rotationEffect(.init(degrees: Double(index) * 30))
+                        .opacity(showNumber(minute: minutes[index]) ? 1 : 0)
                         .onTapGesture {
                             
                             if selectedMinutes == minutes[index] {
@@ -59,11 +55,6 @@ struct ClockView: View {
                             
                         }
                 }
-//                Rectangle() // Second hand
-//                    .fill(.primary)
-//                    .frame(width: 150, height: 2)
-//                    .rotationEffect(.init(degrees: (Double(currentTime.sec) * 6) - 90), anchor: .leading)
-//                    .offset(x: 75)
     
                 Rectangle() // Minute hand
                     .fill(.primary)
@@ -112,10 +103,12 @@ struct ClockView: View {
         }
     }
     
-    func showNumber() -> Bool {
-        
-        
-        
+    func showNumber(minute: Int) -> Bool {
+        let negBuffer = 5
+
+        if currentTime.min >= (minute - negBuffer) && currentTime.min < (minute + 2) {
+            return false
+        }
         
         return true
     }
