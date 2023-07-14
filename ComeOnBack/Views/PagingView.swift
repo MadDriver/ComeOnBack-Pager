@@ -16,7 +16,7 @@ struct PagingView: View {
     @State var beBackPosition: String?
     @State var beBackTime: String?
     @State var isShowingCustomPicker = false
-    @State var customBeBackTime = 0
+    @State var customBeBackTime: Int?
     @State var selectedBeBackTime: String?
     var controller: Controller
     
@@ -29,100 +29,118 @@ struct PagingView: View {
     }
     
     var body: some View {
-        ZStack(alignment: .topTrailing) {
-            VStack {
-                Button {
-                    dismiss()
-                } label: {
-                    Image(systemName: "x.circle")
-                        .font(.system(size: 48))
-                        .padding()
-                    
-                }
-                .buttonStyle(.plain)
-                
-                Spacer()
-                
-                if (controller.status == .PAGED_BACK) {
-                    Button(role: .destructive, action: cancelPage) {
-                        Label("Cancel Page", systemImage: "trash")
+        HStack {
+            ZStack(alignment: .topTrailing) {
+                VStack {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "x.circle")
+                            .font(.system(size: 48))
+                            .padding()
+                        
                     }
-                    .padding(.horizontal, 30)
+                    .buttonStyle(.plain)
+                    
+                    Spacer()
+                    
+                    if (controller.status == .PAGED_BACK) {
+                        Button(role: .destructive, action: cancelPage) {
+                            Label("Cancel Page", systemImage: "trash")
+                        }
+                        .padding(.horizontal, 30)
+                    }
+                }
+                
+                
+                VStack {
+                    Text("\(beBackText)")
+                        .font(.title).bold()
+                        .padding(.bottom)
+                    
+                    HStack {
+                        ForEach(pagingVM.beBackTimes, id: \.self) { time in
+                            Text(time + " mins")
+                                .frame(width: 100, height: 50)
+                                .background(Color.blue.opacity(0.5))
+                                .border(Color.red, width: selectedBeBackTime == time ? 2.5 : 0)
+                                .onTapGesture {
+                                    selectedBeBackTime = time
+                                    self.beBackTime = pagingVM.getBeBackTime(minute: time)
+                                }
+                        }
+                    }
+                    
+                    //                    Button("SELECT TIME", action: { isShowingCustomPicker.toggle() })
+                    //                        .sheet(isPresented: $isShowingCustomPicker) {
+                    //                            CustomPickerView(customBeBackTime: $customBeBackTime)
+                    //                        }
+                    //                        .padding(.vertical)
+                    
+                    Spacer()
+                    
+                        var positions: [String] {
+                        if controller.area == "Departure" {
+                            return pagingVM.DRpositions + pagingVM.commonPositions
+                        } else {
+                            return pagingVM.ARPositions + pagingVM.commonPositions
+                        }
+                    }
+                    
+                    LazyHGrid(rows: pagingVM.positionRows, spacing: 20) {
+                        ForEach(positions, id: \.self) { position in
+                            Text(position)
+                                .font(.system(size: 20, weight: .bold))
+                                .frame(width: 100, height: 50)
+                                .background(Color.red).opacity(0.5)
+                                .border(Color.blue, width: beBackPosition == position ? 2.5 : 0)
+                                .onTapGesture {
+                                    if beBackPosition == position {
+                                        beBackPosition = nil
+                                    } else {
+                                        beBackPosition = position
+                                    }
+                                }
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
+                    .frame(height:250)
+                    
+                    Spacer()
+                    
+                    Button(action: pageBack) {
+                        Text("PAGE")
+                            .foregroundColor(isSubmittable ? .black : .gray)
+                            .frame(width: 500, height: 100)
+                            .font(.title).bold()
+                            .background(Color.blue.opacity(0.8))
+                            .cornerRadius(20)
+                        
+                    }
+                    .disabled(!isSubmittable)
+                    
+                    Spacer()
+                } // VStack
+                .padding(.top)
+            } // ZStack
+            .padding(.horizontal)
+            .navigationBarBackButtonHidden()
+            .background(Color.black.opacity(0.1))
+            .onChange(of: customBeBackTime) { time in
+                selectedBeBackTime = nil
+                beBackTime = nil
+                if let time = time {
+                    beBackTime = pagingVM.customBeBackTimeChanged(time: time)
                 }
             }
-        
+            .onAppear {
+                beBackTime = controller.beBack?.time.stringValue
+                beBackPosition = controller.beBack?.forPosition
+            }
             
-            VStack {
-                Text("\(beBackText)")
-                    .font(.title).bold()
-                    .padding(.bottom)
-                
-                HStack {
-                    ForEach(pagingVM.beBackTimes, id: \.self) { time in
-                        Text(time + " mins")
-                            .frame(width: 100, height: 50)
-                            .background(Color.blue.opacity(0.5))
-                            .border(Color.red, width: selectedBeBackTime == time ? 2.5 : 0)
-                            .onTapGesture {
-                                selectedBeBackTime = time
-                                self.beBackTime = pagingVM.getBeBackTime(minute: time)
-                            }
-                    }
-                }
-                
-                Button("SELECT TIME", action: { isShowingCustomPicker.toggle() })
-                    .sheet(isPresented: $isShowingCustomPicker) {
-                        CustomPickerView(customBeBackTime: $customBeBackTime)
-                    }
-                    .padding(.vertical)
-                
-                Spacer()
-                LazyHGrid(rows: pagingVM.positionRows, spacing: 20) {
-                    ForEach(pagingVM.positions, id: \.self) { position in
-                        Text(position)
-                            .font(.system(size: 20, weight: .bold))
-                            .frame(width: 100, height: 50)
-                            .background(Color.red).opacity(0.5)
-                            .border(Color.blue, width: beBackPosition == position ? 2.5 : 0)
-                            .onTapGesture {
-                                if beBackPosition == position {
-                                    beBackPosition = nil
-                                } else {
-                                    beBackPosition = position
-                                }
-                            }
-                    }
-                }
-                .frame(maxWidth: .infinity)
-                .frame(height:250)
-                
-                Spacer()
-                
-                Button(action: pageBack) {
-                    Text("PAGE")
-                        .foregroundColor(isSubmittable ? .black : .gray)
-                        .frame(width: 500, height: 100)
-                        .font(.title).bold()
-                        .background(Color.blue.opacity(0.8))
-                        .cornerRadius(20)
-                        
-                }
-                .disabled(!isSubmittable)
-                
-                Spacer()
-            } // VStack
-            .padding(.top)
-        } // ZStack
-        .navigationBarBackButtonHidden()
-        .background(Color.black.opacity(0.1))
-        .onChange(of: customBeBackTime) { time in
-            selectedBeBackTime = nil
-            beBackTime = pagingVM.customBeBackTimeChanged(time: time)
-        }
-        .onAppear {
-            beBackTime = controller.beBack?.time.stringValue
-            beBackPosition = controller.beBack?.forPosition
-        }
+            ClockView(selectedMinutes: $customBeBackTime)
+            
+        } // HStack
         
     } // body view
     

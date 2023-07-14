@@ -12,7 +12,7 @@ struct ClockView: View {
     // minutes start at 30 since the numbers start at the 6 o'clock position.  Probably an easy fix but I don't know it.
     let minutes = [30, 35, 40, 45, 50, 55, 0, 5, 10, 15, 20, 25]
     let width = UIScreen.main.bounds.width
-    @State var selectedMinutes: Int?
+    @Binding var selectedMinutes: Int?
     @State var currentTime = TimeClock(sec: 0, min: 0, hour: 0)
     @State var receiver = Timer.publish(every: 1, on: .current, in: .default).autoconnect()
 
@@ -81,9 +81,6 @@ struct ClockView: View {
                 
                 self.currentTime = TimeClock(sec: sec, min: min, hour: hour)
                 
-//                withAnimation {
-//                    self.currentTime = TimeClock(sec: sec, min: min, hour: hour)
-//                }
             }
             .onReceive(receiver) { (_) in
                 let calendar  = Calendar.current
@@ -93,18 +90,13 @@ struct ClockView: View {
                 
                 self.currentTime = TimeClock(sec: sec, min: min, hour: hour)
                 
-//                withAnimation {
-//                    self.currentTime = TimeClock(sec: sec, min: min, hour: hour)
-//                }
-                
-//                print(currentTime.sec)
             }
         }
     }
-    
+    #warning("Doesn't work correctly between 55 and 0")
     func showNumber(minute: Int) -> Bool {
         let negBuffer = 5
-
+        
         if currentTime.min >= (minute - negBuffer) && currentTime.min < (minute + 2) {
             return false
         }
@@ -116,7 +108,7 @@ struct ClockView: View {
 
 struct ClockView_Previews: PreviewProvider {
     static var previews: some View {
-        ClockView()
+        ClockView(selectedMinutes: .constant(5))
     }
 }
 
