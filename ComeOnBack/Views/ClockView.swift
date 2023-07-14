@@ -24,8 +24,8 @@ struct ClockView: View {
             ZStack {
                 ForEach(1...60, id: \.self) { index in
                     Rectangle()
-                        .fill(index % 5 == 0 ? .black : .gray)
-                        .frame(width: 2, height: index % 5 == 0 ? 15 : 5)
+                        .fill(.primary)
+                        .frame(width: 2, height: index % 5 == 0 ? 20 : 5)
                         .offset(y: width / 3)
                         .rotationEffect(.init(degrees: Double(index) * 6))
                     
@@ -37,7 +37,6 @@ struct ClockView: View {
                         .background(selectedMinutes == minutes[index] ? .blue: .clear)
                         .font(.system(size: 30))
                         .font(.caption.bold())
-                        .foregroundColor(.black)
                         .clipShape(Circle())
                         .rotationEffect(.init(degrees: Double(index) * -30))
                         .offset(y: width / 2.5)
@@ -108,7 +107,7 @@ struct ClockView: View {
 
 struct ClockView_Previews: PreviewProvider {
     static var previews: some View {
-        ClockView(selectedMinutes: .constant(5))
+        ClockView(selectedMinutes: .constant(nil))
     }
 }
 
