@@ -71,12 +71,6 @@ struct PagingView: View {
                         }
                     }
                     
-                    //                    Button("SELECT TIME", action: { isShowingCustomPicker.toggle() })
-                    //                        .sheet(isPresented: $isShowingCustomPicker) {
-                    //                            CustomPickerView(customBeBackTime: $customBeBackTime)
-                    //                        }
-                    //                        .padding(.vertical)
-                    
                     Spacer()
                     
                         var positions: [String] {
@@ -110,10 +104,10 @@ struct PagingView: View {
                     
                     Button(action: pageBack) {
                         Text("PAGE")
-                            .foregroundColor(isSubmittable ? .black : .gray)
+                            .foregroundColor(isSubmittable ? .black : .black.opacity(0.4))
                             .frame(width: 500, height: 100)
                             .font(.title).bold()
-                            .background(Color.blue.opacity(0.8))
+                            .background(isSubmittable ? Color.blue.opacity(0.8) : Color.gray)
                             .cornerRadius(20)
                         
                     }
@@ -140,7 +134,7 @@ struct PagingView: View {
             
             ClockView(selectedMinutes: $customBeBackTime)
             
-        } // HStack
+        } // Main HStack
         
     } // body view
     

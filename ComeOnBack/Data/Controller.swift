@@ -1,10 +1,3 @@
-//
-//  Controller.swift
-//  ComeOnBack
-//
-//  Created by Calvin Shultz on 3/10/23.
-//
-
 import Foundation
 
 enum ControllerStatus: String, Codable {
@@ -55,7 +48,7 @@ extension Controller {
         Controller(initials: "XX", area: "Departure", isDev: false, status: .AVAILABLE),
         Controller(initials: "YY", area: "Arrival", isDev: true, status: .ON_POSITION),
         Controller(initials: "ZZ", area: "Arrival", isDev: false, status: .PAGED_BACK, beBack:
-                    BeBack(initials: "ZZ", time: try! Time("06:15"))
+                    BeBack(initials: "ZZ", time: try! Time("06:15"), forPosition: "FR1")
                   )
     ]
 }

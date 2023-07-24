@@ -5,7 +5,6 @@ struct SignInScreen: View {
     private let logger = Logger(subsystem: Logger.subsystem, category: "SignInScreen")
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var pagingVM: PagingViewModel
-//    var controllers: [Controller] = []
     @State var controllersToSignIn: [Controller] = []
     let columns = Array(repeating: GridItem(.flexible()), count: 5)
     

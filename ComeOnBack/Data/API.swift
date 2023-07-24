@@ -130,7 +130,7 @@ class API {
         }
     }
     
-    func getControllerList() async throws -> [Controller]{
+    func getControllerList() async throws -> [Controller] {
         logger.info("Getting controller list")
         let request = buildGETRequest(forEndpoint: .controllerList)
         let (data, response) = try await URLSession.shared.data(for: request)
@@ -151,7 +151,7 @@ class API {
         let (data, response) = try await URLSession.shared.data(for: request)
         
         guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-            logger.error("Invalid server response in getControllerList")
+            logger.error("Invalid server response in getSignedInControllerList")
             throw APIError.invalidServerResponse
         }
         
