@@ -3,6 +3,7 @@ import Foundation
 enum ControllerStatus: String, Codable {
     case AVAILABLE
     case PAGED_BACK
+    case PAGED_BACK_ACKNOWLEDGED
     case ON_POSITION
     case OTHER_DUTIES
 }

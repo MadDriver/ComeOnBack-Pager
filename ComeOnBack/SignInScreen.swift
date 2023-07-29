@@ -6,39 +6,49 @@ struct SignInScreen: View {
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var pagingVM: PagingViewModel
     @State var controllersToSignIn: [Controller] = []
+    @State private var searchInitials = ""
     let columns = Array(repeating: GridItem(.flexible()), count: 5)
     
     var body: some View {
-        VStack {
-            ScrollView {
-                LazyVGrid(columns: columns) {
-                    ForEach(pagingVM.allControllers.sorted(by: { $0.initials < $1.initials })) { controller in
-                        Text("\(controller.initials)")
-                            .frame(width: 250, height: 50)
-                            .background(isControllerInSignInArray(controller: controller) ? Color.red :  Color.primary.opacity(0.2))
-                            .onTapGesture {
-                                if isControllerInSignInArray(controller: controller) {
-                                    if let index = controllersToSignIn.firstIndex(of: controller) {
-                                        controllersToSignIn.remove(at: index)
+        NavigationStack {
+            VStack {
+                ScrollView {
+                    LazyVGrid(columns: columns) {
+                        ForEach(searchResult) { controller in
+                            Text("\(controller.initials)")
+                                .frame(width: 250, height: 50)
+                                .background(isControllerInSignInArray(controller: controller) ? Color.red :  Color.primary.opacity(0.2))
+                                .onTapGesture {
+                                    if isControllerInSignInArray(controller: controller) {
+                                        if let index = controllersToSignIn.firstIndex(of: controller) {
+                                            controllersToSignIn.remove(at: index)
+                                            logger.info("Signing in (\(controllersToSignIn) ")
+                                        }
+                                    } else {
+                                        controllersToSignIn.append(controller)
                                         logger.info("Signing in (\(controllersToSignIn) ")
                                     }
-                                } else {
-                                    controllersToSignIn.append(controller)
-                                    logger.info("Signing in (\(controllersToSignIn) ")
                                 }
-                               
-                                
-                            }
-                    }
+                        }
+                    }  // LazyVGrid
+                } // ScrollView
+                
+                HStack(spacing: 200) {
+                    Button("CANCEL", role: .cancel, action: dismissSignInSheet)
+                        .buttonStyle(.bordered)
+                    Button("SIGN IN", action: signInControllers)
+                        .buttonStyle(.borderedProminent)
                 }
             }
-            
-            HStack(spacing: 200) {
-                Button("CANCEL", role: .cancel, action: dismissSignInSheet)
-                    .buttonStyle(.bordered)
-                Button("SIGN IN", action: signInControllers)
-                    .buttonStyle(.borderedProminent)
-            }
+        }
+        .searchable(text: $searchInitials)
+    }
+    
+    var searchResult: [Controller] {
+        if searchInitials.isEmpty {
+            return pagingVM.allControllers.sorted(by: { $0.initials < $1.initials })
+        } else {
+            return pagingVM.allControllers.filter { $0.initials.contains(searchInitials.uppercased()) }
         }
     }
     
