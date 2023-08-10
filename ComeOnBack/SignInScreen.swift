@@ -44,7 +44,7 @@ struct SignInScreen: View {
         .searchable(text: $searchInitials)
     }
     
-    var searchResult: [Controller] {
+    private var searchResult: [Controller] {
         if searchInitials.isEmpty {
             return pagingVM.allControllers.sorted(by: { $0.initials < $1.initials })
         } else {

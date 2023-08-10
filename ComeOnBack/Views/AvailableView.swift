@@ -21,7 +21,6 @@ struct AvailableView: View {
                         PagingView(controller: controller)
                     } label: {
                         AvailableCellView(controller: controller)
-
                     }
                     .buttonStyle(PlainButtonStyle())
                 }

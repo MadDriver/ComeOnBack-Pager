@@ -62,7 +62,7 @@ struct PagingView: View {
                         ForEach(pagingVM.beBackTimes, id: \.self) { time in
                             Text(time + " mins")
                                 .frame(width: 100, height: 50)
-                                .background(Color.blue.opacity(0.5))
+                                .background(selectedBeBackTime == time ? Color.yellow : Color.blue.opacity(0.5))
                                 .border(Color.red, width: selectedBeBackTime == time ? 2.5 : 0)
                                 .onTapGesture {
                                     selectedBeBackTime = time
@@ -86,7 +86,7 @@ struct PagingView: View {
                             Text(position)
                                 .font(.system(size: 20, weight: .bold))
                                 .frame(width: 100, height: 50)
-                                .background(Color.red).opacity(0.5)
+                                .background(beBackPosition == position ? Color.yellow : Color.red.opacity(0.5))
                                 .border(Color.blue, width: beBackPosition == position ? 2.5 : 0)
                                 .onTapGesture {
                                     if beBackPosition == position {

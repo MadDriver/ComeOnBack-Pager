@@ -17,24 +17,29 @@ struct AvailableViewBeta: View {
     var body: some View {
         
             VStack {
-                LazyVGrid(columns: columns) {
+               
+                List {
                     ForEach(controllers) { controller in
-                        Text(controller.initials)
-                            .frame(width: 100, height: 100)
-                            .background(isSelected(controller: controller) ? Color.blue.opacity(0.2) : Color.red.opacity(0.2))
+                        AvailableCellBeta(controller: controller)
+                            .overlay {
+                                if isSelected(controller: controller) {
+                                    Color.red.opacity(0.2)
+                                }
+                            }
                             .onTapGesture {
                                 if isSelected(controller: controller) {
                                     if let index = selectedControllers.firstIndex(of: controller) {
                                         selectedControllers.remove(at: index)
-                                        print(selectedControllers)
                                     }
+                                    
                                 } else {
                                     selectedControllers.append(controller)
-                                    print(selectedControllers)
                                 }
                             }
                     }
-                }
+                } // List
+                .frame(maxWidth: .infinity)
+
                 
                 Button("SUBMIT") {
                     signInScreenActive = true
@@ -44,20 +49,18 @@ struct AvailableViewBeta: View {
                 
                 
             } // VStack
-            .fullScreenCover(isPresented: $signInScreenActive) {
-                SignInScreenBeta(controllers: selectedControllers)
-            }
+//            .fullScreenCover(isPresented: $signInScreenActive) {
+//                SignInScreenBeta(controllers: selectedControllers)
+//            }
         
         
         
     } // Body
     
     func isSelected(controller: Controller) -> Bool {
-        
         if selectedControllers.contains(controller) {
             return true
         }
-        
         return false
     }
         

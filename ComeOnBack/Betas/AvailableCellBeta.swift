@@ -10,7 +10,6 @@ import SwiftUI
 struct AvailableCellBeta: View {
     
     let controller: Controller
-    @Binding var isSelected: Bool
     
     var body: some View {
         HStack {
@@ -33,10 +32,11 @@ struct AvailableCellBeta: View {
             Text("\(controller.beBack?.forPosition?.description ?? " ")")
                 .font(.system(size: 45, weight: .bold))
                 .padding(.horizontal)
+            
+            Spacer()
 
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(isSelected ? Color.red.opacity(0.2) : Color.black.opacity(0.2))
         .padding(.horizontal)
         
     }
@@ -44,6 +44,6 @@ struct AvailableCellBeta: View {
 
 struct AvailableCellBeta_Previews: PreviewProvider {
     static var previews: some View {
-        AvailableCellBeta(controller: Controller.mock_data[2], isSelected: .constant(false))
+        AvailableCellBeta(controller: Controller.mock_data[2])
     }
 }
