@@ -29,29 +29,11 @@ struct PagingView: View {
     }
     
     var body: some View {
-        HStack {
-            ZStack(alignment: .topTrailing) {
-                VStack {
-                    Button {
-                        dismiss()
-                    } label: {
-                        Image(systemName: "x.circle")
-                            .font(.system(size: 48))
-                            .padding()
-                        
-                    }
-                    .buttonStyle(.plain)
-                    
-                    Spacer()
-                    
-                    if (controller.status == .PAGED_BACK) {
-                        Button(role: .destructive, action: cancelPage) {
-                            Label("Cancel Page", systemImage: "trash")
-                        }
-                        .padding(.horizontal, 30)
-                    }
-                }
-                
+        ZStack(alignment: .topTrailing) {
+            
+            
+            
+            HStack {
                 
                 VStack {
                     Text("\(beBackText)")
@@ -61,6 +43,7 @@ struct PagingView: View {
                     HStack {
                         ForEach(pagingVM.beBackTimes, id: \.self) { time in
                             Text(time + " mins")
+                                .fontWeight(.bold)
                                 .frame(width: 100, height: 50)
                                 .background(selectedBeBackTime == time ? Color.yellow : Color.blue.opacity(0.5))
                                 .border(Color.red, width: selectedBeBackTime == time ? 2.5 : 0)
@@ -73,7 +56,7 @@ struct PagingView: View {
                     
                     Spacer()
                     
-                        var positions: [String] {
+                    var positions: [String] {
                         if controller.area == "Departure" {
                             return pagingVM.DRpositions + pagingVM.commonPositions
                         } else {
@@ -114,9 +97,19 @@ struct PagingView: View {
                     .disabled(!isSubmittable)
                     
                     Spacer()
+                    
+                    if (controller.status == .PAGED_BACK) {
+                        Button(role: .destructive, action: cancelPage) {
+                            Label("Cancel Page", systemImage: "trash")
+                        }
+                        .padding(.horizontal, 30)
+                    }
                 } // VStack
                 .padding(.top)
-            } // ZStack
+                
+                ClockView(selectedMinutes: $customBeBackTime)
+                
+            } // HStack
             .padding(.horizontal)
             .navigationBarBackButtonHidden()
             .background(Color.black.opacity(0.1))
@@ -130,12 +123,24 @@ struct PagingView: View {
             .onAppear {
                 beBackTime = controller.beBack?.time.stringValue
                 beBackPosition = controller.beBack?.forPosition
+                
             }
             
-            ClockView(selectedMinutes: $customBeBackTime)
+            Button {
+                dismiss()
+            } label: {
+                Image(systemName: "x.circle")
+                    .font(.system(size: 48))
+                    .padding()
+                
+            }
+            .buttonStyle(.plain)
             
-        } // Main HStack
+        }  //ZStack
         
+        
+        
+
     } // body view
     
     func cancelPage() {
