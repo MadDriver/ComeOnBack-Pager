@@ -19,9 +19,7 @@ struct PagingView: View {
     @State var customBeBackTime: Int?
     @State var selectedBeBackTime: String?
     var controller: Controller
-    
     var isSubmittable: Bool { beBackTime != nil }
-    
     var beBackText: String {
         if beBackTime == nil { return "Page \(controller.initials)" }
         if beBackPosition == nil { return "Page back \(controller.initials) at \(beBackTime ?? "  ")" }
@@ -30,83 +28,8 @@ struct PagingView: View {
     
     var body: some View {
         ZStack(alignment: .topTrailing) {
-            
-            
-            
             HStack {
-                
-                VStack {
-                    Text("\(beBackText)")
-                        .font(.title).bold()
-                        .padding(.bottom)
-                    
-                    HStack {
-                        ForEach(pagingVM.beBackTimes, id: \.self) { time in
-                            Text(time + " mins")
-                                .fontWeight(.bold)
-                                .frame(width: 100, height: 50)
-                                .background(selectedBeBackTime == time ? Color.yellow : Color.blue.opacity(0.5))
-                                .border(Color.red, width: selectedBeBackTime == time ? 2.5 : 0)
-                                .onTapGesture {
-                                    selectedBeBackTime = time
-                                    self.beBackTime = pagingVM.getBeBackTime(minute: time)
-                                }
-                        }
-                    }
-                    
-                    Spacer()
-                    
-                    var positions: [String] {
-                        if controller.area == "Departure" {
-                            return pagingVM.DRpositions + pagingVM.commonPositions
-                        } else {
-                            return pagingVM.ARPositions + pagingVM.commonPositions
-                        }
-                    }
-                    
-                    LazyHGrid(rows: pagingVM.positionRows, spacing: 20) {
-                        ForEach(positions, id: \.self) { position in
-                            Text(position)
-                                .font(.system(size: 20, weight: .bold))
-                                .frame(width: 100, height: 50)
-                                .background(beBackPosition == position ? Color.yellow : Color.red.opacity(0.5))
-                                .border(Color.blue, width: beBackPosition == position ? 2.5 : 0)
-                                .onTapGesture {
-                                    if beBackPosition == position {
-                                        beBackPosition = nil
-                                    } else {
-                                        beBackPosition = position
-                                    }
-                                }
-                        }
-                    }
-                    .frame(maxWidth: .infinity)
-                    .frame(height:250)
-                    
-                    Spacer()
-                    
-                    Button(action: pageBack) {
-                        Text("PAGE")
-                            .foregroundColor(isSubmittable ? .black : .black.opacity(0.4))
-                            .frame(width: 500, height: 100)
-                            .font(.title).bold()
-                            .background(isSubmittable ? Color.blue.opacity(0.8) : Color.gray)
-                            .cornerRadius(20)
-                        
-                    }
-                    .disabled(!isSubmittable)
-                    
-                    Spacer()
-                    
-                    if (controller.status == .PAGED_BACK) {
-                        Button(role: .destructive, action: cancelPage) {
-                            Label("Cancel Page", systemImage: "trash")
-                        }
-                        .padding(.horizontal, 30)
-                    }
-                } // VStack
-                .padding(.top)
-                
+                leftSideOfHStack
                 ClockView(selectedMinutes: $customBeBackTime)
                 
             } // HStack
@@ -137,11 +60,7 @@ struct PagingView: View {
             .buttonStyle(.plain)
             
         }  //ZStack
-        
-        
-        
-
-    } // body view
+    } // body
     
     func cancelPage() {
         Task {
@@ -177,6 +96,81 @@ struct PagingView: View {
                 logger.error("Unexpected error in pageBack(): \(error)")
             }
         }
+    }
+    
+    @ViewBuilder
+    private var leftSideOfHStack: some View {
+        VStack {
+            Text("\(beBackText)")
+                .font(.title).bold()
+                .padding(.bottom)
+            
+            HStack {
+                ForEach(pagingVM.beBackTimes, id: \.self) { time in
+                    Text(time + " mins")
+                        .fontWeight(.bold)
+                        .frame(width: 100, height: 50)
+                        .background(selectedBeBackTime == time ? Color.yellow : Color.blue.opacity(0.5))
+                        .border(Color.red, width: selectedBeBackTime == time ? 2.5 : 0)
+                        .onTapGesture {
+                            selectedBeBackTime = time
+                            self.beBackTime = pagingVM.getBeBackTime(minute: time)
+                        }
+                }
+            }
+            
+            Spacer()
+            
+            var positions: [String] {
+                if controller.area == "Departure" {
+                    return pagingVM.DRpositions + pagingVM.commonPositions
+                } else {
+                    return pagingVM.ARPositions + pagingVM.commonPositions
+                }
+            }
+            
+            LazyHGrid(rows: pagingVM.positionRows, spacing: 20) {
+                ForEach(positions, id: \.self) { position in
+                    Text(position)
+                        .font(.system(size: 20, weight: .bold))
+                        .frame(width: 100, height: 50)
+                        .background(beBackPosition == position ? Color.yellow : Color.red.opacity(0.5))
+                        .border(Color.blue, width: beBackPosition == position ? 2.5 : 0)
+                        .onTapGesture {
+                            if beBackPosition == position {
+                                beBackPosition = nil
+                            } else {
+                                beBackPosition = position
+                            }
+                        }
+                }
+            }
+            .frame(maxWidth: .infinity)
+            .frame(height:250)
+            
+            Spacer()
+            
+            Button(action: pageBack) {
+                Text("PAGE")
+                    .foregroundColor(isSubmittable ? .black : .black.opacity(0.4))
+                    .frame(width: 500, height: 100)
+                    .font(.title).bold()
+                    .background(isSubmittable ? Color.blue.opacity(0.8) : Color.gray)
+                    .cornerRadius(20)
+                
+            }
+            .disabled(!isSubmittable)
+            
+            Spacer()
+            
+            if (controller.status == .PAGED_BACK) {
+                Button(role: .destructive, action: cancelPage) {
+                    Label("Cancel Page", systemImage: "trash")
+                }
+                .padding(.horizontal, 30)
+            }
+        } // VStack
+        .padding(.top)
     }
 }
 

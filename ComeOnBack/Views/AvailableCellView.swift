@@ -4,7 +4,7 @@ import OSLog
 struct AvailableCellView: View {
     
     @EnvironmentObject var pagingVM: PagingViewModel
-    @State var movingController: Bool = false
+    @State private var movingController: Bool = false
     var controller: Controller
     
     var body: some View {
@@ -61,13 +61,13 @@ struct AvailableCellView: View {
                 }
                 .frame(width: 50)
                 
-                ZStack {
-                    if controller.beBack != nil {
-                        Image(systemName: "checkmark.square")
-                            .foregroundColor(.green).bold()
-                    }
-                }
-                .frame(width: 50)
+//                ZStack {
+//                    if controller.beBack != nil {
+//                        Image(systemName: "checkmark.square")
+//                            .foregroundColor(.green).bold()
+//                    }
+//                }
+//                .frame(width: 50)
             }
         }
     }
