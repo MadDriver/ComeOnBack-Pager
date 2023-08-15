@@ -15,9 +15,9 @@ struct PagingView: View {
     @EnvironmentObject var pagingVM: PagingViewModel
     @State var beBackPosition: String?
     @State var beBackTime: String?
-    @State var isShowingCustomPicker = false
     @State var customBeBackTime: Int?
     @State var selectedBeBackTime: String?
+    @State private var selectedDev: Controller?
     var controller: Controller
     var isSubmittable: Bool { beBackTime != nil }
     var beBackText: String {

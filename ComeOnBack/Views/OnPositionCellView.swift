@@ -4,6 +4,7 @@ import OSLog
 struct OnPositionCellView: View {
     @EnvironmentObject var pagingVM: PagingViewModel
     @State var performingTapGesture: Bool = false
+    
     var controller: Controller
     
     var body: some View {
@@ -13,7 +14,13 @@ struct OnPositionCellView: View {
                 Spacer()
                 Text(controller.initials)
                 Spacer()
-                Image(systemName: "arrowshape.right")
+                if performingTapGesture {
+                    ProgressView()
+                        .progressViewStyle(CircularProgressViewStyle(tint: .blue))
+                } else {
+                    Image(systemName: "arrowshape.right")
+                        .disabled(performingTapGesture)
+                }
             }
             .padding()
         }

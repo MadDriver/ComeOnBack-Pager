@@ -31,6 +31,7 @@ struct AvailableCellView: View {
                                 .progressViewStyle(CircularProgressViewStyle(tint: .blue))
                         } else {
                             Image(systemName: "arrowshape.left")
+                                .disabled(movingController)
                         }
                         
                     }

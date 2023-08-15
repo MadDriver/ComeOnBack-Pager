@@ -15,6 +15,11 @@ final class PagingViewModel: ObservableObject {
     @Published var pagedBack: [Controller] = []
     @Published var onBreak: [Controller] = []
     
+    var signedInDevs: [Controller] {
+        let signedInControllers = onPosition + pagedBack + onBreak
+        return signedInControllers.filter { $0.isDev == true }
+    }
+    
     var rightHandList: [Controller] {
         get {
             return pagedBack + onBreak
