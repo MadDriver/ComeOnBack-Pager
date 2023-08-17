@@ -6,11 +6,13 @@ struct BeBack: Hashable, Identifiable, Codable {
     var initials: String
     var time: Time
     var forPosition: String?
+    var acknowledged: Bool
     
     enum CodingKeys: String, CodingKey {
         case initials
         case time
         case forPosition
+        case acknowledged
     }
 }
 
