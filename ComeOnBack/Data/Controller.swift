@@ -49,7 +49,7 @@ extension Controller {
         Controller(initials: "XX", area: "Departure", isDev: false, status: .AVAILABLE),
         Controller(initials: "YY", area: "Arrival", isDev: true, status: .ON_POSITION),
         Controller(initials: "ZZ", area: "Arrival", isDev: false, status: .PAGED_BACK, beBack:
-                    BeBack(initials: "ZZ", time: try! Time("06:15"), forPosition: "FR1")
+                    BeBack(initials: "ZZ", time: try! Time("06:15"), forPosition: "FR1", acknowledged: false)
                   )
     ]
 }

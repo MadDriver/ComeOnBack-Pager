@@ -61,7 +61,7 @@ class API {
             throw APIError.invalidServerResponse
         }
         
-        return BeBack(initials: initials, time: time, forPosition: forPosition)
+        return BeBack(initials: initials, time: time, forPosition: forPosition, acknowledged: false)
     }
     
     func removeBeBack(initials: String) async throws {
