@@ -62,13 +62,13 @@ struct AvailableCellView: View {
                 }
                 .frame(width: 50)
                 
-//                ZStack {
-//                    if controller.beBack != nil {
-//                        Image(systemName: "checkmark.square")
-//                            .foregroundColor(.green).bold()
-//                    }
-//                }
-//                .frame(width: 50)
+                ZStack {
+                    if controller.beBack?.acknowledged == true {
+                        Image(systemName: "checkmark.square")
+                            .foregroundColor(.green).bold()
+                    }
+                }
+                .frame(width: 50)
             }
         }
     }
