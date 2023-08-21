@@ -57,7 +57,6 @@ struct HomeScreen: View {
                             }
                         }
                         
-                        Spacer()
                     } // V Stack
                 } // Nav Stack
             } // V Stack

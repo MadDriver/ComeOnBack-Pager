@@ -28,11 +28,51 @@ struct PagingView: View {
     
     var body: some View {
         ZStack(alignment: .topTrailing) {
-            HStack {
-                leftSideOfHStack
-                ClockView(selectedMinutes: $customBeBackTime)
+            VStack {
                 
-            } // HStack
+                Text("\(beBackText)")
+                    .font(.title).bold()
+                    .padding(.bottom)
+                
+                HStack {
+                    leftSideOfHStack
+                    VStack {
+                        ClockView(selectedMinutes: $customBeBackTime)
+                        HStack {
+                            ForEach(pagingVM.beBackTimes, id: \.self) { time in
+                                Text(time + " mins")
+                                    .fontWeight(.bold)
+                                    .frame(width: 100, height: 50)
+                                    .background(selectedBeBackTime == time ? Color.yellow : Color.blue.opacity(0.5))
+                                    .border(Color.red, width: selectedBeBackTime == time ? 2.5 : 0)
+                                    .onTapGesture {
+                                        selectedBeBackTime = time
+                                        self.beBackTime = pagingVM.getBeBackTime(minute: time)
+                                    }
+                            }
+                        }
+                        .offset(y: -50)
+                        .padding()
+                        
+                    }
+                    
+                    
+                } // HStack
+                
+                Button(action: pageBack) {
+                    Text("PAGE")
+                        .foregroundColor(isSubmittable ? .black : .black.opacity(0.4))
+                        .frame(width: 500, height: 100)
+                        .font(.title).bold()
+                        .background(isSubmittable ? Color.blue.opacity(0.8) : Color.gray)
+                        .cornerRadius(20)
+                        .padding()
+                    
+                }
+                .disabled(!isSubmittable)
+                
+                
+            }
             .padding(.horizontal)
             .navigationBarBackButtonHidden()
             .background(Color.black.opacity(0.1))
@@ -60,6 +100,14 @@ struct PagingView: View {
             .buttonStyle(.plain)
             
         }  //ZStack
+        .overlay(alignment: .bottomTrailing) {
+            if (controller.status == .PAGED_BACK) {
+                Button(role: .destructive, action: cancelPage) {
+                    Label("Cancel Page", systemImage: "trash")
+                }
+                .padding()
+            }
+        }
     } // body
     
     func cancelPage() {
@@ -101,23 +149,9 @@ struct PagingView: View {
     @ViewBuilder
     private var leftSideOfHStack: some View {
         VStack {
-            Text("\(beBackText)")
-                .font(.title).bold()
-                .padding(.bottom)
             
-            HStack {
-                ForEach(pagingVM.beBackTimes, id: \.self) { time in
-                    Text(time + " mins")
-                        .fontWeight(.bold)
-                        .frame(width: 100, height: 50)
-                        .background(selectedBeBackTime == time ? Color.yellow : Color.blue.opacity(0.5))
-                        .border(Color.red, width: selectedBeBackTime == time ? 2.5 : 0)
-                        .onTapGesture {
-                            selectedBeBackTime = time
-                            self.beBackTime = pagingVM.getBeBackTime(minute: time)
-                        }
-                }
-            }
+            
+            
             
             Spacer()
             
@@ -150,25 +184,7 @@ struct PagingView: View {
             
             Spacer()
             
-            Button(action: pageBack) {
-                Text("PAGE")
-                    .foregroundColor(isSubmittable ? .black : .black.opacity(0.4))
-                    .frame(width: 500, height: 100)
-                    .font(.title).bold()
-                    .background(isSubmittable ? Color.blue.opacity(0.8) : Color.gray)
-                    .cornerRadius(20)
-                
-            }
-            .disabled(!isSubmittable)
             
-            Spacer()
-            
-            if (controller.status == .PAGED_BACK) {
-                Button(role: .destructive, action: cancelPage) {
-                    Label("Cancel Page", systemImage: "trash")
-                }
-                .padding(.horizontal, 30)
-            }
         } // VStack
         .padding(.top)
     }
