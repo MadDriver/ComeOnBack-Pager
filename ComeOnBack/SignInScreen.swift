@@ -7,17 +7,22 @@ struct SignInScreen: View {
     @EnvironmentObject var pagingVM: PagingViewModel
     @State var controllersToSignIn: [Controller] = []
     @State private var searchInitials = ""
-    let columns = Array(repeating: GridItem(.flexible()), count: 5)
+    //    let columns = Array(repeating: GridItem(.adaptive(minimum: 175)), count: 1)
+    let columns = [
+        GridItem(.adaptive(minimum: 175))
+    ]
     
     var body: some View {
         NavigationStack {  // I believe to make it "searchable" it needs to be in a nav stack.  More research needed
             VStack {
                 ScrollView {
-                    LazyVGrid(columns: columns) {
+                    LazyVGrid(columns: columns, spacing: 20) {
                         ForEach(searchResult) { controller in
                             Text("\(controller.initials)")
-                                .frame(width: 175, height: 50)
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 50)
                                 .background(isControllerInSignInArray(controller: controller) ? Color.red :  Color.primary.opacity(0.2))
+                                .cornerRadius(20)
                                 .onTapGesture {
                                     if isControllerInSignInArray(controller: controller) {
                                         if let index = controllersToSignIn.firstIndex(of: controller) {
@@ -29,9 +34,10 @@ struct SignInScreen: View {
                                         logger.info("Signing in (\(controllersToSignIn) ")
                                     }
                                 }
+                            
                         }
                     }  // LazyVGrid
-                } // ScrollView
+                } // Scrollview
                 
                 HStack(spacing: 200) {
                     Button("CANCEL", role: .cancel, action: dismissSignInSheet)
@@ -39,8 +45,9 @@ struct SignInScreen: View {
                     Button("SIGN IN", action: signInControllers)
                         .buttonStyle(.borderedProminent)
                 }
-            }
-        }
+            } // V Stack
+            .padding(.top)
+        } // Nav Stack
         .searchable(text: $searchInitials)
     }
     
