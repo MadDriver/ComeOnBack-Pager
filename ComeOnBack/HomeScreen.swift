@@ -21,61 +21,61 @@ struct HomeScreen: View {
     @State var isLoading = false
     let timer = Timer.publish(every: 30.0, on: .main, in: .common).autoconnect()
     var body: some View {
-        ZStack(alignment: .topLeading) {
-            VStack {
-                HeaderView()
-                
-                NavigationStack {
-                    VStack {
-                        GeometryReader { geometry in
-                            HStack(spacing: 0) {
-                                
-                                VStack {
-                                    Text("ON POSITION")
-                                        .fontWeight(.heavy)
-                                    if pagingVM.onPosition.isEmpty {
-                                        EmptyControllerView()
-                                    } else {
-                                        OnPositionView(controllers: pagingVM.onPosition)
-                                            
-                                    }
+        NavigationStack {
+            ZStack(alignment: .topLeading) {
+                VStack {
+                    HeaderView()
+                    
+                    
+                    GeometryReader { geometry in
+                        HStack(spacing: 0) {
+                            
+                            VStack {
+                                Text("ON POSITION")
+                                    .fontWeight(.heavy)
+                                if pagingVM.onPosition.isEmpty {
+                                    EmptyControllerView()
+                                } else {
+                                    OnPositionView(controllers: pagingVM.onPosition)
+                                    
                                 }
-                                .frame(width: geometry.size.width * 0.33)
-                                
-                                VStack {
-                                    Text("AVAILABLE")
-                                        .fontWeight(.heavy)
-
-                                    if pagingVM.rightHandList.isEmpty {
-                                        EmptyControllerView()
-                                    } else {
-                                        AvailableView(controllerList: pagingVM.rightHandList)
-                                            
-                                    }
-                                }
-                                .frame(width: geometry.size.width * 0.67)
                             }
+                            .frame(width: geometry.size.width * 0.33)
+                            
+                            VStack {
+                                Text("AVAILABLE")
+                                    .fontWeight(.heavy)
+                                
+                                if pagingVM.rightHandList.isEmpty {
+                                    EmptyControllerView()
+                                } else {
+                                    AvailableView(controllerList: pagingVM.rightHandList)
+                                    
+                                }
+                            }
+                            .frame(width: geometry.size.width * 0.67)
                         }
-                        
-                    } // V Stack
-                } // Nav Stack
-            } // V Stack
-            
-            HStack {
-                Button("SIGN IN", action: signInControllers)
-                    .buttonStyle(.borderedProminent)
-                    .padding()
-                    .disabled(isLoading)
+                    }
+                } // V Stack
                 
-                Spacer()
-                
-                Button("SIGN OUT", action: signOutControllers)
-                    .buttonStyle(.borderedProminent)
-                    .padding()
-                    .disabled(isLoading)
-            }
+                HStack {
+                    Button("SIGN IN", action: signInControllers)
+                        .buttonStyle(.borderedProminent)
+                        .padding()
+                        .disabled(isLoading)
+                    
+                    Spacer()
+                    
+                    Button("SIGN OUT", action: signOutControllers)
+                        .buttonStyle(.borderedProminent)
+                        .padding()
+                        .disabled(isLoading)
+                }
+            } // Z Stack
             
-        } // Z Stack
+            
+            
+        } // Nav Stack
         
         .fullScreenCover(isPresented: $signInViewIsActive) {
             SignInScreen()

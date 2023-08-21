@@ -10,13 +10,13 @@ struct SignInScreen: View {
     let columns = Array(repeating: GridItem(.flexible()), count: 5)
     
     var body: some View {
-        NavigationStack {
+        NavigationStack {  // I believe to make it "searchable" it needs to be in a nav stack.  More research needed
             VStack {
                 ScrollView {
                     LazyVGrid(columns: columns) {
                         ForEach(searchResult) { controller in
                             Text("\(controller.initials)")
-                                .frame(width: 250, height: 50)
+                                .frame(width: 175, height: 50)
                                 .background(isControllerInSignInArray(controller: controller) ? Color.red :  Color.primary.opacity(0.2))
                                 .onTapGesture {
                                     if isControllerInSignInArray(controller: controller) {

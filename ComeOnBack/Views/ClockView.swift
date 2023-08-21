@@ -39,7 +39,7 @@ struct ClockView: View {
                         .font(.caption.bold())
                         .clipShape(Circle())
                         .rotationEffect(.init(degrees: Double(index) * -30))
-                        .offset(y: width / 2.5)
+                        .offset(y: width / 2.4)
                         .rotationEffect(.init(degrees: Double(index) * 30))
                         .opacity(showNumber(minute: minutes[index]) ? 1 : 0)
                         .onTapGesture {

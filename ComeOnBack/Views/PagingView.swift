@@ -27,17 +27,23 @@ struct PagingView: View {
     }
     
     var body: some View {
-        ZStack(alignment: .topTrailing) {
             VStack {
                 
-                Text("\(beBackText)")
-                    .font(.title).bold()
-                    .padding(.bottom)
+                
                 
                 HStack {
-                    leftSideOfHStack
+                    VStack {
+                        Text("\(beBackText)")
+                            .font(.title).bold()
+                            .padding(.bottom)
+                        leftSideOfHStack
+                    }
+                    
                     VStack {
                         ClockView(selectedMinutes: $customBeBackTime)
+                            .frame(width: 400, height: 400)
+                            
+                        
                         HStack {
                             ForEach(pagingVM.beBackTimes, id: \.self) { time in
                                 Text(time + " mins")
@@ -51,11 +57,9 @@ struct PagingView: View {
                                     }
                             }
                         }
-                        .offset(y: -50)
                         .padding()
                         
                     }
-                    
                     
                 } // HStack
                 
@@ -71,9 +75,8 @@ struct PagingView: View {
                 }
                 .disabled(!isSubmittable)
                 
-                
             }
-            .padding(.horizontal)
+            .padding()
             .navigationBarBackButtonHidden()
             .background(Color.black.opacity(0.1))
             .onChange(of: customBeBackTime) { time in
@@ -88,26 +91,25 @@ struct PagingView: View {
                 beBackPosition = controller.beBack?.forPosition
                 
             }
-            
-            Button {
-                dismiss()
-            } label: {
-                Image(systemName: "x.circle")
-                    .font(.system(size: 48))
+            .overlay(alignment: .bottomTrailing) {
+                if (controller.status == .PAGED_BACK) {
+                    Button(role: .destructive, action: cancelPage) {
+                        Label("Cancel Page", systemImage: "trash")
+                    }
                     .padding()
-                
-            }
-            .buttonStyle(.plain)
-            
-        }  //ZStack
-        .overlay(alignment: .bottomTrailing) {
-            if (controller.status == .PAGED_BACK) {
-                Button(role: .destructive, action: cancelPage) {
-                    Label("Cancel Page", systemImage: "trash")
                 }
-                .padding()
             }
-        }
+            .overlay(alignment: .topTrailing) {
+                Button {
+                    dismiss()
+                } label: {
+                    Image(systemName: "x.circle")
+                        .font(.system(size: 48))
+                        .padding()
+                    
+                }
+                .buttonStyle(.plain)
+            }
     } // body
     
     func cancelPage() {
@@ -150,11 +152,6 @@ struct PagingView: View {
     private var leftSideOfHStack: some View {
         VStack {
             
-            
-            
-            
-            Spacer()
-            
             var positions: [String] {
                 if controller.area == "Departure" {
                     return pagingVM.DRpositions + pagingVM.commonPositions
@@ -181,9 +178,7 @@ struct PagingView: View {
             }
             .frame(maxWidth: .infinity)
             .frame(height:250)
-            
-            Spacer()
-            
+                        
             
         } // VStack
         .padding(.top)
@@ -192,6 +187,7 @@ struct PagingView: View {
 
 struct PagingView_Previews: PreviewProvider {
     static var previews: some View {
+        
         PagingView(controller: Controller.mock_data.first!)
             .environmentObject(PagingViewModel())
             .previewInterfaceOrientation(.landscapeLeft)
