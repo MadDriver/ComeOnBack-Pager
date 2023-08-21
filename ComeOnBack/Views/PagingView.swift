@@ -51,9 +51,7 @@ struct PagingView: View {
                                     }
                             }
                         }
-                        .offset(y: -50)
                         .padding()
-                        
                     }
                     
                     
@@ -70,7 +68,6 @@ struct PagingView: View {
                     
                 }
                 .disabled(!isSubmittable)
-                
                 
             }
             .padding(.horizontal)
