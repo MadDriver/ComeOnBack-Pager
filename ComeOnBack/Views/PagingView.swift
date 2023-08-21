@@ -58,7 +58,6 @@ struct PagingView: View {
                             }
                         }
                         .padding()
-                        
                     }
                     
                 } // HStack

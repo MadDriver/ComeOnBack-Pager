@@ -88,13 +88,6 @@ struct HomeScreen: View {
         .onReceive(timer) { _ in
             Task {
                 do {
-                    logger.debug("onReceive")
-                    pagingVM.allControllers = try await API().getControllerList()
-                } catch {
-                    logger.error("Error getting controller list in onReceive")
-                }
-                
-                do {
                     try await pagingVM.shortPoll()
                 } catch {
                     logger.error("\(error)")
