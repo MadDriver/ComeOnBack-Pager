@@ -9,7 +9,7 @@ import SwiftUI
 import OSLog
 
 @main
-struct ComeOnBackApp: App {
+struct ComeOnBackPagerApp: App {
     var body: some Scene {
         WindowGroup {
             HomeScreen()

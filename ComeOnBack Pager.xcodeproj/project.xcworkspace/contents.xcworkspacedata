@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:">
+      location = "self:/Users/user/src/ComeOnBack/ComeOnBack Pager.xcodeproj">
    </FileRef>
 </Workspace>
