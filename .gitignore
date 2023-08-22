@@ -45,7 +45,6 @@ Temporary Items
 ## Local Ignores ##
 /.build
 /Packages
-/*.xcodeproj
 DerivedData/
 timeline.xctimeline
 LocalLoginComponents.swift
