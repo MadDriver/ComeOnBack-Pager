@@ -34,10 +34,9 @@ Temporary Items
 .apdisk
 
 ## Xcode ##
-
+.xcuserstate
 
 ## Databases, etc ##
-*.json
 *.pot
 *.sqlite*
 *.log
