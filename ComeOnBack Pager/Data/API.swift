@@ -6,10 +6,17 @@ enum APIError: Error {
     case invalidParameters
 }
 
+enum HTTPMethod: String {
+    case POST
+    case GET
+    case DELETE
+}
+
 class API {
     private let logger = Logger(subsystem: Logger.subsystem, category: "API")
 //    static let serverURL = "http://127.0.0.1:5000/"
     static let serverURL = "http://d01.org/pager/"
+    static let clientAPIVersion = 0.1
     
     enum endPoint: String {
         case beBack = "beback"
@@ -25,20 +32,22 @@ class API {
         }
     }
     
-    func buildGETRequest(forEndpoint endPoint: endPoint) -> URLRequest {
-        return URLRequest(url: endPoint.getURL())
-    }
-    
-    func buildPOSTRequest(forEndpoint endPoint: endPoint, json: [String: Any]) throws -> URLRequest  {
-        guard let jsonData = try? JSONSerialization.data(withJSONObject: json) else {
-            logger.error("Error encoding JSON string \(json)")
-            throw APIError.invalidParameters
-        }
+    func buildRequest(forEndpoint endPoint: endPoint, method: HTTPMethod, queryItems: [URLQueryItem] = [], json: [String: Any]? = nil) throws -> URLRequest  {
         var request = URLRequest(url: endPoint.getURL())
-        request.httpMethod = "POST"
-        request.httpBody = jsonData
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        request.httpMethod = method.rawValue
+        request.url?.append(queryItems: queryItems)
+        
+        if let json = json {
+            guard let jsonData = try? JSONSerialization.data(withJSONObject: json) else {
+                logger.error("Error encoding JSON string \(json)")
+                throw APIError.invalidParameters
+            }
+            request.httpBody = jsonData
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            request.setValue("application/json", forHTTPHeaderField: "Accept")
+        }
+
+        request.setValue("\(API.clientAPIVersion)", forHTTPHeaderField: "API-Version")
         return request
     }
     
@@ -50,7 +59,7 @@ class API {
             json["forPosition"] = forPosition
         }
         
-        let request = try buildPOSTRequest(forEndpoint: .beBack, json: json)
+        let request = try buildRequest(forEndpoint: .beBack, method: .POST, json: json)
         let (data, response) = try await URLSession.shared.data(for: request)
         
         let returnString = String(data: data, encoding: .utf8) ?? "could not decode return data"
@@ -67,7 +76,7 @@ class API {
     func removeBeBack(initials: String) async throws {
         logger.info("Removing BeBack for \(initials)")
         let json = ["initials": initials]
-        var request = try buildPOSTRequest(forEndpoint: .beBack, json: json)
+        var request = try buildRequest(forEndpoint: .beBack, method: .POST, json: json)
         request.httpMethod = "DELETE"
         let (data, response) = try await URLSession.shared.data(for: request)
         let returnString = String(data: data, encoding: .utf8) ?? "could not decode return data"
@@ -81,7 +90,7 @@ class API {
     func signIn(initials: String) async throws {
         logger.info("Signing in \(initials)")
         let json = ["initials": initials]
-        let request = try buildPOSTRequest(forEndpoint: .signIn, json: json)
+        let request = try buildRequest(forEndpoint: .signIn, method: .POST, json: json)
         let (data, response) = try await URLSession.shared.data(for: request)
         let returnString = String(data: data, encoding: .utf8) ?? "could not decode return data"
         logger.debug("Got server response: \(returnString)")
@@ -94,7 +103,7 @@ class API {
     func signOut(initials: String) async throws {
         logger.info("Signing out \(initials)")
         let json = ["initials": initials]
-        let request = try buildPOSTRequest(forEndpoint: .signOut, json: json)
+        let request = try buildRequest(forEndpoint: .signOut, method: .POST, json: json)
         let (data, response) = try await URLSession.shared.data(for: request)
         let returnString = String(data: data, encoding: .utf8) ?? "could not decode return data"
         logger.debug("Got server response: \(returnString)")
@@ -107,7 +116,7 @@ class API {
     func moveOnPosition(initials: String) async throws {
         logger.info("Moving on position \(initials)")
         let json = ["initials": initials]
-        let request = try buildPOSTRequest(forEndpoint: .moveOnPosition, json: json)
+        let request = try buildRequest(forEndpoint: .moveOnPosition, method: .POST, json: json)
         let (data, response) = try await URLSession.shared.data(for: request)
         let returnString = String(data: data, encoding: .utf8) ?? "could not decode return data"
         logger.debug("Got server response: \(returnString)")
@@ -120,7 +129,7 @@ class API {
     func moveOffPosition(initials: String) async throws {
         logger.info("Moving off position \(initials)")
         let json = ["initials": initials]
-        let request = try buildPOSTRequest(forEndpoint: .moveOffPosition, json: json)
+        let request = try buildRequest(forEndpoint: .moveOffPosition, method: .POST, json: json)
         let (data, response) = try await URLSession.shared.data(for: request)
         let returnString = String(data: data, encoding: .utf8) ?? "could not decode return data"
         logger.debug("Got server response: \(returnString)")
@@ -132,7 +141,7 @@ class API {
     
     func getControllerList() async throws -> [Controller] {
         logger.info("Getting controller list")
-        let request = buildGETRequest(forEndpoint: .controllerList)
+        let request = try buildRequest(forEndpoint: .controllerList, method: .GET)
         let (data, response) = try await URLSession.shared.data(for: request)
         
         guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
@@ -147,7 +156,7 @@ class API {
     
     func getSignedInControllers() async throws -> [Controller] {
         logger.info("Getting signed in controllers")
-        let request = buildGETRequest(forEndpoint: .signedIn)
+        let request = try buildRequest(forEndpoint: .signedIn, method: .GET)
         let (data, response) = try await URLSession.shared.data(for: request)
         
         guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
