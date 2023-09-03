@@ -12,10 +12,15 @@ enum HTTPMethod: String {
     case DELETE
 }
 
+enum APIServer: String {
+    case local = "http://127.0.0.1:5000/"
+    case dev = "http://d01.org/pager/"
+    case production = "https://atcpager.com/d01/"
+}
+
 class API {
     private let logger = Logger(subsystem: Logger.subsystem, category: "API")
-//    static let serverURL = "http://127.0.0.1:5000/"
-    static let serverURL = "http://d01.org/pager/"
+    static let server = APIServer.production
     static let clientAPIVersion = 0.1
     
     enum endPoint: String {
@@ -28,7 +33,7 @@ class API {
         case moveOffPosition = "moveoffposition"
         
         func getURL() -> URL {
-            return URL(string: serverURL + self.rawValue)!
+            return URL(string: server.rawValue + self.rawValue)!
         }
     }
     
