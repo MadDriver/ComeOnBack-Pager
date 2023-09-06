@@ -69,6 +69,14 @@ struct AvailableCellView: View {
                     }
                 }
                 .frame(width: 50)
+                
+                ZStack {
+                    if let registered = controller.registered, registered == false {
+                        Image(systemName: "phone")
+                            .foregroundColor(.red).bold()
+                    }
+                }
+                .frame(width: 50)
             }
         }
     }

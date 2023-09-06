@@ -14,9 +14,13 @@ struct AvailableView: View {
         VStack {
             List {
                 ForEach(controllerList) { controller in
-                    NavigationLink {
-                        PagingView(controller: controller)
-                    } label: {
+                    if let registered = controller.registered, registered == true {
+                        NavigationLink {
+                            PagingView(controller: controller)
+                        } label: {
+                            AvailableCellView(controller: controller)
+                        }
+                    } else {
                         AvailableCellView(controller: controller)
                     }
                 }

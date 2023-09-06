@@ -18,19 +18,18 @@ struct PagingView: View {
     @State var customBeBackTime: Int?
     @State var selectedBeBackTime: String?
     @State private var selectedDev: Controller?
+    
     var controller: Controller
     var isSubmittable: Bool { beBackTime != nil }
     var beBackText: String {
-        if beBackTime == nil { return "Page \(controller.initials)" }
-        if beBackPosition == nil { return "Page back \(controller.initials) at \(beBackTime ?? "  ")" }
-        return "Page back \(controller.initials) at \(beBackTime ?? "  ") for \(beBackPosition ?? "  ")"
+        let verb = controller.registered ?? false ? "Page" : "Assign"
+        if beBackTime == nil { return "\(verb) \(controller.initials)" }
+        if beBackPosition == nil { return "\(verb) back \(controller.initials) at \(beBackTime ?? "  ")" }
+        return "\(verb) \(controller.initials) at \(beBackTime ?? "  ") for \(beBackPosition ?? "  ")"
     }
     
     var body: some View {
             VStack {
-                
-                
-                
                 HStack {
                     VStack {
                         Text("\(beBackText)")
@@ -38,32 +37,37 @@ struct PagingView: View {
                             .padding(.bottom)
                         leftSideOfHStack
                     }
-                    
-                    VStack {
-                        ClockView(selectedMinutes: $customBeBackTime)
-                            .frame(width: 400, height: 400)
+                    if let registered = controller.registered, registered {
+                        VStack {
+                            ClockView(selectedMinutes: $customBeBackTime)
+                                .frame(width: 400, height: 400)
                             
-                        
-                        HStack {
-                            ForEach(pagingVM.beBackTimes, id: \.self) { time in
-                                Text(time + " mins")
-                                    .fontWeight(.bold)
-                                    .frame(width: 100, height: 50)
-                                    .background(selectedBeBackTime == time ? Color.yellow : Color.blue.opacity(0.5))
-                                    .border(Color.red, width: selectedBeBackTime == time ? 2.5 : 0)
-                                    .onTapGesture {
-                                        selectedBeBackTime = time
-                                        self.beBackTime = pagingVM.getBeBackTime(minute: time)
-                                    }
+                            
+                            HStack {
+                                ForEach(pagingVM.beBackTimes, id: \.self) { time in
+                                    Text(time + " mins")
+                                        .fontWeight(.bold)
+                                        .frame(width: 100, height: 50)
+                                        .background(selectedBeBackTime == time ? Color.yellow : Color.blue.opacity(0.5))
+                                        .border(Color.red, width: selectedBeBackTime == time ? 2.5 : 0)
+                                        .onTapGesture {
+                                            selectedBeBackTime = time
+                                            self.beBackTime = pagingVM.getBeBackTime(minute: time)
+                                        }
+                                }
                             }
+                            .padding()
                         }
-                        .padding()
+                    } else {
+                        // Controller bot registered
+                        Text("\(controller.initials) not registered")
+                        Spacer()
                     }
                     
                 } // HStack
                 
                 Button(action: pageBack) {
-                    Text("PAGE")
+                    Text(controller.registered ?? false ? "PAGE" : "ASSIGN")
                         .foregroundColor(isSubmittable ? .black : .black.opacity(0.4))
                         .frame(width: 500, height: 100)
                         .font(.title).bold()
@@ -74,7 +78,7 @@ struct PagingView: View {
                 }
                 .disabled(!isSubmittable)
                 
-            }
+            } // VStack
             .padding()
             .navigationBarBackButtonHidden()
             .background(Color.black.opacity(0.1))
@@ -126,7 +130,6 @@ struct PagingView: View {
     }
     
     func pageBack() {
-        logger.info("In pageBack()")
         guard let beBackTime = beBackTime else {
             logger.error("beBackTime must be defined before calling submitBeBack()")
             return
@@ -186,9 +189,14 @@ struct PagingView: View {
 
 struct PagingView_Previews: PreviewProvider {
     static var previews: some View {
-        
-        PagingView(controller: Controller.mock_data.first!)
+        PagingView(controller: Controller.mock_data[0])
             .environmentObject(PagingViewModel())
             .previewInterfaceOrientation(.landscapeLeft)
+            .previewDevice("iPad (10th generation)")
+        PagingView(controller: Controller.mock_data[1])
+            .environmentObject(PagingViewModel())
+            .previewInterfaceOrientation(.landscapeLeft)
+            .previewDevice("iPad (10th generation)")
+            .previewDisplayName("Not Registered")
     }
 }

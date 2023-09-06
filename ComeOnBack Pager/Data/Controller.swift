@@ -15,6 +15,7 @@ struct Controller: Hashable, Identifiable, Codable  {
     var isDev: Bool
     var status: ControllerStatus
     var beBack: BeBack? = nil
+    var registered: Bool?
     
     enum CodingKeys: String, CodingKey {
         case initials
@@ -22,6 +23,7 @@ struct Controller: Hashable, Identifiable, Codable  {
         case isDev
         case status
         case beBack
+        case registered
     }
     
     static func newControllerFrom(_ controller: Controller, withStatus status: ControllerStatus) -> Controller {
@@ -46,10 +48,10 @@ extension Controller: CustomStringConvertible {
 
 extension Controller {
     static let mock_data = [
-        Controller(initials: "XX", area: "Departure", isDev: false, status: .AVAILABLE),
-        Controller(initials: "YY", area: "Arrival", isDev: true, status: .ON_POSITION),
+        Controller(initials: "XX", area: "Departure", isDev: false, status: .AVAILABLE, registered: true),
+        Controller(initials: "YY", area: "Arrival", isDev: true, status: .ON_POSITION, registered: false),
         Controller(initials: "ZZ", area: "Arrival", isDev: false, status: .PAGED_BACK, beBack:
-                    BeBack(initials: "ZZ", time: try! Time("06:15"), forPosition: "FR1", acknowledged: false)
+                    BeBack(initials: "ZZ", time: try! Time("06:15"), forPosition: "FR1", acknowledged: true), registered: true
                   )
     ]
 }
