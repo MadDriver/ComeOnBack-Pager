@@ -10,8 +10,10 @@ import OSLog
 
 @main
 struct ComeOnBackPagerApp: App {
+    // Some appstorage for facility name string
     var body: some Scene {
         WindowGroup {
+            // TODO: If facility string not stored, show failirtyscreenpiuckjer
             HomeScreen()
         }
     }
