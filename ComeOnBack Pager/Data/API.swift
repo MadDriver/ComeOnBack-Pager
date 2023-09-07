@@ -169,7 +169,7 @@ class API {
         logger.info("Getting controller list")
         let request = try buildRequest(forEndpoint: .controllerList, method: .GET)
         let (data, response) = try await URLSession.shared.data(for: request)
-        
+        logger.info("\(String(data: data, encoding: .utf8) ?? "could not decode return data"))")
         guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
             logger.error("Invalid server response in getControllerList")
             throw APIError.invalidServerResponse

@@ -10,26 +10,61 @@ import OSLog
 
 struct FacilityPickerScreen: View {
     private let logger = Logger(subsystem: Logger.subsystem, category: "FacilityPickerScreen")
-    @Binding var facility: String
     @State var inputedFacility = ""
+    @Binding var facilityID: String?
+//    @AppStorage("facilityID") var facilityID: String?
     var body: some View {
+        
         VStack {
-            Spacer()
-            Form {
-                TextField("Facility", text: $inputedFacility)
+            
+            Text("Enter Facility ID")
+                .font(.title.bold())
+                .foregroundColor(.primary)
+            
+            
+            TextField("Facility", text: $inputedFacility)
+                .frame(width: 100, height: 55)
+                .textFieldStyle(PlainTextFieldStyle())
+                .textInputAutocapitalization(.characters)
+//                .background(Color.gray.opacity(0.2).cornerRadius(10))
+                .multilineTextAlignment(.center)
+                .padding([.horizontal], 4)
+                .overlay {
+                    RoundedRectangle(cornerRadius: 16).stroke(Color.primary)
+                }
+                .padding([.horizontal], 20)
+                
+            
+            Button("ENTER") {
+                registerFacilityID( )
             }
+            .buttonStyle(.borderedProminent)
             .padding()
-            Spacer()
+            
+            
         } // VStack
-        .frame(height: 300, alignment: .center)
-        .onChange(of: inputedFacility) { _ in
-            // Make an API call to register the facility
+        
+    }
+    
+    func registerFacilityID()  {
+        // make API call to register the facility
+        Task {
+            do {
+                API.facilityName = inputedFacility
+                try await API().registerPager()
+                facilityID = inputedFacility
+            } catch APIError.invalidFacilityName {
+                logger.error("No facility found that was entered")
+            } catch {
+                logger.error("\(error.localizedDescription)")
+            }
         }
     }
+    
 }
 
 struct FacilityPickerScreen_Previews: PreviewProvider {
     static var previews: some View {
-        FacilityPickerScreen(facility: .constant(""))
+        FacilityPickerScreen(facilityID: .constant(""))
     }
 }

@@ -10,11 +10,19 @@ import OSLog
 
 @main
 struct ComeOnBackPagerApp: App {
-    // Some appstorage for facility name string
+    private let logger = Logger(subsystem: Logger.subsystem, category: "ComeOnBackPagerApp")
+    @AppStorage("facilityID") var facilityID: String?
     var body: some Scene {
         WindowGroup {
-            // TODO: If facility string not stored, show failirtyscreenpiuckjer
-            HomeScreen()
+            if facilityID == nil {
+                FacilityPickerScreen(facilityID: $facilityID)
+            } else {
+                HomeScreen()
+            }
+        }
+        .onChange(of: facilityID) { newValue in
+            logger.info("onchangeof facilityID")
+            API.facilityName = newValue
         }
     }
 }
