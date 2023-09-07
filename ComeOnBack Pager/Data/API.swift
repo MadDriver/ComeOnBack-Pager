@@ -4,6 +4,8 @@ import OSLog
 enum APIError: Error {
     case invalidServerResponse
     case invalidParameters
+    case facilityNameNotSet
+    case invalidFacilityName
 }
 
 enum HTTPMethod: String {
@@ -14,16 +16,17 @@ enum HTTPMethod: String {
 
 enum APIServer: String {
     case local = "http://127.0.0.1:5000/"
-    case dev = "http://d01.org/pager/"
-    case production = "https://atcpager.com/d01/"
+    case production = "https://atcpager.com/"
 }
 
 class API {
     private let logger = Logger(subsystem: Logger.subsystem, category: "API")
     static let server = APIServer.production
     static let clientAPIVersion = 0.1
+    static var facilityName: String? = nil
     
     enum endPoint: String {
+        case registerPager = "registerpager"
         case beBack = "beback"
         case controllerList = "controllers"
         case signIn = "signin"
@@ -32,13 +35,14 @@ class API {
         case moveOnPosition = "moveonposition"
         case moveOffPosition = "moveoffposition"
         
-        func getURL() -> URL {
-            return URL(string: server.rawValue + self.rawValue)!
+        func getURL() throws -> URL {
+            guard let facilityName = facilityName else { throw APIError.facilityNameNotSet }
+            return URL(string: "\(server.rawValue)/\(facilityName)/\(self.rawValue)")!
         }
     }
     
     func buildRequest(forEndpoint endPoint: endPoint, method: HTTPMethod, queryItems: [URLQueryItem] = [], json: [String: Any]? = nil) throws -> URLRequest  {
-        var request = URLRequest(url: endPoint.getURL())
+        var request = URLRequest(url: try endPoint.getURL())
         request.httpMethod = method.rawValue
         request.url?.append(queryItems: queryItems)
         
@@ -76,6 +80,23 @@ class API {
         }
         
         return BeBack(initials: initials, time: time, forPosition: forPosition, acknowledged: false)
+    }
+    
+    func registerPager() async throws {
+        logger.info("registerPager with facilityName \(API.facilityName ?? "nil")")
+        
+        let request = try buildRequest(forEndpoint: .registerPager, method: .POST)
+        let (_, response) = try await URLSession.shared.data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse,
+              (httpResponse.statusCode != 200 || httpResponse.statusCode != 404) else {
+            logger.error("Invalid server response in submitBeBack()")
+            throw APIError.invalidServerResponse
+        }
+        
+        if httpResponse.statusCode == 404 {
+            throw APIError.invalidFacilityName
+        }
     }
     
     func removeBeBack(initials: String) async throws {
