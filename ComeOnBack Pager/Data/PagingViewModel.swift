@@ -80,16 +80,13 @@ final class PagingViewModel: ObservableObject {
     }
     
     @MainActor
-    func processBeBack(_ beBack: BeBack) {
+    func processBeBack(_ beBack: BeBack, forController controller: Controller) {
         logger.info("processBeBack: \(beBack)")
-        guard var controller = getController(withInitials: beBack.initials) else {
-            logger.error("Could not find conotroller with initials \(beBack.initials)")
-            return
-        }
+        var controller = controller
         controller.status = .PAGED_BACK
         controller.beBack = beBack
-        onBreak.removeAll(where: { $0.initials == beBack.initials })
-        pagedBack.removeAll(where: { $0.initials == beBack.initials })
+        onBreak.removeAll(where: { $0.initials == controller.initials })
+        pagedBack.removeAll(where: { $0.initials == controller.initials })
         pagedBack.append(controller)
         sortPagedBack()
     }
@@ -98,7 +95,7 @@ final class PagingViewModel: ObservableObject {
         let beBack = try await API().submitBeBack(initials: controller.initials,
                                                   time: time,
                                                   forPosition: forPosition)
-        await processBeBack(beBack)
+        await processBeBack(beBack, forController: controller)
     }
     
     func moveControllerToOnPosition(_ controller: Controller) async throws {

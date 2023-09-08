@@ -12,6 +12,11 @@ import OSLog
 struct ComeOnBackPagerApp: App {
     private let logger = Logger(subsystem: Logger.subsystem, category: "ComeOnBackPagerApp")
     @AppStorage("facilityID") var facilityID: String?
+
+    init() {
+        API.facilityID = facilityID
+    }
+    
     var body: some Scene {
         WindowGroup {
             if facilityID == nil {
@@ -19,10 +24,6 @@ struct ComeOnBackPagerApp: App {
             } else {
                 HomeScreen()
             }
-        }
-        .onChange(of: facilityID) { newValue in
-            logger.info("onchangeof facilityID")
-            API.facilityName = newValue
         }
     }
 }

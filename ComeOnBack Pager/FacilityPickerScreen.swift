@@ -11,8 +11,8 @@ import OSLog
 struct FacilityPickerScreen: View {
     private let logger = Logger(subsystem: Logger.subsystem, category: "FacilityPickerScreen")
     @State var inputedFacility = ""
+    @State var showErrorField = false
     @Binding var facilityID: String?
-//    @AppStorage("facilityID") var facilityID: String?
     var body: some View {
         
         VStack {
@@ -41,20 +41,26 @@ struct FacilityPickerScreen: View {
             .buttonStyle(.borderedProminent)
             .padding()
             
+            if showErrorField {
+                Text("Invalid Facility ID")
+                    .foregroundColor(.red).bold()
+            }
             
         } // VStack
         
     }
     
     func registerFacilityID()  {
-        // make API call to register the facility
         Task {
             do {
-                API.facilityName = inputedFacility
-                try await API().registerPager()
-                facilityID = inputedFacility
-            } catch APIError.invalidFacilityName {
-                logger.error("No facility found that was entered")
+                try await API().registerPager(forFacilityID: inputedFacility)
+                await MainActor.run {
+                    facilityID = inputedFacility
+                }
+            } catch APIError.invalidFacilityID {
+                await MainActor.run {
+                    showErrorField = true
+                }
             } catch {
                 logger.error("\(error.localizedDescription)")
             }
