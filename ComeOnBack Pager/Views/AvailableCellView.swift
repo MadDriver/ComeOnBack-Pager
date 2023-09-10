@@ -71,7 +71,7 @@ struct AvailableCellView: View {
                 .frame(width: 50)
                 
                 ZStack {
-                    if let registered = controller.registered, registered == false {
+                    if let registered = controller.registered, !registered {
                         Image(systemName: "phone")
                             .foregroundColor(.red).bold()
                     }

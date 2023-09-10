@@ -18,9 +18,20 @@ struct PagingView: View {
     @State var customBeBackTime: Int?
     @State var selectedBeBackTime: String?
     @State private var selectedDev: Controller?
+    @State var buttonIsDisabled: Bool = true
     
     var controller: Controller
-    var isSubmittable: Bool { beBackTime != nil }
+    var isSubmittable: Bool {
+        if let controllerIsRegistered = controller.registered {
+            if controllerIsRegistered {
+                return beBackTime != nil
+            } else {
+                return beBackPosition != nil
+            }
+        }
+        
+        return false
+    }
     var beBackText: String {
         let verb = controller.registered ?? false ? "Page" : "Assign"
         if beBackTime == nil { return "\(verb) \(controller.initials)" }
@@ -114,6 +125,13 @@ struct PagingView: View {
                 .buttonStyle(.plain)
             }
     } // body
+    
+    
+}
+
+// MARK: Functions
+
+extension PagingView {
     
     func cancelPage() {
         Task {

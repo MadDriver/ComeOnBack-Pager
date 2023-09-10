@@ -139,7 +139,7 @@ final class PagingViewModel: ObservableObject {
     ]
     
     let beBackTimes = [
-        "10", "15", "30", "45"
+        "5", "10", "15", "30"
     ]
     
     let positionRows = [

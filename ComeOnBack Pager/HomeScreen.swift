@@ -124,10 +124,10 @@ struct HomeScreen: View {
     }
 }
 
-struct Home_Previews: PreviewProvider {
-    static var previews: some View {
-        HomeScreen()
-            .previewInterfaceOrientation(.landscapeLeft)
-            .previewDevice(PreviewDevice(rawValue: "iPad (10th generation)"))
-    }
-}
+//struct Home_Previews: PreviewProvider {
+//    static var previews: some View {
+//        HomeScreen()
+//            .previewInterfaceOrientation(.landscapeLeft)
+//            .previewDevice(PreviewDevice(rawValue: "iPad (10th generation)"))
+//    }
+//}
