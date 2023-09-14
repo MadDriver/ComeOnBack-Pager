@@ -78,7 +78,8 @@ struct AvailableCellView: View {
                 }
                 .frame(width: 50)
             }
-        }
+        } // VStack
+        .frame(height: 40)
     }
 }
 

@@ -24,6 +24,7 @@ struct OnPositionCellView: View {
             }
             .padding()
         }
+        .frame(height: 40)
         .onTapGesture {
             if (performingTapGesture) { return }
             performingTapGesture = true
