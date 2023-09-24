@@ -165,7 +165,7 @@ struct PagingView: View {
         
         
         HStack {
-            ForEach(pagingVM.beBackTimes, id: \.self) { time in
+            ForEach(pagingVM.beBackMinutes, id: \.self) { time in
                 Text(time + " mins")
                     .fontWeight(.bold)
                     .frame(width: 100, height: 50)
@@ -174,7 +174,7 @@ struct PagingView: View {
                     .onTapGesture {
                         selectedBeBackTime = time
                         self.beBackTime = pagingVM.getBeBackTime(minute: time)
-                        self.clockBeBackTime = self.beBackTime
+                        // TODO: Update clock to show minutes
                     }
             }
         }
