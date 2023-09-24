@@ -32,11 +32,11 @@ final class PagingViewModel: ObservableObject {
     
     func sortPagedBack() {
         pagedBack.sort(by: { lhs, rhs in
-            guard let lhsTime = lhs.beBack?.time, let rhsTime = rhs.beBack?.time else {
+            guard let lhsBeBack = lhs.beBack, let rhsBeBack = rhs.beBack else {
                 logger.error("Trying to sort controllers without beBacks defined. \(lhs)-\(rhs)")
                 return false
             }
-            return lhsTime < rhsTime
+            return lhsBeBack < rhsBeBack
         })
     }
     
@@ -44,8 +44,7 @@ final class PagingViewModel: ObservableObject {
         
         for controller in controllers {
             logger.info("Signing in \(controller)")
-            try await API().signIn(initials: controller.initials)
-            let controller = Controller.newControllerFrom(controller, withStatus: .AVAILABLE)
+            let controller = try await API().signIn(initials: controller.initials)
             await MainActor.run {
                 onBreak.append(controller)
             }
@@ -91,7 +90,7 @@ final class PagingViewModel: ObservableObject {
         sortPagedBack()
     }
     
-    func createAndSubmitBeBack(forController controller: Controller, time: Time, forPosition: String?) async throws {
+    func createAndSubmitBeBack(forController controller: Controller, time: BasicTime, forPosition: String?) async throws {
         let beBack = try await API().submitBeBack(initials: controller.initials,
                                                   time: time,
                                                   forPosition: forPosition)

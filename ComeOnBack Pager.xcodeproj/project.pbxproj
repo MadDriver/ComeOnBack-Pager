@@ -21,11 +21,12 @@
 		378B1AAB2A5E31920053332A /* ClockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 378B1AAA2A5E31920053332A /* ClockView.swift */; };
 		37A0135429CE79A70083FD3C /* OnPositionCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37A0135329CE79A70083FD3C /* OnPositionCellView.swift */; };
 		37A0135829CE7F080083FD3C /* SignInScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37A0135729CE7F080083FD3C /* SignInScreen.swift */; };
+		CE88038E2ABCBA4600A7E830 /* Date+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE88038D2ABCBA4600A7E830 /* Date+Ext.swift */; };
 		CE934E102A52F54700FFE5BE /* API.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE934E0F2A52F54700FFE5BE /* API.swift */; };
 		CE934E152A5462C000FFE5BE /* BeBack.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE934E142A5462C000FFE5BE /* BeBack.swift */; };
 		CE934E172A54ABD700FFE5BE /* AvailableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE934E162A54ABD700FFE5BE /* AvailableView.swift */; };
 		CE934E192A54BE9C00FFE5BE /* OnPositionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE934E182A54BE9C00FFE5BE /* OnPositionView.swift */; };
-		CE934E1B2A54C2DF00FFE5BE /* Time.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE934E1A2A54C2DF00FFE5BE /* Time.swift */; };
+		CE934E1B2A54C2DF00FFE5BE /* BasicTime.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE934E1A2A54C2DF00FFE5BE /* BasicTime.swift */; };
 		CE934E1D2A54C8C500FFE5BE /* HeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE934E1C2A54C8C500FFE5BE /* HeaderView.swift */; };
 		CEC9476E2AA9FFFD00476C0A /* FacilityPickerScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC9476D2AA9FFFD00476C0A /* FacilityPickerScreen.swift */; };
 /* End PBXBuildFile section */
@@ -47,11 +48,12 @@
 		37A0135329CE79A70083FD3C /* OnPositionCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnPositionCellView.swift; sourceTree = "<group>"; };
 		37A0135729CE7F080083FD3C /* SignInScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInScreen.swift; sourceTree = "<group>"; };
 		CE146CF42A54EE8D0096B1B6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		CE88038D2ABCBA4600A7E830 /* Date+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Ext.swift"; sourceTree = "<group>"; };
 		CE934E0F2A52F54700FFE5BE /* API.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = API.swift; sourceTree = "<group>"; };
 		CE934E142A5462C000FFE5BE /* BeBack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeBack.swift; sourceTree = "<group>"; };
 		CE934E162A54ABD700FFE5BE /* AvailableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvailableView.swift; sourceTree = "<group>"; };
 		CE934E182A54BE9C00FFE5BE /* OnPositionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnPositionView.swift; sourceTree = "<group>"; };
-		CE934E1A2A54C2DF00FFE5BE /* Time.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Time.swift; sourceTree = "<group>"; };
+		CE934E1A2A54C2DF00FFE5BE /* BasicTime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicTime.swift; sourceTree = "<group>"; };
 		CE934E1C2A54C8C500FFE5BE /* HeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderView.swift; sourceTree = "<group>"; };
 		CEC9476D2AA9FFFD00476C0A /* FacilityPickerScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FacilityPickerScreen.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -113,10 +115,11 @@
 			isa = PBXGroup;
 			children = (
 				CE934E0F2A52F54700FFE5BE /* API.swift */,
-				CE934E1A2A54C2DF00FFE5BE /* Time.swift */,
+				CE934E1A2A54C2DF00FFE5BE /* BasicTime.swift */,
 				374D8C5C29BB880C002A690D /* Controller.swift */,
 				374D8C6029BCF73B002A690D /* PagingViewModel.swift */,
 				CE934E142A5462C000FFE5BE /* BeBack.swift */,
+				CE88038D2ABCBA4600A7E830 /* Date+Ext.swift */,
 			);
 			path = Data;
 			sourceTree = "<group>";
@@ -217,10 +220,11 @@
 				378B1AAB2A5E31920053332A /* ClockView.swift in Sources */,
 				3766D3912A5B9132002B64BA /* EmptyControllerView.swift in Sources */,
 				CE934E172A54ABD700FFE5BE /* AvailableView.swift in Sources */,
+				CE88038E2ABCBA4600A7E830 /* Date+Ext.swift in Sources */,
 				374D8C4B29BA7E5B002A690D /* ComeOnBackPagerApp.swift in Sources */,
 				CE934E192A54BE9C00FFE5BE /* OnPositionView.swift in Sources */,
 				374D8C5F29BCC2D7002A690D /* PagingView.swift in Sources */,
-				CE934E1B2A54C2DF00FFE5BE /* Time.swift in Sources */,
+				CE934E1B2A54C2DF00FFE5BE /* BasicTime.swift in Sources */,
 				CE934E102A52F54700FFE5BE /* API.swift in Sources */,
 				372D02802A6452EF00F8CFC4 /* AvailableCellBeta.swift in Sources */,
 				374D8C5B29BB86EB002A690D /* AvailableCellView.swift in Sources */,

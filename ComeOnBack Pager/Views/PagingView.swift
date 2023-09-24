@@ -96,7 +96,7 @@ struct PagingView: View {
             }
         }
         .onAppear {
-            beBackTime = controller.beBack?.time.stringValue
+            beBackTime = controller.beBack?.stringValue
             beBackPosition = controller.beBack?.forPosition
             
         }
@@ -184,7 +184,7 @@ extension PagingView {
         
         Task {
             do {
-                let time = try Time(beBackTime)
+                let time = try BasicTime(beBackTime)
                 try await pagingVM.createAndSubmitBeBack(forController: controller, time: time, forPosition: beBackPosition)
                 await MainActor.run { dismiss() }
             } catch APIError.invalidParameters {

@@ -50,8 +50,8 @@ extension Controller {
     static let mock_data = [
         Controller(initials: "XX", area: "Departure", isDev: false, status: .AVAILABLE, registered: true),
         Controller(initials: "YY", area: "Arrival", isDev: true, status: .ON_POSITION, registered: false),
-        Controller(initials: "ZZ", area: "Arrival", isDev: false, status: .PAGED_BACK, beBack:
-                    BeBack(time: try! Time("06:15"), forPosition: "FR1", acknowledged: true), registered: true
-                  )
+//        Controller(initials: "ZZ", area: "Arrival", isDev: false, status: .PAGED_BACK, beBack:
+//                    BeBack(time: try! BasicTime("06:15"), forPosition: "FR1", acknowledged: true), registered: true
+//                  )
     ]
 }
