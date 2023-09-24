@@ -80,7 +80,6 @@ final class PagingViewModel: ObservableObject {
     
     @MainActor
     func processBeBack(_ beBack: BeBack, forController controller: Controller) {
-        logger.info("processBeBack: \(beBack)")
         var controller = controller
         controller.status = .PAGED_BACK
         controller.beBack = beBack
@@ -90,10 +89,8 @@ final class PagingViewModel: ObservableObject {
         sortPagedBack()
     }
     
-    func createAndSubmitBeBack(forController controller: Controller, time: BasicTime, forPosition: String?) async throws {
-        let beBack = try await API().submitBeBack(initials: controller.initials,
-                                                  time: time,
-                                                  forPosition: forPosition)
+    func submitBeBack(_ beBack: BeBack, forController controller: Controller) async throws {
+        try await API().submitBeBack(beBack, forInitials: controller.initials)
         await processBeBack(beBack, forController: controller)
     }
     

@@ -31,7 +31,7 @@ struct PagingView: View {
     @EnvironmentObject var pagingVM: PagingViewModel
     @State var beBackPosition: String?
     @State var beBackTime: String?
-    @State var customBeBackTime: Int?
+    @State var clockBeBackTime: Int?
     @State var selectedBeBackTime: String?
     @State private var selectedDev: Controller?
     @State var buttonIsDisabled: Bool = true
@@ -102,17 +102,29 @@ struct PagingView: View {
         .padding()
         .navigationBarBackButtonHidden()
         .background(Color.black.opacity(0.1))
-        .onChange(of: customBeBackTime) { time in
+        .onChange(of: clockBeBackTime) { time in
             selectedBeBackTime = nil
             beBackTime = nil
             if let time = time {
                 beBackTime = pagingVM.customBeBackTimeChanged(time: time)
             }
         }
+        .onChange(of: timePicker) { picker in
+            switch timePicker {
+            case .normal:
+                beBackTime = controller.beBack?.stringValue
+            case .asap:
+                beBackTime = "ASAP"
+            }
+        }
         .onAppear {
             beBackTime = controller.beBack?.stringValue
             beBackPosition = controller.beBack?.forPosition
-            
+            if beBackTime == "ASAP" {
+                timePicker = .asap
+            } else {
+                clockBeBackTime = controller.beBack?.atTime?.minutes
+            }
         }
         .overlay(alignment: .bottomTrailing) {
             if (controller.status == .PAGED_BACK) {
@@ -148,7 +160,7 @@ struct PagingView: View {
     
     @ViewBuilder
     private var rightClockView: some View {
-        ClockView(selectedMinutes: $customBeBackTime)
+        ClockView(selectedMinutes: $clockBeBackTime)
             .frame(width: 400, height: 400)
         
         
@@ -162,6 +174,7 @@ struct PagingView: View {
                     .onTapGesture {
                         selectedBeBackTime = time
                         self.beBackTime = pagingVM.getBeBackTime(minute: time)
+                        self.clockBeBackTime = self.beBackTime
                     }
             }
         }
@@ -231,13 +244,15 @@ extension PagingView {
         
         Task {
             do {
-                let time = try BasicTime(beBackTime)
-                try await pagingVM.createAndSubmitBeBack(forController: controller, time: time, forPosition: beBackPosition)
+                let beBack = try BeBack(timeString: beBackTime, forPosition: beBackPosition)
+                try await pagingVM.submitBeBack(beBack, forController: controller)
                 await MainActor.run { dismiss() }
             } catch APIError.invalidParameters {
                 logger.error("Invalid parameters in pageBack()")
             } catch APIError.invalidServerResponse {
                 logger.error("Invalid server response in pageBack()")
+            } catch BeBackError.initializationError {
+                logger.error("Could not create BeBack with timeString\(beBackTime)")
             } catch {
                 logger.error("Unexpected error in pageBack(): \(error)")
             }

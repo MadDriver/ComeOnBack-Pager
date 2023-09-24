@@ -64,12 +64,12 @@ class API {
         return request
     }
     
-    func submitBeBack(initials: String, time: BasicTime, forPosition position: String?) async throws -> BeBack{
-        logger.info("submitBeBack(initials: \(initials) time: \(time) forPosition: \(position ?? "nil")")
+    func submitBeBack(_ beBack: BeBack, forInitials initials: String) async throws {
+        logger.info("submitBeBack(\(beBack), forInitials: \(initials)")
         
-        var json: [String: Any] = ["initials": initials, "time": time.stringValue]
-        if position != nil {
-            json["forPosition"] = position
+        var json: [String: Any] = ["initials": initials, "time": beBack.stringValue]
+        if let forPosition = beBack.forPosition {
+            json["forPosition"] = forPosition
         }
         
         let request = try buildRequest(forEndpoint: .beBack, method: .POST, json: json)
@@ -81,8 +81,6 @@ class API {
             logger.debug("Got server response: \(returnString)")
             throw APIError.invalidServerResponse
         }
-        
-        return BeBack(atTime: time, forPosition: position)
     }
     
     func registerPager(forFacilityID facilityID: String) async throws {
