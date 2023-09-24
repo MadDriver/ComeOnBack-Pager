@@ -8,6 +8,22 @@
 import SwiftUI
 import OSLog
 
+enum TimeASAPPicker: CaseIterable, Identifiable {
+    case normal
+    case asap
+    
+    var id: Self { self }
+    
+    var description: String {
+        switch self {
+        case .normal:
+            return "Normal"
+        case .asap:
+            return "ASAP"
+        }
+    }
+}
+
 struct PagingView: View {
     private let logger = Logger(subsystem: Logger.subsystem, category: "PagingView")
     
@@ -19,11 +35,12 @@ struct PagingView: View {
     @State var selectedBeBackTime: String?
     @State private var selectedDev: Controller?
     @State var buttonIsDisabled: Bool = true
+    @State var timePicker: TimeASAPPicker = .normal
     
     var controller: Controller
     
     var isSubmittable: Bool { beBackTime != nil }
-
+    
     var beBackText: String {
         let verb = controller.registered ?? false ? "Page" : "Assign"
         if beBackTime == nil { return "\(verb) \(controller.initials)" }
@@ -41,25 +58,22 @@ struct PagingView: View {
                     leftSideOfHStack
                 }
                 VStack {
-                    ClockView(selectedMinutes: $customBeBackTime)
-                        .frame(width: 400, height: 400)
-                    
-                    
-                    HStack {
-                        ForEach(pagingVM.beBackTimes, id: \.self) { time in
-                            Text(time + " mins")
-                                .fontWeight(.bold)
-                                .frame(width: 100, height: 50)
-                                .background(selectedBeBackTime == time ? Color.yellow : Color.blue.opacity(0.5))
-                                .border(Color.red, width: selectedBeBackTime == time ? 2.5 : 0)
-                                .onTapGesture {
-                                    selectedBeBackTime = time
-                                    self.beBackTime = pagingVM.getBeBackTime(minute: time)
-                                }
+                    Picker("Time Picker type", selection: $timePicker) {
+                        ForEach(TimeASAPPicker.allCases) { option in
+                            Text(option.description)
                         }
                     }
-                    .padding()
-                }
+                    .pickerStyle(SegmentedPickerStyle())
+                    .frame(width: 200)
+                                        
+                    switch timePicker {
+                    case .normal:
+                        rightClockView
+                    case .asap:
+                        asapView
+                    }
+                } // VStack
+                .frame(height: 500)
                 
             } // HStack
             
@@ -71,7 +85,6 @@ struct PagingView: View {
                     .background(isSubmittable ? Color.blue.opacity(0.8) : Color.gray)
                     .cornerRadius(20)
                     .padding()
-                
             }
             .disabled(!isSubmittable)
             
@@ -85,6 +98,7 @@ struct PagingView: View {
                 }
             }
         } // VStack
+        .frame(maxHeight: .infinity)
         .padding()
         .navigationBarBackButtonHidden()
         .background(Color.black.opacity(0.1))
@@ -120,6 +134,39 @@ struct PagingView: View {
             .buttonStyle(.plain)
         }
     } // body
+    
+    @ViewBuilder
+    private var asapView: some View {
+        ZStack {
+            Circle()
+                .fill(.red)
+            Text("ASAP")
+                .font(.title).bold()
+        }
+        .padding()
+    }
+    
+    @ViewBuilder
+    private var rightClockView: some View {
+        ClockView(selectedMinutes: $customBeBackTime)
+            .frame(width: 400, height: 400)
+        
+        
+        HStack {
+            ForEach(pagingVM.beBackTimes, id: \.self) { time in
+                Text(time + " mins")
+                    .fontWeight(.bold)
+                    .frame(width: 100, height: 50)
+                    .background(selectedBeBackTime == time ? Color.yellow : Color.blue.opacity(0.5))
+                    .border(Color.red, width: selectedBeBackTime == time ? 2.5 : 0)
+                    .onTapGesture {
+                        selectedBeBackTime = time
+                        self.beBackTime = pagingVM.getBeBackTime(minute: time)
+                    }
+            }
+        }
+        .padding()
+    }
     
     @ViewBuilder
     private var leftSideOfHStack: some View {
