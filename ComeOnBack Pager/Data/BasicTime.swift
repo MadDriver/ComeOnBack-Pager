@@ -2,7 +2,7 @@ enum TimeError: Error {
     case InvalidString(error: String)
 }
 
-public struct Time: Hashable {
+public struct BasicTime: Hashable {
     public let hours: Int // 00-23
     public let minutes: Int // 00-59
     
@@ -39,14 +39,14 @@ public struct Time: Hashable {
     }
 }
 
-extension Time: CustomStringConvertible {
+extension BasicTime: CustomStringConvertible {
     public var description: String {
         return stringValue
     }
 }
 
-extension Time: Comparable {
-    public static func < (lhs: Time, rhs: Time) -> Bool {
+extension BasicTime: Comparable {
+    public static func < (lhs: BasicTime, rhs: BasicTime) -> Bool {
         if lhs.hours == rhs.hours {
             return lhs.minutes < rhs.minutes
         }
@@ -54,7 +54,7 @@ extension Time: Comparable {
     }
 }
 
-extension Time: Codable {
+extension BasicTime: Codable {
     enum CodingKeys: String, CodingKey {
         case time
     }
