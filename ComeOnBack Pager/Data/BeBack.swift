@@ -79,7 +79,7 @@ extension BeBack: Codable {
     init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
 
-        let position = try values.decode(String.self, forKey: .forPosition)
+        let position = try values.decodeIfPresent(String.self, forKey: .forPosition)
         let ack = try values.decode(Bool.self, forKey: .acknowledged)
         let timeString = try values.decode(String.self, forKey: .timeString)
         try self.init(timeString: timeString, forPosition: position, acknowledged: ack)
