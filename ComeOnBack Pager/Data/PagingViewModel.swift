@@ -32,20 +32,18 @@ final class PagingViewModel: ObservableObject {
     
     func sortPagedBack() {
         pagedBack.sort(by: { lhs, rhs in
-            guard let lhsTime = lhs.beBack?.time, let rhsTime = rhs.beBack?.time else {
+            guard let lhsBeBack = lhs.beBack, let rhsBeBack = rhs.beBack else {
                 logger.error("Trying to sort controllers without beBacks defined. \(lhs)-\(rhs)")
                 return false
             }
-            return lhsTime < rhsTime
+            return lhsBeBack < rhsBeBack
         })
     }
     
     func signIn(controllers: [Controller]) async throws {
-        
         for controller in controllers {
             logger.info("Signing in \(controller)")
-            try await API().signIn(initials: controller.initials)
-            let controller = Controller.newControllerFrom(controller, withStatus: .AVAILABLE)
+            let controller = try await API().signIn(initials: controller.initials)
             await MainActor.run {
                 onBreak.append(controller)
             }
@@ -53,7 +51,6 @@ final class PagingViewModel: ObservableObject {
     }
     
     func signOut(controllers: [Controller]) async throws {
-        
         for controller in controllers {
             logger.info("Signing out \(controller)")
             try await API().signOut(initials: controller.initials)
@@ -81,7 +78,6 @@ final class PagingViewModel: ObservableObject {
     
     @MainActor
     func processBeBack(_ beBack: BeBack, forController controller: Controller) {
-        logger.info("processBeBack: \(beBack)")
         var controller = controller
         controller.status = .PAGED_BACK
         controller.beBack = beBack
@@ -91,10 +87,8 @@ final class PagingViewModel: ObservableObject {
         sortPagedBack()
     }
     
-    func createAndSubmitBeBack(forController controller: Controller, time: Time, forPosition: String?) async throws {
-        let beBack = try await API().submitBeBack(initials: controller.initials,
-                                                  time: time,
-                                                  forPosition: forPosition)
+    func submitBeBack(_ beBack: BeBack, forController controller: Controller) async throws {
+        try await API().submitBeBack(beBack, forInitials: controller.initials)
         await processBeBack(beBack, forController: controller)
     }
     
@@ -138,8 +132,8 @@ final class PagingViewModel: ObservableObject {
         "FR1", "FR2", "FR3", "FR4", "FDCD", "MO1", "MO2", "MO3", "CI"
     ]
     
-    let beBackTimes = [
-        "5", "10", "15", "30"
+    let beBackMinutes = [
+        "10", "15", "30", "45"
     ]
     
     let positionRows = [
@@ -150,33 +144,18 @@ final class PagingViewModel: ObservableObject {
         GridItem(), GridItem()
     ]
     
-    var beBackTimeFormat: DateFormatter {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "HH:mm"
-        return formatter
-    }
-    
-    func getBeBackTime(minute: String) -> String {
+    func roundUpToNext5Minutes(minutes: Int) -> Int? {
         let calendar = Calendar.current
-        let timeToAdd = Int(minute)!
-        let dateToEdit = calendar.date(byAdding: .minute, value: timeToAdd, to: Date())!
-        let m = calendar.component(.minute, from: dateToEdit)
+        let dateToEdit = calendar.date(byAdding: .minute, value: minutes, to: Date())!
+        let currentMinutes = calendar.component(.minute, from: dateToEdit)
         
-        if m % 5 != 0 {
-            let r = 5 - (m % 5)
-            let minuteToAdd = timeToAdd + r
+        if currentMinutes % 5 != 0 {
+            let r = 5 - (currentMinutes % 5)
+            let minuteToAdd = minutes + r
             let actualDate = calendar.date(byAdding: .minute, value: minuteToAdd, to: Date())!
-            return beBackTimeFormat.string(from: actualDate)
+            return calendar.component(.minute, from: actualDate)
         } else {
-            return beBackTimeFormat.string(from: dateToEdit)
+            return calendar.component(.minute, from: dateToEdit)
         }
     }
-    
-    func customBeBackTimeChanged(time: Int) -> String {
-        let calendar = Calendar.current
-        let dateOne = calendar.date(bySetting: .minute, value: time, of: Date())!
-        let dateString = beBackTimeFormat.string(from: dateOne)
-        return dateString
-    }
-    
 }

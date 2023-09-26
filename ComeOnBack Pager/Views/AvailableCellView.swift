@@ -49,7 +49,7 @@ struct AvailableCellView: View {
                 
                 ZStack {
                     if let beBack = controller.beBack {
-                        Text("\(beBack.time.description)")
+                        Text("\(beBack.stringValue)")
                     }
                 }
                 .frame(width: 50)

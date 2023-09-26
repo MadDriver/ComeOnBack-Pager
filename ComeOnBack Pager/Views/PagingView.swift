@@ -8,27 +8,46 @@
 import SwiftUI
 import OSLog
 
+enum TimeASAPPicker: CaseIterable, Identifiable {
+    case normal
+    case asap
+    
+    var id: Self { self }
+    
+    var description: String {
+        switch self {
+        case .normal:
+            return "Normal"
+        case .asap:
+            return "ASAP"
+        }
+    }
+}
+
 struct PagingView: View {
     private let logger = Logger(subsystem: Logger.subsystem, category: "PagingView")
     
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var pagingVM: PagingViewModel
+    
+    // The current selected time/position
+    @State var beBackTimeString: String?
     @State var beBackPosition: String?
-    @State var beBackTime: String?
-    @State var customBeBackTime: Int?
-    @State var selectedBeBackTime: String?
-    @State private var selectedDev: Controller?
+    
+    // Handle the two sources of user input
+    @State var clockBeBackMinutes: Int?
+    @State var selectedBeBackMinutes: String?
+    @State var timePicker: TimeASAPPicker = .normal
+    
     @State var buttonIsDisabled: Bool = true
     
     var controller: Controller
-    
-    var isSubmittable: Bool { beBackTime != nil }
-
+    var isSubmittable: Bool { beBackTimeString != nil }
     var beBackText: String {
         let verb = controller.registered ?? false ? "Page" : "Assign"
-        if beBackTime == nil { return "\(verb) \(controller.initials)" }
-        if beBackPosition == nil { return "\(verb) \(controller.initials) at \(beBackTime ?? "  ")" }
-        return "\(verb) \(controller.initials) at \(beBackTime ?? "  ") for \(beBackPosition ?? "  ")"
+        if beBackTimeString == nil { return "\(verb) \(controller.initials)" }
+        if beBackPosition == nil { return "\(verb) \(controller.initials) at \(beBackTimeString ?? "  ")" }
+        return "\(verb) \(controller.initials) at \(beBackTimeString ?? "  ") for \(beBackPosition ?? "  ")"
     }
     
     var body: some View {
@@ -41,25 +60,22 @@ struct PagingView: View {
                     leftSideOfHStack
                 }
                 VStack {
-                    ClockView(selectedMinutes: $customBeBackTime)
-                        .frame(width: 400, height: 400)
-                    
-                    
-                    HStack {
-                        ForEach(pagingVM.beBackTimes, id: \.self) { time in
-                            Text(time + " mins")
-                                .fontWeight(.bold)
-                                .frame(width: 100, height: 50)
-                                .background(selectedBeBackTime == time ? Color.yellow : Color.blue.opacity(0.5))
-                                .border(Color.red, width: selectedBeBackTime == time ? 2.5 : 0)
-                                .onTapGesture {
-                                    selectedBeBackTime = time
-                                    self.beBackTime = pagingVM.getBeBackTime(minute: time)
-                                }
+                    Picker("Time Picker type", selection: $timePicker) {
+                        ForEach(TimeASAPPicker.allCases) { option in
+                            Text(option.description)
                         }
                     }
-                    .padding()
-                }
+                    .pickerStyle(SegmentedPickerStyle())
+                    .frame(width: 200)
+                                        
+                    switch timePicker {
+                    case .normal:
+                        rightClockView
+                    case .asap:
+                        asapView
+                    }
+                } // VStack
+                .frame(height: 500)
                 
             } // HStack
             
@@ -71,7 +87,6 @@ struct PagingView: View {
                     .background(isSubmittable ? Color.blue.opacity(0.8) : Color.gray)
                     .cornerRadius(20)
                     .padding()
-                
             }
             .disabled(!isSubmittable)
             
@@ -85,20 +100,26 @@ struct PagingView: View {
                 }
             }
         } // VStack
+        .frame(maxHeight: .infinity)
         .padding()
         .navigationBarBackButtonHidden()
         .background(Color.black.opacity(0.1))
-        .onChange(of: customBeBackTime) { time in
-            selectedBeBackTime = nil
-            beBackTime = nil
-            if let time = time {
-                beBackTime = pagingVM.customBeBackTimeChanged(time: time)
+        .onChange(of: timePicker) { picker in
+            switch timePicker {
+            case .normal:
+                newMinuteSelected(minute: controller.beBack?.atTime?.minutes)
+            case .asap:
+                beBackTimeString = "ASAP"
             }
         }
         .onAppear {
-            beBackTime = controller.beBack?.time.stringValue
+            beBackTimeString = controller.beBack?.stringValue
             beBackPosition = controller.beBack?.forPosition
-            
+            if beBackTimeString == "ASAP" {
+                timePicker = .asap
+            } else {
+                clockBeBackMinutes = controller.beBack?.atTime?.minutes
+            }
         }
         .overlay(alignment: .bottomTrailing) {
             if (controller.status == .PAGED_BACK) {
@@ -120,6 +141,39 @@ struct PagingView: View {
             .buttonStyle(.plain)
         }
     } // body
+    
+    @ViewBuilder
+    private var asapView: some View {
+        ZStack {
+            Circle()
+                .fill(.red)
+            Text("ASAP")
+                .font(.title).bold()
+        }
+        .padding()
+    }
+    
+    @ViewBuilder
+    private var rightClockView: some View {
+        ClockView(selectedMinute: clockBeBackMinutes, onMinuteSelected: newMinuteSelected)
+            .frame(width: 400, height: 400)
+        
+        HStack {
+            ForEach(pagingVM.beBackMinutes, id: \.self) { minute in
+                Text("\(minute) mins")
+                    .fontWeight(.bold)
+                    .frame(width: 100, height: 50)
+                    .background(selectedBeBackMinutes == minute ? Color.yellow : Color.blue.opacity(0.5))
+                    .border(Color.red, width: selectedBeBackMinutes == minute ? 2.5 : 0)
+                    .onTapGesture {
+                        guard let minutesAsInt = Int(minute) else { return }
+                        newMinuteSelected(minute: pagingVM.roundUpToNext5Minutes(minutes: minutesAsInt))
+                        self.selectedBeBackMinutes = minute
+                    }
+            }
+        }
+        .padding()
+    }
     
     @ViewBuilder
     private var leftSideOfHStack: some View {
@@ -162,6 +216,21 @@ struct PagingView: View {
 
 extension PagingView {
     
+    func newMinuteSelected(minute: Int?) {
+        logger.debug("newTimeSelected \(String(describing:minute))")
+        if let minutes = minute,
+           let newDate = Calendar.current.date(bySetting: .minute, value: minutes, of: Date()) {
+            let beBackTime = BasicTime(fromDate: newDate)
+            self.clockBeBackMinutes = minutes
+            self.selectedBeBackMinutes = nil
+            self.beBackTimeString = beBackTime?.stringValue
+        } else {
+            self.clockBeBackMinutes = nil
+            self.selectedBeBackMinutes = nil
+            self.beBackTimeString = nil
+        }
+    }
+    
     func cancelPage() {
         Task {
             do {
@@ -177,20 +246,22 @@ extension PagingView {
     }
     
     func pageBack() {
-        guard let beBackTime = beBackTime else {
-            logger.error("beBackTime must be defined before calling submitBeBack()")
+        guard let beBackTime = beBackTimeString else {
+            logger.error("beBackTimeString must be defined before calling submitBeBack()")
             return
         }
         
         Task {
             do {
-                let time = try Time(beBackTime)
-                try await pagingVM.createAndSubmitBeBack(forController: controller, time: time, forPosition: beBackPosition)
+                let beBack = try BeBack(timeString: beBackTime, forPosition: beBackPosition)
+                try await pagingVM.submitBeBack(beBack, forController: controller)
                 await MainActor.run { dismiss() }
             } catch APIError.invalidParameters {
                 logger.error("Invalid parameters in pageBack()")
             } catch APIError.invalidServerResponse {
                 logger.error("Invalid server response in pageBack()")
+            } catch BeBackError.initializationError {
+                logger.error("Could not create BeBack with timeString\(beBackTime)")
             } catch {
                 logger.error("Unexpected error in pageBack(): \(error)")
             }

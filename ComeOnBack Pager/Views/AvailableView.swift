@@ -20,15 +20,6 @@ struct AvailableView: View {
                     } label: {
                         AvailableCellView(controller: controller)
                     }
-//                    if let registered = controller.registered, registered == true {
-//                        NavigationLink {
-//                            PagingView(controller: controller)
-//                        } label: {
-//                            AvailableCellView(controller: controller)
-//                        }
-//                    } else {
-//                        AvailableCellView(controller: controller)
-//                    }
                 }
             } // List
         }

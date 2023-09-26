@@ -26,7 +26,7 @@ struct AvailableCellBeta: View {
                 .font(.system(size: 45, weight: .bold))
                 .padding()
             
-            Text("\(controller.beBack?.time.description ?? " ")")
+            Text("\(controller.beBack?.stringValue ?? " ")")
                 .font(.system(size: 45, weight: .bold))
 
             Text("\(controller.beBack?.forPosition?.description ?? " ")")

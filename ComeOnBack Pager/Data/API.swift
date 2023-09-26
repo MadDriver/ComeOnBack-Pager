@@ -8,6 +8,10 @@ enum APIError: Error {
     case invalidFacilityID
 }
 
+enum CodingError: Error {
+    case decodingError(error: String)
+}
+
 enum HTTPMethod: String {
     case POST
     case GET
@@ -60,38 +64,36 @@ class API {
         return request
     }
     
-    func submitBeBack(initials: String, time: Time, forPosition: String?) async throws -> BeBack{
-        logger.info("submitBeBack(initials: \(initials) time: \(time) forPosition: \(forPosition ?? "nil")")
+    func submitBeBack(_ beBack: BeBack, forInitials initials: String) async throws {
+        logger.info("submitBeBack(\(beBack), forInitials: \(initials)")
         
-        var json: [String: Any] = ["initials": initials, "time": time.stringValue]
-        if forPosition != nil {
+        var json: [String: Any] = ["initials": initials, "time": beBack.stringValue]
+        if let forPosition = beBack.forPosition {
             json["forPosition"] = forPosition
         }
         
         let request = try buildRequest(forEndpoint: .beBack, method: .POST, json: json)
-        let (_, response) = try await URLSession.shared.data(for: request)
+        let (data, response) = try await URLSession.shared.data(for: request)
         
-        //let returnString = String(data: data, encoding: .utf8) ?? "could not decode return data"
-        //logger.debug("Got server response: \(returnString)")
         guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 201 else {
             logger.error("Invalid server response in submitBeBack()")
+            let returnString = String(data: data, encoding: .utf8) ?? "could not decode return data"
+            logger.debug("Got server response: \(returnString)")
             throw APIError.invalidServerResponse
         }
-        
-        return BeBack(time: time, forPosition: forPosition, acknowledged: false)
     }
     
     func registerPager(forFacilityID facilityID: String) async throws {
         logger.info("registerPager with facilityName \(facilityID)")
         API.facilityID = facilityID
         let request = try buildRequest(forEndpoint: .registerPager, method: .POST)
-        let (_, response) = try await URLSession.shared.data(for: request)
+        let (data, response) = try await URLSession.shared.data(for: request)
         
-        //let returnString = String(data: data, encoding: .utf8) ?? "could not decode return data"
-        //logger.debug("Got server response: \(returnString)")
         guard let httpResponse = response as? HTTPURLResponse,
               (httpResponse.statusCode != 200 || httpResponse.statusCode != 404) else {
             logger.error("Invalid server response in submitBeBack()")
+            let returnString = String(data: data, encoding: .utf8) ?? "could not decode return data"
+            logger.debug("Got server response: \(returnString)")
             API.facilityID = nil
             throw APIError.invalidServerResponse
         }
@@ -107,40 +109,42 @@ class API {
         let json = ["initials": initials]
         var request = try buildRequest(forEndpoint: .beBack, method: .POST, json: json)
         request.httpMethod = "DELETE"
-        let (_, response) = try await URLSession.shared.data(for: request)
+        let (data, response) = try await URLSession.shared.data(for: request)
         
-        //let returnString = String(data: data, encoding: .utf8) ?? "could not decode return data"
-        //logger.debug("Got server response: \(returnString)")
         guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
             logger.error("Invalid server response in removeBeBack(\(initials))")
+            let returnString = String(data: data, encoding: .utf8) ?? "could not decode return data"
+            logger.debug("Got server response: \(returnString)")
             throw APIError.invalidServerResponse
         }
     }
     
-    func signIn(initials: String) async throws {
+    func signIn(initials: String) async throws -> Controller {
         logger.info("Signing in \(initials)")
         let json = ["initials": initials]
         let request = try buildRequest(forEndpoint: .signIn, method: .POST, json: json)
-        let (_, response) = try await URLSession.shared.data(for: request)
+        let (data, response) = try await URLSession.shared.data(for: request)
         
-        //let returnString = String(data: data, encoding: .utf8) ?? "could not decode return data"
-        //logger.debug("Got server response: \(returnString)")
         guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
             logger.error("Invalid server response in signIn(\(initials))")
+            let returnString = String(data: data, encoding: .utf8) ?? "could not decode return data"
+            logger.debug("Got server response: \(returnString)")
             throw APIError.invalidServerResponse
         }
+        return try JSONDecoder().decode(Controller.self, from: data)
     }
     
     func signOut(initials: String) async throws {
         logger.info("Signing out \(initials)")
         let json = ["initials": initials]
         let request = try buildRequest(forEndpoint: .signOut, method: .POST, json: json)
-        let (_, response) = try await URLSession.shared.data(for: request)
+        let (data, response) = try await URLSession.shared.data(for: request)
         
-        //let returnString = String(data: data, encoding: .utf8) ?? "could not decode return data"
-        //logger.debug("Got server response: \(returnString)")
+        
         guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
             logger.error("Invalid server response in signOut\(initials)")
+            let returnString = String(data: data, encoding: .utf8) ?? "could not decode return data"
+            logger.debug("Got server response: \(returnString)")
             throw APIError.invalidServerResponse
         }
     }
@@ -149,12 +153,12 @@ class API {
         logger.info("Moving on position \(initials)")
         let json = ["initials": initials]
         let request = try buildRequest(forEndpoint: .moveOnPosition, method: .POST, json: json)
-        let (_, response) = try await URLSession.shared.data(for: request)
+        let (data, response) = try await URLSession.shared.data(for: request)
         
-        //let returnString = String(data: data, encoding: .utf8) ?? "could not decode return data"
-        //logger.debug("Got server response: \(returnString)")
         guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
             logger.error("Invalid server response in moveOnPosition(\(initials)")
+            let returnString = String(data: data, encoding: .utf8) ?? "could not decode return data"
+            logger.debug("Got server response: \(returnString)")
             throw APIError.invalidServerResponse
         }
     }
@@ -163,12 +167,12 @@ class API {
         logger.info("Moving off position \(initials)")
         let json = ["initials": initials]
         let request = try buildRequest(forEndpoint: .moveOffPosition, method: .POST, json: json)
-        let (_, response) = try await URLSession.shared.data(for: request)
+        let (data, response) = try await URLSession.shared.data(for: request)
         
-        //let returnString = String(data: data, encoding: .utf8) ?? "could not decode return data"
-        //logger.debug("Got server response: \(returnString)")
         guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
             logger.error("Invalid server response in moveOffPosition(\(initials)")
+            let returnString = String(data: data, encoding: .utf8) ?? "could not decode return data"
+            logger.debug("Got server response: \(returnString)")
             throw APIError.invalidServerResponse
         }
     }
@@ -178,10 +182,10 @@ class API {
         let request = try buildRequest(forEndpoint: .controllerList, method: .GET)
         let (data, response) = try await URLSession.shared.data(for: request)
         
-        //let returnString = String(data: data, encoding: .utf8) ?? "could not decode return data"
-        //logger.debug("Got server response: \(returnString)")
         guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
             logger.error("Invalid server response in getControllerList")
+            let returnString = String(data: data, encoding: .utf8) ?? "could not decode return data"
+            logger.debug("Got server response: \(returnString)")
             throw APIError.invalidServerResponse
         }
         
@@ -196,10 +200,10 @@ class API {
         let request = try buildRequest(forEndpoint: .signedIn, method: .GET)
         let (data, response) = try await URLSession.shared.data(for: request)
         
-        //let returnString = String(data: data, encoding: .utf8) ?? "could not decode return data"
-        //logger.debug("Got server response: \(returnString)")
         guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
             logger.error("Invalid server response in getSignedInControllerList")
+            let returnString = String(data: data, encoding: .utf8) ?? "could not decode return data"
+            logger.debug("Got server response: \(returnString)")
             throw APIError.invalidServerResponse
         }
         
