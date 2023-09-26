@@ -2,9 +2,10 @@ import SwiftUI
 import OSLog
 
 struct AvailableCellView: View {
-    
+    private let logger = Logger(subsystem: Logger.subsystem, category: "AvailableCellView")
     @EnvironmentObject var pagingVM: PagingViewModel
     @State private var movingController: Bool = false
+    @State private var phoneColor: Color = .gray
     var controller: Controller
     
     var body: some View {
@@ -21,7 +22,7 @@ struct AvailableCellView: View {
                                 await MainActor.run { movingController = false }
                             } catch {
                                 await MainActor.run { movingController = false }
-                                Logger(subsystem: Logger.subsystem, category: "AvailableCellView").error("With controller \(controller): \(error)")
+                                logger.error("With controller \(controller): \(error)")
                             }
                         }
                         
@@ -73,14 +74,24 @@ struct AvailableCellView: View {
                 ZStack {
                     if let registered = controller.registered, !registered {
                         Image(systemName: "phone")
-                            .foregroundColor(.red).bold()
+                            .foregroundColor(phoneColor).bold()
+                            .onTapGesture {
+                                if let beBack = controller.beBack {
+                                    logger.debug("Phone tapped!")
+                                }
+                            }
                     }
                 }
                 .frame(width: 50)
             }
         } // VStack
         .frame(height: 40)
-    }
+        .onAppear {
+            if let beBack = controller.beBack {
+                phoneColor = beBack.acknowledged ? .green : .red
+            }
+        }
+    } // body
 }
 
 struct StripView_Previews: PreviewProvider {
