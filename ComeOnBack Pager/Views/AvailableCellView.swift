@@ -5,9 +5,16 @@ struct AvailableCellView: View {
     private let logger = Logger(subsystem: Logger.subsystem, category: "AvailableCellView")
     @EnvironmentObject var pagingVM: PagingViewModel
     @State private var movingController: Bool = false
-    @State private var phoneColor: Color = .gray
     @State private var processingPhoneTap = false
+    
     var controller: Controller
+    
+    private var phoneColor: Color {
+        if let beBack = controller.beBack {
+            return beBack.acknowledged ? .green : .red
+        }
+        return .gray
+    }
     
     var body: some View {
         VStack {
@@ -101,11 +108,6 @@ struct AvailableCellView: View {
             }
         } // VStack
         .frame(height: 40)
-        .onAppear {
-            if let beBack = controller.beBack {
-                phoneColor = beBack.acknowledged ? .green : .red
-            }
-        }
     } // body
 }
 
