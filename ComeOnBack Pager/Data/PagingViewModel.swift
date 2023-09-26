@@ -77,10 +77,7 @@ final class PagingViewModel: ObservableObject {
     }
     
     @MainActor
-    func processBeBack(_ beBack: BeBack, forController controller: Controller) {
-        var controller = controller
-        controller.status = .PAGED_BACK
-        controller.beBack = beBack
+    func processBeBack(forController controller: Controller) {
         onBreak.removeAll(where: { $0.initials == controller.initials })
         pagedBack.removeAll(where: { $0.initials == controller.initials })
         pagedBack.append(controller)
@@ -88,8 +85,11 @@ final class PagingViewModel: ObservableObject {
     }
     
     func submitBeBack(_ beBack: BeBack, forController controller: Controller) async throws {
-        try await API().submitBeBack(beBack, forInitials: controller.initials)
-        await processBeBack(beBack, forController: controller)
+        var controller = controller
+        controller.status = .PAGED_BACK
+        controller.beBack = beBack
+        try await API().submitBeBack(forController: controller)
+        await processBeBack(forController: controller)
     }
     
     func moveControllerToOnPosition(_ controller: Controller) async throws {
@@ -118,6 +118,11 @@ final class PagingViewModel: ObservableObject {
             pagedBack.removeAll(where: { $0.initials == controller.initials })
             onBreak.insert(controller, at: 0)
         }
+    }
+    
+    func ackBeBack(forController controller: Controller) async throws {
+        try await API().ackBeBack(forController: controller)
+        await processBeBack(forController: controller)
     }
     
     let DRpositions = [

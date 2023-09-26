@@ -6,6 +6,7 @@ enum APIError: Error {
     case invalidParameters
     case facilityIDNotSet
     case invalidFacilityID
+    case missingBeBack
 }
 
 enum CodingError: Error {
@@ -64,10 +65,15 @@ class API {
         return request
     }
     
-    func submitBeBack(_ beBack: BeBack, forInitials initials: String) async throws {
-        logger.info("submitBeBack(\(beBack), forInitials: \(initials)")
+    func submitBeBack(forController controller: Controller) async throws {
+        logger.info("submitBeBack(forController: \(controller)")
         
-        var json: [String: Any] = ["initials": initials, "time": beBack.stringValue]
+        guard let beBack = controller.beBack else {
+            throw APIError.missingBeBack
+        }
+        
+        var json: [String: Any] = ["initials": controller.initials,
+                                   "time": beBack.stringValue]
         if let forPosition = beBack.forPosition {
             json["forPosition"] = forPosition
         }
