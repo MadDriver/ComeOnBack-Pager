@@ -111,6 +111,11 @@ struct HomeScreen: View {
             }
             
         }
+        .refreshable {
+            Task {
+                try? await pagingVM.shortPoll()
+            }
+        }
     }// body
     
     func signInControllers() {
