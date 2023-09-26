@@ -6,6 +6,7 @@ struct AvailableCellView: View {
     @EnvironmentObject var pagingVM: PagingViewModel
     @State private var movingController: Bool = false
     @State private var phoneColor: Color = .gray
+    @State private var processingPhoneTap = false
     var controller: Controller
     
     var body: some View {
@@ -64,7 +65,8 @@ struct AvailableCellView: View {
                 .frame(width: 50)
                 
                 ZStack {
-                    if controller.beBack?.acknowledged == true {
+                    if controller.beBack?.acknowledged == true
+                        && (controller.registered ?? false) {
                         Image(systemName: "checkmark.square")
                             .foregroundColor(.green).bold()
                     }
@@ -73,13 +75,26 @@ struct AvailableCellView: View {
                 
                 ZStack {
                     if let registered = controller.registered, !registered {
-                        Image(systemName: "phone")
-                            .foregroundColor(phoneColor).bold()
-                            .onTapGesture {
-                                if let beBack = controller.beBack {
-                                    logger.debug("Phone tapped!")
-                                }
-                            }
+                        if processingPhoneTap {
+                            ProgressView()
+                        } else {
+                            Image(systemName: "phone")
+                                .foregroundColor(phoneColor).bold()
+                                .onTapGesture {
+                                    if let beBack = controller.beBack {
+                                        processingPhoneTap = true
+                                        Task {
+                                            do {
+                                                try await pagingVM.ackBeBack(forController: controller)
+                                                processingPhoneTap = false
+                                            } catch {
+                                                processingPhoneTap = false
+                                                logger.error("Error ackBeBack \(error)")
+                                            }
+                                        }
+                                    }
+                                } // onTapGesture
+                        } // "phone" Image
                     }
                 }
                 .frame(width: 50)
