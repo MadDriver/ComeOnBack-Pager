@@ -1,3 +1,5 @@
+import Foundation
+
 enum TimeError: Error {
     case InvalidString(error: String)
 }
@@ -36,6 +38,16 @@ public struct BasicTime: Hashable {
         
         self.hours = hours
         self.minutes = minutes
+    }
+    
+    public init?(fromDate date: Date) {
+        let components = Calendar.current.dateComponents([.hour, .minute], from: date)
+        guard let hour = components.hour,
+              let minute = components.minute else {
+            return nil
+        }
+        self.hours = hour
+        self.minutes = minute
     }
 }
 
