@@ -41,7 +41,6 @@ final class PagingViewModel: ObservableObject {
     }
     
     func signIn(controllers: [Controller]) async throws {
-        
         for controller in controllers {
             logger.info("Signing in \(controller)")
             let controller = try await API().signIn(initials: controller.initials)
@@ -52,7 +51,6 @@ final class PagingViewModel: ObservableObject {
     }
     
     func signOut(controllers: [Controller]) async throws {
-        
         for controller in controllers {
             logger.info("Signing out \(controller)")
             try await API().signOut(initials: controller.initials)
@@ -146,12 +144,6 @@ final class PagingViewModel: ObservableObject {
         GridItem(), GridItem()
     ]
     
-    var beBackTimeFormat: DateFormatter {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "HH:mm"
-        return formatter
-    }
-    
     func roundUpToNext5Minutes(minutes: Int) -> Int? {
         let calendar = Calendar.current
         let dateToEdit = calendar.date(byAdding: .minute, value: minutes, to: Date())!
@@ -166,12 +158,4 @@ final class PagingViewModel: ObservableObject {
             return calendar.component(.minute, from: dateToEdit)
         }
     }
-    
-    func customBeBackTimeChanged(time: Int) -> String {
-        let calendar = Calendar.current
-        let dateOne = calendar.date(bySetting: .minute, value: time, of: Date())!
-        let dateString = beBackTimeFormat.string(from: dateOne)
-        return dateString
-    }
-    
 }
