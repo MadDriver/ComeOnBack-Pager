@@ -135,7 +135,7 @@ final class PagingViewModel: ObservableObject {
     ]
     
     let beBackMinutes = [
-        "5", "10", "15", "30"
+        "10", "15", "30", "45"
     ]
     
     let positionRows = [
@@ -152,19 +152,18 @@ final class PagingViewModel: ObservableObject {
         return formatter
     }
     
-    func getBeBackTime(minute: String) -> String {
+    func roundUpToNext5Minutes(minutes: Int) -> Int? {
         let calendar = Calendar.current
-        let timeToAdd = Int(minute)!
-        let dateToEdit = calendar.date(byAdding: .minute, value: timeToAdd, to: Date())!
-        let m = calendar.component(.minute, from: dateToEdit)
+        let dateToEdit = calendar.date(byAdding: .minute, value: minutes, to: Date())!
+        let currentMinutes = calendar.component(.minute, from: dateToEdit)
         
-        if m % 5 != 0 {
-            let r = 5 - (m % 5)
-            let minuteToAdd = timeToAdd + r
+        if currentMinutes % 5 != 0 {
+            let r = 5 - (currentMinutes % 5)
+            let minuteToAdd = minutes + r
             let actualDate = calendar.date(byAdding: .minute, value: minuteToAdd, to: Date())!
-            return beBackTimeFormat.string(from: actualDate)
+            return calendar.component(.minute, from: actualDate)
         } else {
-            return beBackTimeFormat.string(from: dateToEdit)
+            return calendar.component(.minute, from: dateToEdit)
         }
     }
     
