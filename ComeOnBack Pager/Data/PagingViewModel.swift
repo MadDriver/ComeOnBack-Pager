@@ -122,6 +122,8 @@ final class PagingViewModel: ObservableObject {
     
     func ackBeBack(forController controller: Controller) async throws {
         try await API().ackBeBack(forController: controller)
+        var controller = controller
+        controller.beBack?.acknowledged = true
         await processBeBack(forController: controller)
     }
     

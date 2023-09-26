@@ -33,6 +33,7 @@ class API {
     enum endPoint: String {
         case registerPager = "registerpager"
         case beBack = "beback"
+        case acknowledge = "acknowledgebeback"
         case controllerList = "controllers"
         case signIn = "signin"
         case signOut = "signout"
@@ -85,6 +86,29 @@ class API {
             logger.error("Invalid server response in submitBeBack()")
             let returnString = String(data: data, encoding: .utf8) ?? "could not decode return data"
             logger.debug("Got server response: \(returnString)")
+            throw APIError.invalidServerResponse
+        }
+    }
+    
+    func ackBeBack(forController controller: Controller) async throws {
+        logger.info("AckBeBack(forController: \(controller)")
+        
+        guard let beBack = controller.beBack else {
+            throw APIError.missingBeBack
+        }
+        
+        let request = try buildRequest(forEndpoint: .acknowledge,
+                                       method: .POST,
+                                       json: [
+                                        "initials": controller.initials.uppercased()
+                                       ])
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        let returnString = String(data: data, encoding: .utf8) ?? "Could not decode return data"
+        logger.debug("Got server response: \(returnString)")
+        
+        guard let httpResponse = response as? HTTPURLResponse,
+              httpResponse.statusCode == 200 else {
             throw APIError.invalidServerResponse
         }
     }
