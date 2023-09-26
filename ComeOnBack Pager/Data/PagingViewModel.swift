@@ -70,9 +70,6 @@ final class PagingViewModel: ObservableObject {
             self.pagedBack = controllers.filter { $0.status == .PAGED_BACK }
             self.onBreak = controllers.filter { $0.status == .AVAILABLE }
             sortPagedBack()
-            self.logger.info("onPositionn count: \(self.onPosition.count)")
-            self.logger.info("pagedBack count: \(self.pagedBack.count)")
-            self.logger.info("onBreak count: \(self.onBreak.count)")
         }
     }
     
