@@ -29,23 +29,25 @@ struct PagingView: View {
     
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var pagingVM: PagingViewModel
+    
+    // The current selected time/position
+    @State var beBackTimeString: String?
     @State var beBackPosition: String?
-    @State var beBackTime: String?
-    @State var clockBeBackTime: Int?
-    @State var selectedBeBackTime: String?
-    @State private var selectedDev: Controller?
-    @State var buttonIsDisabled: Bool = true
+    
+    // Handle the two sources of user input
+    @State var clockBeBackMinutes: Int?
+    @State var selectedBeBackMinutes: String?
     @State var timePicker: TimeASAPPicker = .normal
     
+    @State var buttonIsDisabled: Bool = true
+    
     var controller: Controller
-    
-    var isSubmittable: Bool { beBackTime != nil }
-    
+    var isSubmittable: Bool { beBackTimeString != nil }
     var beBackText: String {
         let verb = controller.registered ?? false ? "Page" : "Assign"
-        if beBackTime == nil { return "\(verb) \(controller.initials)" }
-        if beBackPosition == nil { return "\(verb) \(controller.initials) at \(beBackTime ?? "  ")" }
-        return "\(verb) \(controller.initials) at \(beBackTime ?? "  ") for \(beBackPosition ?? "  ")"
+        if beBackTimeString == nil { return "\(verb) \(controller.initials)" }
+        if beBackPosition == nil { return "\(verb) \(controller.initials) at \(beBackTimeString ?? "  ")" }
+        return "\(verb) \(controller.initials) at \(beBackTimeString ?? "  ") for \(beBackPosition ?? "  ")"
     }
     
     var body: some View {
@@ -102,28 +104,21 @@ struct PagingView: View {
         .padding()
         .navigationBarBackButtonHidden()
         .background(Color.black.opacity(0.1))
-        .onChange(of: clockBeBackTime) { time in
-            selectedBeBackTime = nil
-            beBackTime = nil
-            if let time = time {
-                beBackTime = pagingVM.customBeBackTimeChanged(time: time)
-            }
-        }
         .onChange(of: timePicker) { picker in
             switch timePicker {
             case .normal:
-                beBackTime = controller.beBack?.stringValue
+                newMinuteSelected(minute: controller.beBack?.atTime?.minutes)
             case .asap:
-                beBackTime = "ASAP"
+                beBackTimeString = "ASAP"
             }
         }
         .onAppear {
-            beBackTime = controller.beBack?.stringValue
+            beBackTimeString = controller.beBack?.stringValue
             beBackPosition = controller.beBack?.forPosition
-            if beBackTime == "ASAP" {
+            if beBackTimeString == "ASAP" {
                 timePicker = .asap
             } else {
-                clockBeBackTime = controller.beBack?.atTime?.minutes
+                clockBeBackMinutes = controller.beBack?.atTime?.minutes
             }
         }
         .overlay(alignment: .bottomTrailing) {
@@ -160,21 +155,20 @@ struct PagingView: View {
     
     @ViewBuilder
     private var rightClockView: some View {
-        ClockView(selectedMinutes: $clockBeBackTime)
+        ClockView(selectedMinute: clockBeBackMinutes, onMinuteSelected: newMinuteSelected)
             .frame(width: 400, height: 400)
         
-        
         HStack {
-            ForEach(pagingVM.beBackMinutes, id: \.self) { time in
-                Text(time + " mins")
+            ForEach(pagingVM.beBackMinutes, id: \.self) { minute in
+                Text("\(minute) mins")
                     .fontWeight(.bold)
                     .frame(width: 100, height: 50)
-                    .background(selectedBeBackTime == time ? Color.yellow : Color.blue.opacity(0.5))
-                    .border(Color.red, width: selectedBeBackTime == time ? 2.5 : 0)
+                    .background(selectedBeBackMinutes == minute ? Color.yellow : Color.blue.opacity(0.5))
+                    .border(Color.red, width: selectedBeBackMinutes == minute ? 2.5 : 0)
                     .onTapGesture {
-                        selectedBeBackTime = time
-                        self.beBackTime = pagingVM.getBeBackTime(minute: time)
-                        // TODO: Update clock to show minutes
+                        guard let minutesAsInt = Int(minute) else { return }
+                        newMinuteSelected(minute: pagingVM.roundUpToNext5Minutes(minutes: minutesAsInt))
+                        self.selectedBeBackMinutes = minute
                     }
             }
         }
@@ -222,6 +216,21 @@ struct PagingView: View {
 
 extension PagingView {
     
+    func newMinuteSelected(minute: Int?) {
+        logger.debug("newTimeSelected \(String(describing:minute))")
+        if let minutes = minute,
+           let newDate = Calendar.current.date(bySetting: .minute, value: minutes, of: Date()) {
+            let beBackTime = BasicTime(fromDate: newDate)
+            self.clockBeBackMinutes = minutes
+            self.selectedBeBackMinutes = nil
+            self.beBackTimeString = beBackTime?.stringValue
+        } else {
+            self.clockBeBackMinutes = nil
+            self.selectedBeBackMinutes = nil
+            self.beBackTimeString = nil
+        }
+    }
+    
     func cancelPage() {
         Task {
             do {
@@ -237,8 +246,8 @@ extension PagingView {
     }
     
     func pageBack() {
-        guard let beBackTime = beBackTime else {
-            logger.error("beBackTime must be defined before calling submitBeBack()")
+        guard let beBackTime = beBackTimeString else {
+            logger.error("beBackTimeString must be defined before calling submitBeBack()")
             return
         }
         

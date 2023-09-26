@@ -18,11 +18,15 @@ struct ClockView: View {
     private let logger = Logger(subsystem: Logger.subsystem, category: "ClockView")
     // minutes start at 30 since the numbers start at the 6 o'clock position.  Probably an easy fix but I don't know it.
     let minutes = [30, 35, 40, 45, 50, 55, 0, 5, 10, 15, 20, 25]
-    @Binding var selectedMinutes: Int?
+    
+    var selectedMinute: Int?
+    
     @State var currentTime = TimeClock(sec: 0, min: 0, hour: 0)
     @State var receiver = Timer.publish(every: 1, on: .current, in: .default).autoconnect()
      
     var showHourHand = false
+    var onMinuteSelected: (Int?) -> Void = {_ in }
+    
     var body: some View {
         GeometryReader { proxy in
             let width = proxy.size.width
@@ -39,7 +43,7 @@ struct ClockView: View {
                 ForEach(minutes.indices, id: \.self) { index in
                     Text("\(minutes[index])")
                         .frame(width: 60, height: 60)
-                        .background(selectedMinutes == minutes[index] ? .blue: .clear)
+                        .background(selectedMinute == minutes[index] ? .blue: .clear)
                         .font(.system(size: 30))
                         .font(.caption.bold())
                         .clipShape(Circle())
@@ -48,14 +52,11 @@ struct ClockView: View {
                         .rotationEffect(.init(degrees: Double(index) * 30))
                         .opacity(showNumber(minute: minutes[index]) ? 1 : 0)
                         .onTapGesture {
-                            
-                            if selectedMinutes == minutes[index] {
-                                selectedMinutes = nil
-                            } else {
-                                selectedMinutes = minutes[index]
-                                print(String(minutes[index]))
+                            if selectedMinute == minutes[index] {
+                                // Unselect tapped on currently selectedMinute
+                                onMinuteSelected(nil)
                             }
-                            
+                            onMinuteSelected(minutes[index])
                         }
                 }
                 
@@ -116,13 +117,6 @@ struct ClockView: View {
 
 struct ClockView_Previews: PreviewProvider {
     static var previews: some View {
-        ClockView(selectedMinutes: .constant(nil))
+        ClockView(selectedMinute: 45)
     }
-}
-
-struct TimeClock: Equatable {
-    var sec: Int
-    var min: Int
-    var hour: Int
-    
 }
