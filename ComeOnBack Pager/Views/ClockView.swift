@@ -6,19 +6,25 @@
 //
 
 import SwiftUI
+import OSLog
+
+struct TimeClock: Equatable {
+    var sec: Int
+    var min: Int
+    var hour: Int
+}
 
 struct ClockView: View {
-    
+    private let logger = Logger(subsystem: Logger.subsystem, category: "ClockView")
     // minutes start at 30 since the numbers start at the 6 o'clock position.  Probably an easy fix but I don't know it.
     let minutes = [30, 35, 40, 45, 50, 55, 0, 5, 10, 15, 20, 25]
-    let width = UIScreen.main.bounds.width
     @Binding var selectedMinutes: Int?
     @State var currentTime = TimeClock(sec: 0, min: 0, hour: 0)
     @State var receiver = Timer.publish(every: 1, on: .current, in: .default).autoconnect()
-
+     
+    var showHourHand = false
     var body: some View {
         GeometryReader { proxy in
-            
             let width = proxy.size.width
             
             ZStack {
@@ -28,7 +34,6 @@ struct ClockView: View {
                         .frame(width: 2, height: index % 5 == 0 ? 20 : 5)
                         .offset(y: width / 3)
                         .rotationEffect(.init(degrees: Double(index) * 6))
-                    
                 }
                 
                 ForEach(minutes.indices, id: \.self) { index in
@@ -53,18 +58,20 @@ struct ClockView: View {
                             
                         }
                 }
-    
+                
                 Rectangle() // Minute hand
                     .fill(.primary)
                     .frame(width: width / 2.9, height: 2)
                     .rotationEffect(.init(degrees: ((Double(currentTime.min) * 6) + (Double(currentTime.sec) / 10))  - 90), anchor: .leading)
                     .offset(x: (width / 2.9) / 2)
                 
-                Rectangle()
-                    .fill(.primary)
-                    .frame(width: width / 4.5, height: 2)
-                    .rotationEffect(Angle(degrees: (Double(currentTime.hour) * 30) + (Double(currentTime.min) * 0.5) - 90), anchor: .leading)
-                    .offset(x: (width / 4.5) / 2)
+                if showHourHand {
+                    Rectangle() // Hour Hand
+                        .fill(.primary)
+                        .frame(width: width / 4.5, height: 2)
+                        .rotationEffect(Angle(degrees: (Double(currentTime.hour) * 30) + (Double(currentTime.min) * 0.5) - 90), anchor: .leading)
+                        .offset(x: (width / 4.5) / 2)
+                }
                 
                 Circle()
                     .fill(.primary)
