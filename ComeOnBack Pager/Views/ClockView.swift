@@ -92,17 +92,23 @@ struct ClockView: View {
             }
         }
     }
-    #warning("Doesn't work correctly between 55 and 0")
     func showNumber(minute: Int) -> Bool {
         let negBuffer = 5
+        
+        if minute == selectedMinute {
+            return true
+        }
         
         if currentTime.min >= (minute - negBuffer) && currentTime.min < (minute + 2) {
             return false
         }
         
+        if currentTime.min >= 55 && minute == 0 {
+            return false
+        }
+        
         return true
     }
-    
 }
 
 struct ClockView_Previews: PreviewProvider {
