@@ -71,27 +71,23 @@ struct ClockView: View {
                     .frame(width: 15, height: 15)
             } // Zstack
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            
             .onAppear {
-                let calendar  = Calendar.current
-                let sec = calendar.component(.second, from: Date())
-                let min = calendar.component(.minute, from: Date())
-                let hour = calendar.component(.hour, from: Date())
-                
-                self.currentTime = TimeClock(sec: sec, min: min, hour: hour)
-                
+                updateCurrentTime()
             }
             .onReceive(receiver) { (_) in
-                let calendar  = Calendar.current
-                let sec = calendar.component(.second, from: Date())
-                let min = calendar.component(.minute, from: Date())
-                let hour = calendar.component(.hour, from: Date())
-                
-                self.currentTime = TimeClock(sec: sec, min: min, hour: hour)
-                
+                updateCurrentTime()
             }
         }
     }
+    
+    func updateCurrentTime() {
+        let calendar  = Calendar.current
+        let sec = calendar.component(.second, from: Date())
+        let min = calendar.component(.minute, from: Date())
+        let hour = calendar.component(.hour, from: Date())
+        self.currentTime = TimeClock(sec: sec, min: min, hour: hour)
+    }
+    
     func showNumber(minute: Int) -> Bool {
         let negBuffer = 5
         
