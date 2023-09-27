@@ -8,7 +8,7 @@
 import SwiftUI
 import OSLog
 
-struct SignOutView: View {
+struct SignOutScreen: View {
     
     private let logger = Logger(subsystem: Logger.subsystem, category: "SignOutScreen")
     @Environment(\.dismiss) var dismiss
@@ -72,6 +72,6 @@ struct SignOutView: View {
 
 struct SignOutView_Previews: PreviewProvider {
     static var previews: some View {
-        SignOutView()
+        SignOutScreen()
     }
 }

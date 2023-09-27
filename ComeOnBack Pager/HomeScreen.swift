@@ -81,7 +81,7 @@ struct HomeScreen: View {
             SignInScreen()
         }
         .fullScreenCover(isPresented: $signOutViewIsActive) {
-            SignOutView()
+            SignOutScreen()
         }
         .environmentObject(pagingVM)
         .environmentObject(displaySettings)
