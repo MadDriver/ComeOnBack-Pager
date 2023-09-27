@@ -83,8 +83,18 @@ final class PagingViewModel: ObservableObject {
     
     func submitBeBack(_ beBack: BeBack, forController controller: Controller) async throws {
         var controller = controller
+        
+        // Determine if beBack should keep ack status
+        var ack = false
+        if controller.beBack?.stringValue == beBack.stringValue {
+            ack = controller.beBack?.acknowledged ?? false
+        }
+        
         controller.status = .PAGED_BACK
         controller.beBack = beBack
+        controller.beBack?.acknowledged = ack
+        
+        
         try await API().submitBeBack(forController: controller)
         await processBeBack(forController: controller)
     }
