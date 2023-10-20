@@ -63,10 +63,16 @@ struct AvailableCellView: View {
                 .frame(width: 50)
                 
                 ZStack {
-                    if controller.beBack?.acknowledged == true {
-                        Image(systemName: "checkmark.square")
-                            .foregroundColor(.green).bold()
+                    if let registered = controller.registered, let beBack = controller.beBack, registered {
+                        if beBack.acknowledged == true {
+                            Image(systemName: "checkmark.square")
+                                .foregroundColor(.green).bold()
+                        } else {
+                            Image(systemName: "xmark")
+                                .foregroundColor(.red).bold()
+                        }
                     }
+                    
                 }
                 .frame(width: 50)
                 
@@ -88,7 +94,7 @@ struct StripView_Previews: PreviewProvider {
         List {
             AvailableCellView(controller: Controller.mock_data[0])
             AvailableCellView(controller: Controller.mock_data[1])
-            AvailableCellView(controller: Controller.mock_data[2])
+//            AvailableCellView(controller: Controller.mock_data[2])
         }
     }
 }
