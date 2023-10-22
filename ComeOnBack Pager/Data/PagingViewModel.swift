@@ -70,17 +70,11 @@ final class PagingViewModel: ObservableObject {
             self.pagedBack = controllers.filter { $0.status == .PAGED_BACK }
             self.onBreak = controllers.filter { $0.status == .AVAILABLE }
             sortPagedBack()
-            self.logger.info("onPositionn count: \(self.onPosition.count)")
-            self.logger.info("pagedBack count: \(self.pagedBack.count)")
-            self.logger.info("onBreak count: \(self.onBreak.count)")
         }
     }
     
     @MainActor
-    func processBeBack(_ beBack: BeBack, forController controller: Controller) {
-        var controller = controller
-        controller.status = .PAGED_BACK
-        controller.beBack = beBack
+    func processBeBack(forController controller: Controller) {
         onBreak.removeAll(where: { $0.initials == controller.initials })
         pagedBack.removeAll(where: { $0.initials == controller.initials })
         pagedBack.append(controller)
@@ -88,8 +82,21 @@ final class PagingViewModel: ObservableObject {
     }
     
     func submitBeBack(_ beBack: BeBack, forController controller: Controller) async throws {
-        try await API().submitBeBack(beBack, forInitials: controller.initials)
-        await processBeBack(beBack, forController: controller)
+        var controller = controller
+        
+        // Determine if beBack should keep ack status
+        var ack = false
+        if controller.beBack?.stringValue == beBack.stringValue {
+            ack = controller.beBack?.acknowledged ?? false
+        }
+        
+        controller.status = .PAGED_BACK
+        controller.beBack = beBack
+        controller.beBack?.acknowledged = ack
+        
+        
+        try await API().submitBeBack(forController: controller)
+        await processBeBack(forController: controller)
     }
     
     func moveControllerToOnPosition(_ controller: Controller) async throws {
@@ -118,6 +125,13 @@ final class PagingViewModel: ObservableObject {
             pagedBack.removeAll(where: { $0.initials == controller.initials })
             onBreak.insert(controller, at: 0)
         }
+    }
+    
+    func ackBeBack(forController controller: Controller) async throws {
+        try await API().ackBeBack(forController: controller)
+        var controller = controller
+        controller.beBack?.acknowledged = true
+        await processBeBack(forController: controller)
     }
     
     let DRpositions = [

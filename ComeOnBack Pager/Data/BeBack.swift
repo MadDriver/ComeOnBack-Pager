@@ -96,7 +96,7 @@ extension BeBack: Codable {
 
 extension BeBack {
     // MARK: Storage
-    static let SUITE_NAME = "group.co.amalgamated.ComeOnBack"
+    static let SUITE_NAME = "group.co.amalgamated.ComeOnBackPager"
     func store() {
         guard let userDefaults = UserDefaults(suiteName: BeBack.SUITE_NAME) else {
             BeBack.logger.error("Could not load UserDefaults")

@@ -7,8 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		372D027A2A62D61A00F8CFC4 /* AvailableViewBeta.swift in Sources */ = {isa = PBXBuildFile; fileRef = 372D02792A62D61A00F8CFC4 /* AvailableViewBeta.swift */; };
-		372D02802A6452EF00F8CFC4 /* AvailableCellBeta.swift in Sources */ = {isa = PBXBuildFile; fileRef = 372D027F2A6452EF00F8CFC4 /* AvailableCellBeta.swift */; };
 		374D8C4B29BA7E5B002A690D /* ComeOnBackPagerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 374D8C4A29BA7E5B002A690D /* ComeOnBackPagerApp.swift */; };
 		374D8C4F29BA7E5D002A690D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 374D8C4E29BA7E5D002A690D /* Assets.xcassets */; };
 		374D8C5929BA7FE5002A690D /* HomeScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 374D8C5829BA7FE5002A690D /* HomeScreen.swift */; };
@@ -16,7 +14,7 @@
 		374D8C5D29BB880C002A690D /* Controller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 374D8C5C29BB880C002A690D /* Controller.swift */; };
 		374D8C5F29BCC2D7002A690D /* PagingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 374D8C5E29BCC2D7002A690D /* PagingView.swift */; };
 		374D8C6129BCF73B002A690D /* PagingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 374D8C6029BCF73B002A690D /* PagingViewModel.swift */; };
-		3766D38F2A5B05E7002B64BA /* SignOutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3766D38E2A5B05E7002B64BA /* SignOutView.swift */; };
+		3766D38F2A5B05E7002B64BA /* SignOutScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3766D38E2A5B05E7002B64BA /* SignOutScreen.swift */; };
 		3766D3912A5B9132002B64BA /* EmptyControllerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3766D3902A5B9132002B64BA /* EmptyControllerView.swift */; };
 		378B1AAB2A5E31920053332A /* ClockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 378B1AAA2A5E31920053332A /* ClockView.swift */; };
 		37A0135429CE79A70083FD3C /* OnPositionCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37A0135329CE79A70083FD3C /* OnPositionCellView.swift */; };
@@ -32,8 +30,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		372D02792A62D61A00F8CFC4 /* AvailableViewBeta.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvailableViewBeta.swift; sourceTree = "<group>"; };
-		372D027F2A6452EF00F8CFC4 /* AvailableCellBeta.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvailableCellBeta.swift; sourceTree = "<group>"; };
 		374D8C4729BA7E5B002A690D /* ComeOnBack Pager.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ComeOnBack Pager.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		374D8C4A29BA7E5B002A690D /* ComeOnBackPagerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComeOnBackPagerApp.swift; sourceTree = "<group>"; };
 		374D8C4E29BA7E5D002A690D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -42,7 +38,7 @@
 		374D8C5C29BB880C002A690D /* Controller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Controller.swift; sourceTree = "<group>"; };
 		374D8C5E29BCC2D7002A690D /* PagingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagingView.swift; sourceTree = "<group>"; };
 		374D8C6029BCF73B002A690D /* PagingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagingViewModel.swift; sourceTree = "<group>"; };
-		3766D38E2A5B05E7002B64BA /* SignOutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignOutView.swift; sourceTree = "<group>"; };
+		3766D38E2A5B05E7002B64BA /* SignOutScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignOutScreen.swift; sourceTree = "<group>"; };
 		3766D3902A5B9132002B64BA /* EmptyControllerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyControllerView.swift; sourceTree = "<group>"; };
 		378B1AAA2A5E31920053332A /* ClockView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockView.swift; sourceTree = "<group>"; };
 		37A0135329CE79A70083FD3C /* OnPositionCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnPositionCellView.swift; sourceTree = "<group>"; };
@@ -69,15 +65,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		372D027C2A641D0100F8CFC4 /* Betas */ = {
-			isa = PBXGroup;
-			children = (
-				372D02792A62D61A00F8CFC4 /* AvailableViewBeta.swift */,
-				372D027F2A6452EF00F8CFC4 /* AvailableCellBeta.swift */,
-			);
-			path = Betas;
-			sourceTree = "<group>";
-		};
 		374D8C3E29BA7E5B002A690D = {
 			isa = PBXGroup;
 			children = (
@@ -101,10 +88,9 @@
 				CE934E112A52F64A00FFE5BE /* Data */,
 				374D8C5829BA7FE5002A690D /* HomeScreen.swift */,
 				37A0135729CE7F080083FD3C /* SignInScreen.swift */,
+				3766D38E2A5B05E7002B64BA /* SignOutScreen.swift */,
 				CEC9476D2AA9FFFD00476C0A /* FacilityPickerScreen.swift */,
-				3766D38E2A5B05E7002B64BA /* SignOutView.swift */,
 				CE9E84792A43A7CC00141062 /* Views */,
-				372D027C2A641D0100F8CFC4 /* Betas */,
 				374D8C4E29BA7E5D002A690D /* Assets.xcassets */,
 				CE146CF42A54EE8D0096B1B6 /* Info.plist */,
 			);
@@ -208,14 +194,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3766D38F2A5B05E7002B64BA /* SignOutView.swift in Sources */,
+				3766D38F2A5B05E7002B64BA /* SignOutScreen.swift in Sources */,
 				37A0135429CE79A70083FD3C /* OnPositionCellView.swift in Sources */,
 				CE934E152A5462C000FFE5BE /* BeBack.swift in Sources */,
 				374D8C5D29BB880C002A690D /* Controller.swift in Sources */,
 				CEC9476E2AA9FFFD00476C0A /* FacilityPickerScreen.swift in Sources */,
 				374D8C5929BA7FE5002A690D /* HomeScreen.swift in Sources */,
 				374D8C6129BCF73B002A690D /* PagingViewModel.swift in Sources */,
-				372D027A2A62D61A00F8CFC4 /* AvailableViewBeta.swift in Sources */,
 				37A0135829CE7F080083FD3C /* SignInScreen.swift in Sources */,
 				378B1AAB2A5E31920053332A /* ClockView.swift in Sources */,
 				3766D3912A5B9132002B64BA /* EmptyControllerView.swift in Sources */,
@@ -226,7 +211,6 @@
 				374D8C5F29BCC2D7002A690D /* PagingView.swift in Sources */,
 				CE934E1B2A54C2DF00FFE5BE /* BasicTime.swift in Sources */,
 				CE934E102A52F54700FFE5BE /* API.swift in Sources */,
-				372D02802A6452EF00F8CFC4 /* AvailableCellBeta.swift in Sources */,
 				374D8C5B29BB86EB002A690D /* AvailableCellView.swift in Sources */,
 				CE934E1D2A54C8C500FFE5BE /* HeaderView.swift in Sources */,
 			);
@@ -358,7 +342,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 11;
 				DEVELOPMENT_TEAM = 9XKN747L88;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -390,7 +374,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 11;
 				DEVELOPMENT_TEAM = 9XKN747L88;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;

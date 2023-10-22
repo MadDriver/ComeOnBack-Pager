@@ -2,10 +2,19 @@ import SwiftUI
 import OSLog
 
 struct AvailableCellView: View {
-    
+    private let logger = Logger(subsystem: Logger.subsystem, category: "AvailableCellView")
     @EnvironmentObject var pagingVM: PagingViewModel
     @State private var movingController: Bool = false
+    @State private var processingPhoneTap = false
+    
     var controller: Controller
+    
+    private var phoneColor: Color {
+        if let beBack = controller.beBack {
+            return beBack.acknowledged ? .green : .red
+        }
+        return .gray
+    }
     
     var body: some View {
         VStack {
@@ -21,7 +30,7 @@ struct AvailableCellView: View {
                                 await MainActor.run { movingController = false }
                             } catch {
                                 await MainActor.run { movingController = false }
-                                Logger(subsystem: Logger.subsystem, category: "AvailableCellView").error("With controller \(controller): \(error)")
+                                logger.error("With controller \(controller): \(error)")
                             }
                         }
                         
@@ -78,15 +87,33 @@ struct AvailableCellView: View {
                 
                 ZStack {
                     if let registered = controller.registered, !registered {
-                        Image(systemName: "phone")
-                            .foregroundColor(.red).bold()
+                        if processingPhoneTap {
+                            ProgressView()
+                        } else {
+                            Image(systemName: "phone")
+                                .foregroundColor(phoneColor).bold()
+                                .onTapGesture {
+                                    if let beBack = controller.beBack {
+                                        processingPhoneTap = true
+                                        Task {
+                                            do {
+                                                try await pagingVM.ackBeBack(forController: controller)
+                                                processingPhoneTap = false
+                                            } catch {
+                                                processingPhoneTap = false
+                                                logger.error("Error ackBeBack \(error)")
+                                            }
+                                        }
+                                    }
+                                } // onTapGesture
+                        } // "phone" Image
                     }
                 }
                 .frame(width: 50)
             }
         } // VStack
         .frame(height: 40)
-    }
+    } // body
 }
 
 struct StripView_Previews: PreviewProvider {

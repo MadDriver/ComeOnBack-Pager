@@ -81,7 +81,7 @@ struct HomeScreen: View {
             SignInScreen()
         }
         .fullScreenCover(isPresented: $signOutViewIsActive) {
-            SignOutView()
+            SignOutScreen()
         }
         .environmentObject(pagingVM)
         .environmentObject(displaySettings)
@@ -110,6 +110,11 @@ struct HomeScreen: View {
                 logger.error("\(error)")
             }
             
+        }
+        .refreshable {
+            Task {
+                try? await pagingVM.shortPoll()
+            }
         }
     }// body
     

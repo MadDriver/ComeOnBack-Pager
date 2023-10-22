@@ -6,6 +6,7 @@ enum APIError: Error {
     case invalidParameters
     case facilityIDNotSet
     case invalidFacilityID
+    case missingBeBack
 }
 
 enum CodingError: Error {
@@ -26,12 +27,13 @@ enum APIServer: String {
 class API {
     private let logger = Logger(subsystem: Logger.subsystem, category: "API")
     static let server = APIServer.production
-    static let clientAPIVersion = 0.1
+    static let clientAPIVersion = 0.11
     static var facilityID: String? = nil
     
     enum endPoint: String {
         case registerPager = "registerpager"
         case beBack = "beback"
+        case acknowledge = "acknowledgebeback"
         case controllerList = "controllers"
         case signIn = "signin"
         case signOut = "signout"
@@ -64,10 +66,15 @@ class API {
         return request
     }
     
-    func submitBeBack(_ beBack: BeBack, forInitials initials: String) async throws {
-        logger.info("submitBeBack(\(beBack), forInitials: \(initials)")
+    func submitBeBack(forController controller: Controller) async throws {
+        logger.info("submitBeBack(forController: \(controller)")
         
-        var json: [String: Any] = ["initials": initials, "time": beBack.stringValue]
+        guard let beBack = controller.beBack else {
+            throw APIError.missingBeBack
+        }
+        
+        var json: [String: Any] = ["initials": controller.initials,
+                                   "time": beBack.stringValue]
         if let forPosition = beBack.forPosition {
             json["forPosition"] = forPosition
         }
@@ -79,6 +86,29 @@ class API {
             logger.error("Invalid server response in submitBeBack()")
             let returnString = String(data: data, encoding: .utf8) ?? "could not decode return data"
             logger.debug("Got server response: \(returnString)")
+            throw APIError.invalidServerResponse
+        }
+    }
+    
+    func ackBeBack(forController controller: Controller) async throws {
+        logger.info("AckBeBack(forController: \(controller)")
+        
+        guard let beBack = controller.beBack else {
+            throw APIError.missingBeBack
+        }
+        
+        let request = try buildRequest(forEndpoint: .acknowledge,
+                                       method: .POST,
+                                       json: [
+                                        "initials": controller.initials.uppercased()
+                                       ])
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        let returnString = String(data: data, encoding: .utf8) ?? "Could not decode return data"
+        logger.debug("Got server response: \(returnString)")
+        
+        guard let httpResponse = response as? HTTPURLResponse,
+              httpResponse.statusCode == 200 else {
             throw APIError.invalidServerResponse
         }
     }
