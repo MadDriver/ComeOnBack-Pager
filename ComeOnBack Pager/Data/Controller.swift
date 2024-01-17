@@ -15,7 +15,6 @@ struct Controller: Hashable, Identifiable, Codable  {
     var isDev: Bool
     var status: ControllerStatus
     var beBack: BeBack? = nil
-    var registered: Bool?
     
     enum CodingKeys: String, CodingKey {
         case initials

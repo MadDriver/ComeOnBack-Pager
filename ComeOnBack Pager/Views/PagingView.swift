@@ -44,7 +44,7 @@ struct PagingView: View {
     var controller: Controller
     var isSubmittable: Bool { beBackTimeString != nil }
     var beBackText: String {
-        let verb = controller.registered ?? false ? "Page" : "Assign"
+        let verb = controller.registered ? "Page" : "Assign"
         if beBackTimeString == nil { return "\(verb) \(controller.initials)" }
         if beBackPosition == nil { return "\(verb) \(controller.initials) at \(beBackTimeString ?? "  ")" }
         return "\(verb) \(controller.initials) at \(beBackTimeString ?? "  ") for \(beBackPosition ?? "  ")"
@@ -80,7 +80,7 @@ struct PagingView: View {
             } // HStack
             
             Button(action: pageBack) {
-                Text(controller.registered ?? false ? "PAGE" : "ASSIGN")
+                Text(controller.registered ? "PAGE" : "ASSIGN")
                     .foregroundColor(isSubmittable ? .black : .black.opacity(0.4))
                     .frame(width: 500, height: 100)
                     .font(.title).bold()
@@ -90,7 +90,7 @@ struct PagingView: View {
             }
             .disabled(!isSubmittable)
             
-            if let registered = controller.registered, !registered {
+            if !controller.registered {
                 HStack {
                     Image(systemName: "phone")
                         .foregroundColor(.red).bold()
