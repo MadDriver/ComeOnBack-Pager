@@ -12,9 +12,13 @@ struct AvailableView: View {
     var body: some View {
         
         VStack {
+            Text("AVAILABLE")
+                .fontWeight(.heavy)
             List {
+                if controllerList.isEmpty {
+                    EmptyControllerView()
+                }
                 ForEach(controllerList) { controller in
-                    
                     NavigationLink {
                         PagingView(controller: controller)
                     } label: {
@@ -27,7 +31,6 @@ struct AvailableView: View {
 }
 
 struct AvailableView_Previews: PreviewProvider {
-    
     static var previews: some View {
         AvailableView(controllerList: Controller.mock_data)
     }
