@@ -93,7 +93,7 @@ class API {
     func ackBeBack(forController controller: Controller) async throws {
         logger.info("AckBeBack(forController: \(controller)")
         
-        guard let beBack = controller.beBack else {
+        guard controller.beBack != nil else {
             throw APIError.missingBeBack
         }
         
@@ -219,7 +219,9 @@ class API {
             throw APIError.invalidServerResponse
         }
         
-        let controllers = try JSONDecoder().decode([Controller].self, from: data)
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        let controllers = try decoder.decode([Controller].self, from: data)
         logger.info("Got \(controllers.count) controllers")
         return controllers
     }
@@ -237,7 +239,9 @@ class API {
             throw APIError.invalidServerResponse
         }
         
-        let siControllers = try JSONDecoder().decode([Controller].self, from: data)
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        let siControllers = try decoder.decode([Controller].self, from: data)
         logger.info("Got \(siControllers.count) signed in controllers")
         return siControllers
     }

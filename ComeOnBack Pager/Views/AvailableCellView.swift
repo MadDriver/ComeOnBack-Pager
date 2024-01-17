@@ -72,7 +72,7 @@ struct AvailableCellView: View {
                 .frame(width: 50)
                 
                 ZStack {
-                    if let registered = controller.registered, let beBack = controller.beBack, registered {
+                    if let beBack = controller.beBack, controller.registered {
                         if beBack.acknowledged == true {
                             Image(systemName: "checkmark.square")
                                 .foregroundColor(.green).bold()
@@ -86,14 +86,14 @@ struct AvailableCellView: View {
                 .frame(width: 50)
                 
                 ZStack {
-                    if let registered = controller.registered, !registered {
+                    if !controller.registered {
                         if processingPhoneTap {
                             ProgressView()
                         } else {
                             Image(systemName: "phone")
                                 .foregroundColor(phoneColor).bold()
                                 .onTapGesture {
-                                    if let beBack = controller.beBack {
+                                    if controller.beBack != nil {
                                         processingPhoneTap = true
                                         Task {
                                             do {
