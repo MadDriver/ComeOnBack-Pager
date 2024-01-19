@@ -10,16 +10,19 @@ struct OnPositionCellView: View {
     var body: some View {
         ZStack { // ZStack for a tapGesture for the entire row
             HStack {
-                Text("") // To get the underline all the way across the row
-                Spacer()
+                Text(" \(controller.atTime?.relative() ?? "")")
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                
                 Text(controller.initials)
-                Spacer()
+                    .frame(maxWidth: .infinity, alignment: .center)
+                
                 if performingTapGesture {
                     ProgressView()
                         .progressViewStyle(CircularProgressViewStyle(tint: .blue))
+                        .frame(maxWidth: .infinity, alignment: .trailing)
                 } else {
                     Image(systemName: "arrowshape.right")
-                        .disabled(performingTapGesture)
+                        .frame(maxWidth: .infinity, alignment: .trailing)
                 }
             }
             .padding()

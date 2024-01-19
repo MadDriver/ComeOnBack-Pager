@@ -21,6 +21,7 @@ struct HomeScreen: View {
     @State var signOutViewIsActive = false
     @State var isLoading = false
     let timer = Timer.publish(every: 30.0, on: .main, in: .common).autoconnect()
+        
     var body: some View {
         NavigationStack {
             ZStack(alignment: .topLeading) {
@@ -30,7 +31,8 @@ struct HomeScreen: View {
                         HStack(spacing: 0) {
                             OnPositionView(controllers: pagingVM.onPosition)
                                 .frame(width: geometry.size.width * 0.33)
-                            AvailableView(controllerList: pagingVM.rightHandList)
+                            AvailableView(newlySignedIn: pagingVM.newelySignedIn,
+                                          onBreak: pagingVM.onBreak)
                                 .frame(width: geometry.size.width * 0.67)
                         } // HStack
                     } // GeoReader
@@ -101,9 +103,7 @@ struct HomeScreen: View {
     }
     
     func signOutControllers() {
-        
         signOutViewIsActive = true
-        
     }
 }
 

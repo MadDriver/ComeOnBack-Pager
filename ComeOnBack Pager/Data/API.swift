@@ -66,12 +66,14 @@ class API {
         return request
     }
     
-    func submitBeBack(forController controller: Controller) async throws {
-        logger.info("submitBeBack(forController: \(controller)")
-        
-        guard let beBack = controller.beBack else {
-            throw APIError.missingBeBack
-        }
+    func parseController(fromData data: Data) throws -> Controller {
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        return try decoder.decode(Controller.self, from: data)
+    }
+    
+    func submit(beBack: BeBack, forController controller: Controller) async throws -> Controller {
+        logger.info("submitBeBack(\(beBack), forController: \(controller)")
         
         var json: [String: Any] = ["initials": controller.initials,
                                    "time": beBack.stringValue]
@@ -88,6 +90,8 @@ class API {
             logger.debug("Got server response: \(returnString)")
             throw APIError.invalidServerResponse
         }
+        
+        return try parseController(fromData: data)
     }
     
     func ackBeBack(forController controller: Controller) async throws {
@@ -134,7 +138,7 @@ class API {
         }
     }
     
-    func removeBeBack(initials: String) async throws {
+    func removeBeBack(initials: String) async throws -> Controller {
         logger.info("Removing BeBack for \(initials)")
         let json = ["initials": initials]
         var request = try buildRequest(forEndpoint: .beBack, method: .POST, json: json)
@@ -147,6 +151,8 @@ class API {
             logger.debug("Got server response: \(returnString)")
             throw APIError.invalidServerResponse
         }
+        
+        return try parseController(fromData: data)
     }
     
     func signIn(initials: String) async throws -> Controller {
@@ -161,7 +167,7 @@ class API {
             logger.debug("Got server response: \(returnString)")
             throw APIError.invalidServerResponse
         }
-        return try JSONDecoder().decode(Controller.self, from: data)
+        return try parseController(fromData: data)
     }
     
     func signOut(initials: String) async throws {
@@ -179,7 +185,7 @@ class API {
         }
     }
     
-    func moveOnPosition(initials: String) async throws {
+    func moveOnPosition(initials: String) async throws -> Controller {
         logger.info("Moving on position \(initials)")
         let json = ["initials": initials]
         let request = try buildRequest(forEndpoint: .moveOnPosition, method: .POST, json: json)
@@ -191,9 +197,11 @@ class API {
             logger.debug("Got server response: \(returnString)")
             throw APIError.invalidServerResponse
         }
+        
+        return try parseController(fromData: data)
     }
     
-    func moveOffPosition(initials: String) async throws {
+    func moveOffPosition(initials: String) async throws -> Controller {
         logger.info("Moving off position \(initials)")
         let json = ["initials": initials]
         let request = try buildRequest(forEndpoint: .moveOffPosition, method: .POST, json: json)
@@ -205,6 +213,8 @@ class API {
             logger.debug("Got server response: \(returnString)")
             throw APIError.invalidServerResponse
         }
+
+        return try parseController(fromData: data)
     }
     
     func getControllerList() async throws -> [Controller] {

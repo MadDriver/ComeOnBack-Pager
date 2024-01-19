@@ -1,4 +1,5 @@
 import Foundation
+import OSLog
 
 enum ControllerStatus: String, Codable {
     case AVAILABLE
@@ -10,6 +11,8 @@ enum ControllerStatus: String, Codable {
 }
 
 struct Controller: Hashable, Identifiable  {
+    
+//    private let logger = Logger(subsystem: Logger.subsystem, category: "Controller")
     var id = UUID()
     var initials: String
     var area: String
@@ -19,15 +22,6 @@ struct Controller: Hashable, Identifiable  {
     var atTime: Date?
     var signInTime: Date?
     var registered: Bool
-    
-    static func newControllerFrom(_ controller: Controller, withStatus status: ControllerStatus) -> Controller {
-        var newController = controller
-        newController.status = status
-        if status == .AVAILABLE {
-            newController.beBack = nil
-        }
-        return newController
-    }
 }
 
 extension Controller: Codable {
@@ -51,6 +45,17 @@ extension Controller: CustomStringConvertible {
         return "\(initials)-\(status)"
     }
     
+}
+
+extension Controller: Comparable {
+    static func < (lhs: Controller, rhs: Controller) -> Bool {
+        guard let lhsDate = lhs.atTime, let rhsDate = rhs.atTime else {
+            let logger = Logger(subsystem: Logger.subsystem, category: "Controller:Comparable")
+            logger.error("Trying to sort controllers without atTimes defined. \(lhs)-\(rhs)")
+            return false
+        }
+        return lhsDate < rhsDate
+    }
 }
 
 extension Controller {

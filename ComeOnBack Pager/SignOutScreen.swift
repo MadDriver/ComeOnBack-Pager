@@ -20,7 +20,7 @@ struct SignOutScreen: View {
         VStack {
             ScrollView {
                 LazyVGrid(columns: columns) {
-                    ForEach(pagingVM.rightHandList) { controller in
+                    ForEach(pagingVM.onBreak) { controller in
                         Text("\(controller.initials)")
                             .frame(width: 250, height: 50)
                             .background(controllerIsInSignOutArray(controller: controller) ? Color.red : Color.primary.opacity(0.5))

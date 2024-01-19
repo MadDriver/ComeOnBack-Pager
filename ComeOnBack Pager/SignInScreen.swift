@@ -53,9 +53,9 @@ struct SignInScreen: View {
     
     private var searchResult: [Controller] {
         if searchInitials.isEmpty {
-            return pagingVM.allControllers.sorted(by: { $0.initials < $1.initials })
+            return pagingVM.notSignedIn.sorted(by: { $0.initials < $1.initials })
         } else {
-            return pagingVM.allControllers.filter { $0.initials.contains(searchInitials.uppercased()) }
+            return pagingVM.notSignedIn.filter { $0.initials.contains(searchInitials.uppercased()) }
         }
     }
     
