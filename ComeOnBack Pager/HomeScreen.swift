@@ -76,7 +76,7 @@ struct HomeScreen: View {
         }
         .task{
             do {
-                pagingVM.allControllers = try await API().getControllerList()
+                try await pagingVM.updateAllControllers()
                 await MainActor.run {
                     isLoading = false
                 }

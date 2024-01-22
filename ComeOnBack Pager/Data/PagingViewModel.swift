@@ -11,7 +11,22 @@ import OSLog
 final class PagingViewModel: ObservableObject {
     private let logger = Logger(subsystem: Logger.subsystem, category: "PagingViewModel")
     @Published var allControllers: [Controller] = []
+    @Published var areas: [Area] = []
     @Published var signedIn: [Controller] = []
+    
+    
+    @MainActor
+    func updateAllControllers() async throws {
+        allControllers = try await API().getControllerList()
+        
+        areas = Array(Set(allControllers.map{
+            $0.area
+        }))
+        .sorted()
+        .map {
+            Area(name: $0)
+        }
+    }
     
     func getController(withInitials initials: String) -> Controller? {
         return allControllers.first { $0.initials == initials}
