@@ -7,17 +7,52 @@ struct SignInScreen: View {
     @EnvironmentObject var pagingVM: PagingViewModel
     @State var controllersToSignIn: [Controller] = []
     @State private var searchInitials = ""
-    //    let columns = Array(repeating: GridItem(.adaptive(minimum: 175)), count: 1)
+    @State private var filteredArea: Area? = nil
     let columns = [
         GridItem(.adaptive(minimum: 175))
     ]
     
+    private func areaFilter(_ controller: Controller) -> Bool {
+        guard let filteredArea = filteredArea else {
+            // If filteredArea is nil, include all
+            return true
+        }
+        return controller.area == filteredArea.name
+    }
+    
+    private func searchFilter(_ controller: Controller) -> Bool {
+        if searchInitials == "" {
+            return true
+        }
+        return controller.initials.contains(searchInitials.uppercased())
+    }
+    
+    private var controllers: [Controller] {
+        return pagingVM.notSignedIn
+            .filter(searchFilter)
+            .filter(areaFilter)
+            .sorted(by: { $0.initials < $1.initials })
+    }
+    
     var body: some View {
         NavigationStack {  // I believe to make it "searchable" it needs to be in a nav stack.  More research needed
             VStack {
+                if pagingVM.areas.count > 1 {
+                    HStack {
+                        Picker("Select Area", selection: $filteredArea) {
+                            ForEach(pagingVM.areas) { area in
+                                Text("\(area.name)")
+                                    .tag(area as Area?)
+                            }
+                        }
+                        .pickerStyle(.segmented)
+                        
+                        Button("Clear") { filteredArea = nil }
+                    } //HStack
+                } // if pagingVM.areas.count > 1
                 ScrollView {
                     LazyVGrid(columns: columns, spacing: 20) {
-                        ForEach(searchResult) { controller in
+                        ForEach(controllers) { controller in
                             Text("\(controller.initials)")
                                 .frame(maxWidth: .infinity)
                                 .frame(height: 50)
@@ -51,17 +86,15 @@ struct SignInScreen: View {
         .searchable(text: $searchInitials)
     }
     
-    private var searchResult: [Controller] {
-        if searchInitials.isEmpty {
-            return pagingVM.notSignedIn.sorted(by: { $0.initials < $1.initials })
-        } else {
-            return pagingVM.notSignedIn.filter { $0.initials.contains(searchInitials.uppercased()) }
-        }
-    }
-    
     func signInControllers() {
         Task {
             do {
+                // Remove any controllers that are in controllersToSignIn
+                // but are not visible due to another filter
+                controllersToSignIn = controllersToSignIn.filter { controller in
+                    controllers.contains { $0 == controller }
+                }
+                
                 try await pagingVM.signIn(controllers: controllersToSignIn)
             } catch {
                 logger.error("\(error)")
