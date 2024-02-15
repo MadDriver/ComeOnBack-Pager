@@ -134,18 +134,6 @@ final class PagingViewModel: ObservableObject {
         await processBeBack(forController: controller)
     }
     
-    let DRpositions = [
-        "DR1", "DR2", "DR3", "DR4", "SR1", "SR2", "SR3", "SR4"
-    ]
-    
-    let ARPositions = [
-        "AR1", "AR2", "AR3", "AR4", "GJT", "PUB"
-    ]
-    
-    let commonPositions = [
-        "FR1", "FR2", "FR3", "FR4", "FDCD", "MO1", "MO2", "MO3", "CI"
-    ]
-    
     let beBackMinutes = [
         "10", "15", "30", "45"
     ]
