@@ -42,6 +42,10 @@ struct Controller: Hashable, Identifiable  {
     var atTime: Date?
     var signInTime: Date?
     var registered: Bool
+    
+    var positions: [String?] {
+        return Controller.positionsList[self.area] ?? []
+    }
 }
 
 extension Controller: Codable {
