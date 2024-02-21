@@ -178,29 +178,26 @@ struct PagingView: View {
     @ViewBuilder
     private var leftSideOfHStack: some View {
         VStack {
-            
-            var positions: [String] {
-                if controller.area == "Departure" {
-                    return pagingVM.DRpositions + pagingVM.commonPositions
-                } else {
-                    return pagingVM.ARPositions + pagingVM.commonPositions
-                }
-            }
-            
+    
             LazyHGrid(rows: pagingVM.positionRows, spacing: 20) {
-                ForEach(positions, id: \.self) { position in
-                    Text(position)
-                        .font(.system(size: 20, weight: .bold))
-                        .frame(width: 100, height: 50)
-                        .background(beBackPosition == position ? Color.yellow : Color.red.opacity(0.5))
-                        .border(Color.blue, width: beBackPosition == position ? 2.5 : 0)
-                        .onTapGesture {
-                            if beBackPosition == position {
-                                beBackPosition = nil
-                            } else {
-                                beBackPosition = position
+                ForEach(controller.positions, id: \.self) { position in
+                    if let position = position {
+                        Text(position)
+                            .font(.system(size: 20, weight: .bold))
+                            .frame(width: 100, height: 50)
+                            .background(beBackPosition == position ? Color.yellow : Color.red.opacity(0.5))
+                            .border(Color.blue, width: beBackPosition == position ? 2.5 : 0)
+                            .onTapGesture {
+                                if beBackPosition == position {
+                                    beBackPosition = nil
+                                } else {
+                                    beBackPosition = position
+                                }
                             }
-                        }
+                    } else {
+                         // Position is nil, placeholder text box.
+                        Text("")
+                    }
                 }
             }
             .frame(maxWidth: .infinity)
@@ -278,6 +275,11 @@ struct PagingView_Previews: PreviewProvider {
             .previewInterfaceOrientation(.landscapeLeft)
             .previewDevice("iPad (10th generation)")
         PagingView(controller: Controller.mock_data[1])
+            .environmentObject(PagingViewModel())
+            .previewInterfaceOrientation(.landscapeLeft)
+            .previewDevice("iPad (10th generation)")
+            .previewDisplayName("Not Registered")
+        PagingView(controller: Controller.mock_data[2])
             .environmentObject(PagingViewModel())
             .previewInterfaceOrientation(.landscapeLeft)
             .previewDevice("iPad (10th generation)")
