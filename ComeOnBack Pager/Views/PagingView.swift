@@ -177,35 +177,38 @@ struct PagingView: View {
     
     @ViewBuilder
     private var leftSideOfHStack: some View {
-        VStack {
-    
-            LazyHGrid(rows: pagingVM.positionRows, spacing: 20) {
-                ForEach(controller.positions, id: \.self) { position in
-                    if let position = position {
-                        Text(position)
-                            .font(.system(size: 20, weight: .bold))
-                            .frame(width: 100, height: 50)
-                            .background(beBackPosition == position ? Color.yellow : Color.red.opacity(0.5))
-                            .border(Color.blue, width: beBackPosition == position ? 2.5 : 0)
-                            .onTapGesture {
-                                if beBackPosition == position {
-                                    beBackPosition = nil
-                                } else {
-                                    beBackPosition = position
+        if let facility = pagingVM.facility,
+           let area = facility.getArea(forController: controller)
+        {
+            VStack {
+                LazyHGrid(rows: pagingVM.positionRows, spacing: 20) {
+                    ForEach(area.positions, id: \.self) { position in
+                        if let position = position {
+                            Text(position)
+                                .font(.system(size: 20, weight: .bold))
+                                .frame(width: 100, height: 50)
+                                .background(beBackPosition == position ? Color.yellow : Color.red.opacity(0.5))
+                                .border(Color.blue, width: beBackPosition == position ? 2.5 : 0)
+                                .onTapGesture {
+                                    if beBackPosition == position {
+                                        beBackPosition = nil
+                                    } else {
+                                        beBackPosition = position
+                                    }
                                 }
-                            }
-                    } else {
-                         // Position is nil, placeholder text box.
-                        Text("")
+                        } else {
+                            // Position is nil, placeholder text box.
+                            Text("")
+                        }
                     }
                 }
-            }
-            .frame(maxWidth: .infinity)
-            .frame(height:250)
-            
-            
-        } // VStack
-        .padding(.top)
+                .frame(maxWidth: .infinity)
+                .frame(height:250)
+                
+                
+            } // VStack
+            .padding(.top)
+        } // if let facility, area
     }
 }
 

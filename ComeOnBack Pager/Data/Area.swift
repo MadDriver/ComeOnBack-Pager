@@ -7,9 +7,17 @@
 
 import Foundation
 
-struct Area: Identifiable, Hashable, Equatable {
+struct Area: Identifiable, Hashable {
     var id = UUID()
     var name: String
+    var positions: [String?]
+}
+
+extension Area: Codable {
+    enum CodingKeys: String, CodingKey {
+        case name
+        case positions
+    }
 }
 
 extension Area: Comparable {

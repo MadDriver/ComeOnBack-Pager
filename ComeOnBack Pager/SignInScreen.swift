@@ -17,7 +17,7 @@ struct SignInScreen: View {
             // If filteredArea is nil, include all
             return true
         }
-        return controller.area == filteredArea.name
+        return controller.areaString == filteredArea.name
     }
     
     private func searchFilter(_ controller: Controller) -> Bool {

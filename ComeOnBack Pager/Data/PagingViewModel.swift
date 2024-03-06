@@ -10,6 +10,7 @@ import OSLog
 
 final class PagingViewModel: ObservableObject {
     private let logger = Logger(subsystem: Logger.subsystem, category: "PagingViewModel")
+    @Published var facility: Facility? = nil
     @Published var allControllers: [Controller] = []
     @Published var areas: [Area] = []
     @Published var signedIn: [Controller] = []
@@ -17,15 +18,10 @@ final class PagingViewModel: ObservableObject {
     
     @MainActor
     func updateAllControllers() async throws {
-        allControllers = try await API().getControllerList()
-        
-        areas = Array(Set(allControllers.map{
-            $0.area
-        }))
-        .sorted()
-        .map {
-            Area(name: $0)
-        }
+        let newFacility = try await API().getFacility()
+        facility = newFacility
+        areas = newFacility.areas
+        allControllers = newFacility.controllers
     }
     
     func getController(withInitials initials: String) -> Controller? {

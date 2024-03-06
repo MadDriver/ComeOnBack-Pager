@@ -28,6 +28,7 @@
 		CE934E1B2A54C2DF00FFE5BE /* BasicTime.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE934E1A2A54C2DF00FFE5BE /* BasicTime.swift */; };
 		CE934E1D2A54C8C500FFE5BE /* HeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE934E1C2A54C8C500FFE5BE /* HeaderView.swift */; };
 		CEC9476E2AA9FFFD00476C0A /* FacilityPickerScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC9476D2AA9FFFD00476C0A /* FacilityPickerScreen.swift */; };
+		CEEE252D2B97EAA600196070 /* Facility.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEEE252C2B97EAA600196070 /* Facility.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -54,6 +55,7 @@
 		CE934E1A2A54C2DF00FFE5BE /* BasicTime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicTime.swift; sourceTree = "<group>"; };
 		CE934E1C2A54C8C500FFE5BE /* HeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderView.swift; sourceTree = "<group>"; };
 		CEC9476D2AA9FFFD00476C0A /* FacilityPickerScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FacilityPickerScreen.swift; sourceTree = "<group>"; };
+		CEEE252C2B97EAA600196070 /* Facility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Facility.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -106,6 +108,7 @@
 				CE934E1A2A54C2DF00FFE5BE /* BasicTime.swift */,
 				374D8C5C29BB880C002A690D /* Controller.swift */,
 				CE71A04A2B5E1ECB00AC8252 /* Area.swift */,
+				CEEE252C2B97EAA600196070 /* Facility.swift */,
 				374D8C6029BCF73B002A690D /* PagingViewModel.swift */,
 				CE934E142A5462C000FFE5BE /* BeBack.swift */,
 				CE88038D2ABCBA4600A7E830 /* Date+Ext.swift */,
@@ -209,6 +212,7 @@
 				378B1AAB2A5E31920053332A /* ClockView.swift in Sources */,
 				3766D3912A5B9132002B64BA /* EmptyControllerView.swift in Sources */,
 				CE934E172A54ABD700FFE5BE /* AvailableView.swift in Sources */,
+				CEEE252D2B97EAA600196070 /* Facility.swift in Sources */,
 				CE88038E2ABCBA4600A7E830 /* Date+Ext.swift in Sources */,
 				374D8C4B29BA7E5B002A690D /* ComeOnBackPagerApp.swift in Sources */,
 				CE934E192A54BE9C00FFE5BE /* OnPositionView.swift in Sources */,

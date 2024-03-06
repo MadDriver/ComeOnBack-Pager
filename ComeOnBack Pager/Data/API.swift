@@ -20,21 +20,21 @@ enum HTTPMethod: String {
 }
 
 enum APIServer: String {
-    case local = "http://127.0.0.1:5000/"
-    case production = "https://atcpager.com/"
+    case local = "http://127.0.0.1:5000"
+    case production = "https://atcpager.com"
 }
 
 class API {
     private let logger = Logger(subsystem: Logger.subsystem, category: "API")
-    static let server = APIServer.production
-    static let clientAPIVersion = 0.11
+    static let server = APIServer.local
+    static let clientAPIVersion = 0.12
     static var facilityID: String? = nil
     
     enum endPoint: String {
         case registerPager = "registerpager"
         case beBack = "beback"
         case acknowledge = "acknowledgebeback"
-        case controllerList = "controllers"
+        case facility = ""
         case signIn = "signin"
         case signOut = "signout"
         case signedIn = "signedin"
@@ -217,9 +217,9 @@ class API {
         return try parseController(fromData: data)
     }
     
-    func getControllerList() async throws -> [Controller] {
-        logger.info("Getting controller list")
-        let request = try buildRequest(forEndpoint: .controllerList, method: .GET)
+    func getFacility() async throws -> Facility {
+        logger.info("Getting facility")
+        let request = try buildRequest(forEndpoint: .facility, method: .GET)
         let (data, response) = try await URLSession.shared.data(for: request)
         
         guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
@@ -231,15 +231,16 @@ class API {
         
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
-        let controllers = try decoder.decode([Controller].self, from: data)
-        logger.info("Got \(controllers.count) controllers")
-        return controllers
+        let facility = try decoder.decode(Facility.self, from: data)
+        logger.info("Got facility: \(facility.name)")
+        return facility
     }
     
     func getSignedInControllers() async throws -> [Controller] {
         logger.info("Getting signed in controllers")
         
         let request = try buildRequest(forEndpoint: .signedIn, method: .GET)
+        logger.info("URL: \(String(describing:request.url))")
         let (data, response) = try await URLSession.shared.data(for: request)
         
         guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
