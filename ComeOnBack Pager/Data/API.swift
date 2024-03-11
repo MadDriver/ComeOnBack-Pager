@@ -26,7 +26,7 @@ enum APIServer: String {
 
 class API {
     private let logger = Logger(subsystem: Logger.subsystem, category: "API")
-    static let server = APIServer.local
+    static let server = APIServer.production
     static let clientAPIVersion = 0.12
     static var facilityID: String? = nil
     
@@ -240,7 +240,6 @@ class API {
         logger.info("Getting signed in controllers")
         
         let request = try buildRequest(forEndpoint: .signedIn, method: .GET)
-        logger.info("URL: \(String(describing:request.url))")
         let (data, response) = try await URLSession.shared.data(for: request)
         
         guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {

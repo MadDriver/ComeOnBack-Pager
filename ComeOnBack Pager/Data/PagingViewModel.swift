@@ -70,6 +70,9 @@ final class PagingViewModel: ObservableObject {
     @MainActor
     func shortPoll() async throws {
         logger.info("shortPoll()")
+        
+        // TODO: Why is this not updating correctly?
+        
         signedIn = try await API().getSignedInControllers()
     }
     
