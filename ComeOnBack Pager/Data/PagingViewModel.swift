@@ -48,7 +48,7 @@ final class PagingViewModel: ObservableObject {
             }
     }
     
-    var newelySignedIn: [Controller] {
+    var newlySignedIn: [Controller] {
         signedIn.filter { controller in
             controller.status == .SIGNED_IN
         }.sorted()

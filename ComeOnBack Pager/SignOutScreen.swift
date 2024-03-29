@@ -57,7 +57,7 @@ struct SignOutScreen: View {
         case .all:
             return pagingVM.signedIn.sorted(by: selectedSortingMethod)
         case .onBreak:
-            return (pagingVM.onBreak + pagingVM.newelySignedIn).sorted(by: selectedSortingMethod)
+            return (pagingVM.onBreak + pagingVM.newlySignedIn).sorted(by: selectedSortingMethod)
         }
     }
     

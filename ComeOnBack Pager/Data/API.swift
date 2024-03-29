@@ -223,7 +223,7 @@ class API {
         let (data, response) = try await URLSession.shared.data(for: request)
         
         guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-            logger.error("Invalid server response in getControllerList")
+            logger.error("Invalid server response in getFacility")
             let returnString = String(data: data, encoding: .utf8) ?? "could not decode return data"
             logger.debug("Got server response: \(returnString)")
             throw APIError.invalidServerResponse
