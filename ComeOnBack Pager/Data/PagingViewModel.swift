@@ -15,7 +15,6 @@ final class PagingViewModel: ObservableObject {
     @Published var areas: [Area] = []
     @Published var signedIn: [Controller] = []
     
-    
     @MainActor
     func updateAllControllers() async throws {
         let newFacility = try await API().getFacility()
@@ -69,15 +68,18 @@ final class PagingViewModel: ObservableObject {
     
     @MainActor
     func shortPoll() async throws {
-        logger.info("shortPoll()")
-        
-        // TODO: Why is this not updating correctly?
-        
         signedIn = try await API().getSignedInControllers()
     }
     
     @MainActor
     func updateController(_ controller: Controller) async {
+        // This is a hack to force swiftui to redraw this controller.
+        // It fixes a bug where updating the ack of the beBack would not force a redraw.
+        // There's probably a cleaner way to fix this.
+        // ~LG 2024-03-29
+        var controller = controller
+        controller.id = UUID()
+        
         signedIn.removeAll { $0.initials == controller.initials}
         signedIn.append(controller)
     }

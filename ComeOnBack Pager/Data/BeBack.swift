@@ -5,8 +5,9 @@ enum BeBackError: Error {
     case initializationError
 }
 
-struct BeBack: Hashable {
+struct BeBack: Identifiable, Hashable {
     private static let logger = Logger(subsystem: Logger.subsystem, category: "BeBack")
+    var id = UUID()
     var asap: Bool
     var atTime: BasicTime?
     var forPosition: String?

@@ -97,6 +97,7 @@ struct AvailableCellView: View {
                                         processingPhoneTap = true
                                         Task {
                                             do {
+                                                logger.debug("Processing phone tap ack")
                                                 try await pagingVM.ackBeBack(forController: controller)
                                                 processingPhoneTap = false
                                             } catch {

@@ -31,8 +31,7 @@ struct HomeScreen: View {
                         HStack(spacing: 0) {
                             OnPositionView(controllers: pagingVM.onPosition)
                                 .frame(width: geometry.size.width * 0.33)
-                            AvailableView(newlySignedIn: pagingVM.newelySignedIn,
-                                          onBreak: pagingVM.onBreak)
+                            AvailableView()
                                 .frame(width: geometry.size.width * 0.67)
                         } // HStack
                     } // GeoReader
