@@ -20,21 +20,21 @@ enum HTTPMethod: String {
 }
 
 enum APIServer: String {
-    case local = "http://127.0.0.1:5000/"
-    case production = "https://atcpager.com/"
+    case local = "http://127.0.0.1:5000"
+    case production = "https://atcpager.com"
 }
 
 class API {
     private let logger = Logger(subsystem: Logger.subsystem, category: "API")
     static let server = APIServer.production
-    static let clientAPIVersion = 0.11
+    static let clientAPIVersion = 0.12
     static var facilityID: String? = nil
     
     enum endPoint: String {
         case registerPager = "registerpager"
         case beBack = "beback"
         case acknowledge = "acknowledgebeback"
-        case controllerList = "controllers"
+        case facility = ""
         case signIn = "signin"
         case signOut = "signout"
         case signedIn = "signedin"
@@ -66,12 +66,14 @@ class API {
         return request
     }
     
-    func submitBeBack(forController controller: Controller) async throws {
-        logger.info("submitBeBack(forController: \(controller)")
-        
-        guard let beBack = controller.beBack else {
-            throw APIError.missingBeBack
-        }
+    func parseController(fromData data: Data) throws -> Controller {
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        return try decoder.decode(Controller.self, from: data)
+    }
+    
+    func submit(beBack: BeBack, forController controller: Controller) async throws -> Controller {
+        logger.info("submitBeBack(\(beBack), forController: \(controller)")
         
         var json: [String: Any] = ["initials": controller.initials,
                                    "time": beBack.stringValue]
@@ -88,12 +90,14 @@ class API {
             logger.debug("Got server response: \(returnString)")
             throw APIError.invalidServerResponse
         }
+        
+        return try parseController(fromData: data)
     }
     
     func ackBeBack(forController controller: Controller) async throws {
         logger.info("AckBeBack(forController: \(controller)")
         
-        guard let beBack = controller.beBack else {
+        guard controller.beBack != nil else {
             throw APIError.missingBeBack
         }
         
@@ -134,7 +138,7 @@ class API {
         }
     }
     
-    func removeBeBack(initials: String) async throws {
+    func removeBeBack(initials: String) async throws -> Controller {
         logger.info("Removing BeBack for \(initials)")
         let json = ["initials": initials]
         var request = try buildRequest(forEndpoint: .beBack, method: .POST, json: json)
@@ -147,6 +151,8 @@ class API {
             logger.debug("Got server response: \(returnString)")
             throw APIError.invalidServerResponse
         }
+        
+        return try parseController(fromData: data)
     }
     
     func signIn(initials: String) async throws -> Controller {
@@ -161,7 +167,7 @@ class API {
             logger.debug("Got server response: \(returnString)")
             throw APIError.invalidServerResponse
         }
-        return try JSONDecoder().decode(Controller.self, from: data)
+        return try parseController(fromData: data)
     }
     
     func signOut(initials: String) async throws {
@@ -179,7 +185,7 @@ class API {
         }
     }
     
-    func moveOnPosition(initials: String) async throws {
+    func moveOnPosition(initials: String) async throws -> Controller {
         logger.info("Moving on position \(initials)")
         let json = ["initials": initials]
         let request = try buildRequest(forEndpoint: .moveOnPosition, method: .POST, json: json)
@@ -191,9 +197,11 @@ class API {
             logger.debug("Got server response: \(returnString)")
             throw APIError.invalidServerResponse
         }
+        
+        return try parseController(fromData: data)
     }
     
-    func moveOffPosition(initials: String) async throws {
+    func moveOffPosition(initials: String) async throws -> Controller {
         logger.info("Moving off position \(initials)")
         let json = ["initials": initials]
         let request = try buildRequest(forEndpoint: .moveOffPosition, method: .POST, json: json)
@@ -205,23 +213,27 @@ class API {
             logger.debug("Got server response: \(returnString)")
             throw APIError.invalidServerResponse
         }
+
+        return try parseController(fromData: data)
     }
     
-    func getControllerList() async throws -> [Controller] {
-        logger.info("Getting controller list")
-        let request = try buildRequest(forEndpoint: .controllerList, method: .GET)
+    func getFacility() async throws -> Facility {
+        logger.info("Getting facility")
+        let request = try buildRequest(forEndpoint: .facility, method: .GET)
         let (data, response) = try await URLSession.shared.data(for: request)
         
         guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-            logger.error("Invalid server response in getControllerList")
+            logger.error("Invalid server response in getFacility")
             let returnString = String(data: data, encoding: .utf8) ?? "could not decode return data"
             logger.debug("Got server response: \(returnString)")
             throw APIError.invalidServerResponse
         }
         
-        let controllers = try JSONDecoder().decode([Controller].self, from: data)
-        logger.info("Got \(controllers.count) controllers")
-        return controllers
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        let facility = try decoder.decode(Facility.self, from: data)
+        logger.info("Got facility: \(facility.name)")
+        return facility
     }
     
     func getSignedInControllers() async throws -> [Controller] {
@@ -237,7 +249,9 @@ class API {
             throw APIError.invalidServerResponse
         }
         
-        let siControllers = try JSONDecoder().decode([Controller].self, from: data)
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        let siControllers = try decoder.decode([Controller].self, from: data)
         logger.info("Got \(siControllers.count) signed in controllers")
         return siControllers
     }

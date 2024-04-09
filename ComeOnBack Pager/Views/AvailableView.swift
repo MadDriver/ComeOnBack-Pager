@@ -8,13 +8,31 @@
 import SwiftUI
 
 struct AvailableView: View {
-    var controllerList: [Controller]
+    @EnvironmentObject var pagingVM: PagingViewModel
+    
     var body: some View {
-        
         VStack {
+            if !pagingVM.newlySignedIn.isEmpty {
+                Text("Signed In")
+                    .fontWeight(.heavy)
+                List {
+                    ForEach(pagingVM.newlySignedIn) { controller in
+                        NavigationLink {
+                            PagingView(controller: controller)
+                        } label: {
+                            AvailableCellView(controller: controller)
+                        }
+                    }
+                } // List
+            }
+            
+            Text("AVAILABLE")
+                .fontWeight(.heavy)
+            if pagingVM.onBreak.isEmpty && pagingVM.newlySignedIn.isEmpty {
+                EmptyControllerView()
+            }
             List {
-                ForEach(controllerList) { controller in
-                    
+                ForEach(pagingVM.onBreak, id: \.id) { controller in
                     NavigationLink {
                         PagingView(controller: controller)
                     } label: {
@@ -27,8 +45,7 @@ struct AvailableView: View {
 }
 
 struct AvailableView_Previews: PreviewProvider {
-    
     static var previews: some View {
-        AvailableView(controllerList: Controller.mock_data)
+        AvailableView()
     }
 }

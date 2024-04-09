@@ -1,4 +1,5 @@
 import Foundation
+import OSLog
 
 enum ControllerStatus: String, Codable {
     case AVAILABLE
@@ -6,58 +7,32 @@ enum ControllerStatus: String, Codable {
     case PAGED_BACK_ACKNOWLEDGED
     case ON_POSITION
     case OTHER_DUTIES
+    case SIGNED_IN
 }
 
-struct Controller: Hashable, Identifiable, Codable  {
-    static var positionsList = [
-        "Departure": ["DR1", "DR2", "DR3", "DR4",
-                      "SR1", "SR2", "SR3", "SR4",
-                      "FR1", "FR2", "FR3", "FR4",
-                      "MO1", "MO2", "MO3", nil,
-                      "FD/CD", "CI"],
-        
-        "Arrival": ["AR1", "AR2", "AR3", "AR4",
-                    "FR1", "FR2", "FR3", "FR4",
-                    "MO1", "MO2", "MO3", nil,
-                    "GJT", "PUB","FD/CD", "CI"],
-        
-        "OS/TMU": ["DR1", "DR2", "DR3", "DR4",
-                   "SR1", "SR2", "SR3", "SR4",
-                   "AR1", "AR2", "AR3", "AR4",
-                   "FR1", "FR2", "FR3", "FR4",
-                   "MO1", "MO2", "MO3", nil,
-                   "GJT", "PUB",
-                   "FD/CD",  "CI"]
-    ]
-    
+struct Controller: Hashable, Identifiable  {
+//    private let logger = Logger(subsystem: Logger.subsystem, category: "Controller")
     var id = UUID()
     var initials: String
-    var area: String
     var isDev: Bool
     var status: ControllerStatus
     var beBack: BeBack? = nil
-    var registered: Bool?
-    
+    var atTime: Date?
+    var signInTime: Date?
+    var registered: Bool
+    var areaString: String
+}
+
+extension Controller: Codable {
     enum CodingKeys: String, CodingKey {
         case initials
-        case area
         case isDev
         case status
         case beBack
         case registered
-    }
-    
-    var positions: [String?] {
-        return Controller.positionsList[self.area] ?? []
-    }
-    
-    static func newControllerFrom(_ controller: Controller, withStatus status: ControllerStatus) -> Controller {
-        var newController = controller
-        newController.status = status
-        if status == .AVAILABLE {
-            newController.beBack = nil
-        }
-        return newController
+        case atTime
+        case signInTime
+        case areaString = "area"
     }
 }
 
@@ -71,10 +46,27 @@ extension Controller: CustomStringConvertible {
     
 }
 
+extension Controller: Equatable {
+    static func == (lhs: Controller, rhs: Controller) -> Bool {
+        lhs.initials == rhs.initials
+    }
+}
+
+extension Controller: Comparable {
+    static func < (lhs: Controller, rhs: Controller) -> Bool {
+        guard let lhsDate = lhs.atTime, let rhsDate = rhs.atTime else {
+            let logger = Logger(subsystem: Logger.subsystem, category: "Controller:Comparable")
+            logger.error("Trying to sort controllers without atTimes defined. \(lhs)-\(rhs)")
+            return false
+        }
+        return lhsDate < rhsDate
+    }
+}
+
 extension Controller {
     static let mock_data = [
-        Controller(initials: "XX", area: "Departure", isDev: false, status: .AVAILABLE, registered: true),
-        Controller(initials: "YY", area: "Arrival", isDev: true, status: .ON_POSITION, registered: false),
-        Controller(initials: "ZZ", area: "OS/TMU", isDev: false, status: .ON_POSITION, registered: false),
+        Controller(initials: "XX", isDev: false, status: .AVAILABLE, atTime: Date(), signInTime: Date(), registered: true, areaString: ""),
+        Controller(initials: "YY", isDev: true, status: .ON_POSITION, atTime: Date(), signInTime: Date(), registered: false, areaString: ""),
+        Controller(initials: "ZZ", isDev: false, status: .ON_POSITION, atTime: Date(), signInTime: Date(), registered: false, areaString: ""),
     ]
 }

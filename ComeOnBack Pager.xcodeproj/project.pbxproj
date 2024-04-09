@@ -19,6 +19,7 @@
 		378B1AAB2A5E31920053332A /* ClockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 378B1AAA2A5E31920053332A /* ClockView.swift */; };
 		37A0135429CE79A70083FD3C /* OnPositionCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37A0135329CE79A70083FD3C /* OnPositionCellView.swift */; };
 		37A0135829CE7F080083FD3C /* SignInScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37A0135729CE7F080083FD3C /* SignInScreen.swift */; };
+		CE71A04B2B5E1ECB00AC8252 /* Area.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE71A04A2B5E1ECB00AC8252 /* Area.swift */; };
 		CE88038E2ABCBA4600A7E830 /* Date+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE88038D2ABCBA4600A7E830 /* Date+Ext.swift */; };
 		CE934E102A52F54700FFE5BE /* API.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE934E0F2A52F54700FFE5BE /* API.swift */; };
 		CE934E152A5462C000FFE5BE /* BeBack.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE934E142A5462C000FFE5BE /* BeBack.swift */; };
@@ -27,6 +28,7 @@
 		CE934E1B2A54C2DF00FFE5BE /* BasicTime.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE934E1A2A54C2DF00FFE5BE /* BasicTime.swift */; };
 		CE934E1D2A54C8C500FFE5BE /* HeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE934E1C2A54C8C500FFE5BE /* HeaderView.swift */; };
 		CEC9476E2AA9FFFD00476C0A /* FacilityPickerScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEC9476D2AA9FFFD00476C0A /* FacilityPickerScreen.swift */; };
+		CEEE252D2B97EAA600196070 /* Facility.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEEE252C2B97EAA600196070 /* Facility.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -44,6 +46,7 @@
 		37A0135329CE79A70083FD3C /* OnPositionCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnPositionCellView.swift; sourceTree = "<group>"; };
 		37A0135729CE7F080083FD3C /* SignInScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInScreen.swift; sourceTree = "<group>"; };
 		CE146CF42A54EE8D0096B1B6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		CE71A04A2B5E1ECB00AC8252 /* Area.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Area.swift; sourceTree = "<group>"; };
 		CE88038D2ABCBA4600A7E830 /* Date+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Ext.swift"; sourceTree = "<group>"; };
 		CE934E0F2A52F54700FFE5BE /* API.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = API.swift; sourceTree = "<group>"; };
 		CE934E142A5462C000FFE5BE /* BeBack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeBack.swift; sourceTree = "<group>"; };
@@ -52,6 +55,7 @@
 		CE934E1A2A54C2DF00FFE5BE /* BasicTime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicTime.swift; sourceTree = "<group>"; };
 		CE934E1C2A54C8C500FFE5BE /* HeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderView.swift; sourceTree = "<group>"; };
 		CEC9476D2AA9FFFD00476C0A /* FacilityPickerScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FacilityPickerScreen.swift; sourceTree = "<group>"; };
+		CEEE252C2B97EAA600196070 /* Facility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Facility.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -103,6 +107,8 @@
 				CE934E0F2A52F54700FFE5BE /* API.swift */,
 				CE934E1A2A54C2DF00FFE5BE /* BasicTime.swift */,
 				374D8C5C29BB880C002A690D /* Controller.swift */,
+				CE71A04A2B5E1ECB00AC8252 /* Area.swift */,
+				CEEE252C2B97EAA600196070 /* Facility.swift */,
 				374D8C6029BCF73B002A690D /* PagingViewModel.swift */,
 				CE934E142A5462C000FFE5BE /* BeBack.swift */,
 				CE88038D2ABCBA4600A7E830 /* Date+Ext.swift */,
@@ -199,12 +205,14 @@
 				CE934E152A5462C000FFE5BE /* BeBack.swift in Sources */,
 				374D8C5D29BB880C002A690D /* Controller.swift in Sources */,
 				CEC9476E2AA9FFFD00476C0A /* FacilityPickerScreen.swift in Sources */,
+				CE71A04B2B5E1ECB00AC8252 /* Area.swift in Sources */,
 				374D8C5929BA7FE5002A690D /* HomeScreen.swift in Sources */,
 				374D8C6129BCF73B002A690D /* PagingViewModel.swift in Sources */,
 				37A0135829CE7F080083FD3C /* SignInScreen.swift in Sources */,
 				378B1AAB2A5E31920053332A /* ClockView.swift in Sources */,
 				3766D3912A5B9132002B64BA /* EmptyControllerView.swift in Sources */,
 				CE934E172A54ABD700FFE5BE /* AvailableView.swift in Sources */,
+				CEEE252D2B97EAA600196070 /* Facility.swift in Sources */,
 				CE88038E2ABCBA4600A7E830 /* Date+Ext.swift in Sources */,
 				374D8C4B29BA7E5B002A690D /* ComeOnBackPagerApp.swift in Sources */,
 				CE934E192A54BE9C00FFE5BE /* OnPositionView.swift in Sources */,

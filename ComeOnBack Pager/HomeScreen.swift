@@ -15,47 +15,26 @@ class DisplaySettings: ObservableObject {
 struct HomeScreen: View {
     private let logger = Logger(subsystem: Logger.subsystem, category: "Home View")
     @ObservedObject var pagingVM = PagingViewModel()
+    
     @ObservedObject var displaySettings = DisplaySettings()
     @State var signInViewIsActive = false
     @State var signOutViewIsActive = false
     @State var isLoading = false
     let timer = Timer.publish(every: 30.0, on: .main, in: .common).autoconnect()
+        
     var body: some View {
         NavigationStack {
             ZStack(alignment: .topLeading) {
                 VStack {
                     HeaderView()
-                    
-                    
                     GeometryReader { geometry in
                         HStack(spacing: 0) {
-                            
-                            VStack {
-                                Text("ON POSITION")
-                                    .fontWeight(.heavy)
-                                if pagingVM.onPosition.isEmpty {
-                                    EmptyControllerView()
-                                } else {
-                                    OnPositionView(controllers: pagingVM.onPosition)
-                                    
-                                }
-                            }
-                            .frame(width: geometry.size.width * 0.33)
-                            
-                            VStack {
-                                Text("AVAILABLE")
-                                    .fontWeight(.heavy)
-                                
-                                if pagingVM.rightHandList.isEmpty {
-                                    EmptyControllerView()
-                                } else {
-                                    AvailableView(controllerList: pagingVM.rightHandList)
-                                    
-                                }
-                            }
-                            .frame(width: geometry.size.width * 0.67)
-                        }
-                    }
+                            OnPositionView(controllers: pagingVM.onPosition)
+                                .frame(width: geometry.size.width * 0.33)
+                            AvailableView()
+                                .frame(width: geometry.size.width * 0.67)
+                        } // HStack
+                    } // GeoReader
                 } // V Stack
                 
                 HStack {
@@ -96,7 +75,7 @@ struct HomeScreen: View {
         }
         .task{
             do {
-                pagingVM.allControllers = try await API().getControllerList()
+                try await pagingVM.updateAllControllers()
                 await MainActor.run {
                     isLoading = false
                 }
@@ -123,9 +102,7 @@ struct HomeScreen: View {
     }
     
     func signOutControllers() {
-        
         signOutViewIsActive = true
-        
     }
 }
 

@@ -11,8 +11,12 @@ struct OnPositionView: View {
     var controllers: [Controller]
     var body: some View {
         VStack {
-            
+            Text("ON POSITION")
+                .fontWeight(.heavy)
             List {
+                if controllers.isEmpty {
+                    EmptyControllerView()
+                }
                 ForEach(controllers) { controller in
                     OnPositionCellView(controller: controller)
                 }

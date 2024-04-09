@@ -10,43 +10,85 @@ import OSLog
 
 final class PagingViewModel: ObservableObject {
     private let logger = Logger(subsystem: Logger.subsystem, category: "PagingViewModel")
+    @Published var facility: Facility? = nil
     @Published var allControllers: [Controller] = []
-    @Published var onPosition: [Controller] = []
-    @Published var pagedBack: [Controller] = []
-    @Published var onBreak: [Controller] = []
+    @Published var areas: [Area] = []
+    @Published var signedIn: [Controller] = []
     
-    var signedInDevs: [Controller] {
-        let signedInControllers = onPosition + pagedBack + onBreak
-        return signedInControllers.filter { $0.isDev == true }
-    }
-    
-    var rightHandList: [Controller] {
-        get {
-            return pagedBack + onBreak
-        }
+    @MainActor
+    func updateAllControllers() async throws {
+        let newFacility = try await API().getFacility()
+        facility = newFacility
+        areas = newFacility.areas
+        allControllers = newFacility.controllers
     }
     
     func getController(withInitials initials: String) -> Controller? {
         return allControllers.first { $0.initials == initials}
     }
     
-    func sortPagedBack() {
-        pagedBack.sort(by: { lhs, rhs in
-            guard let lhsBeBack = lhs.beBack, let rhsBeBack = rhs.beBack else {
-                logger.error("Trying to sort controllers without beBacks defined. \(lhs)-\(rhs)")
-                return false
+    var notSignedIn: [Controller] {
+        allControllers.filter { allController in
+            !signedIn.contains { $0.initials == allController.initials}
+        }
+    }
+    
+    var pagedBack: [Controller] {
+        signedIn
+            .filter { controller in
+                controller.status == .PAGED_BACK
             }
-            return lhsBeBack < rhsBeBack
-        })
+            .sorted { lhs, rhs in
+                guard let lhsBeBack = lhs.beBack, let rhsBeBack = rhs.beBack else {
+                    logger.error("Trying to sort controllers without beBacks defined. \(lhs)-\(rhs)")
+                    return false
+                }
+                return lhsBeBack < rhsBeBack
+            }
+    }
+    
+    var newlySignedIn: [Controller] {
+        signedIn.filter { controller in
+            controller.status == .SIGNED_IN
+        }.sorted()
+    }
+    
+    var onBreak: [Controller] {
+        pagedBack +
+        signedIn.filter { controller in
+            controller.status == .AVAILABLE
+        }.sorted()
+    }
+    
+    var onPosition: [Controller] {
+        signedIn.filter { controller in
+            controller.status == .ON_POSITION
+        }.sorted()
+    }
+    
+    @MainActor
+    func shortPoll() async throws {
+        signedIn = try await API().getSignedInControllers()
+    }
+    
+    @MainActor
+    func updateController(_ controller: Controller) async {
+        // This is a hack to force swiftui to redraw this controller.
+        // It fixes a bug where updating the ack of the beBack would not force a redraw.
+        // There's probably a cleaner way to fix this.
+        // ~LG 2024-03-29
+        var controller = controller
+        controller.id = UUID()
+        
+        signedIn.removeAll { $0.initials == controller.initials}
+        signedIn.append(controller)
     }
     
     func signIn(controllers: [Controller]) async throws {
         for controller in controllers {
             logger.info("Signing in \(controller)")
             let controller = try await API().signIn(initials: controller.initials)
-            await MainActor.run {
-                onBreak.append(controller)
-            }
+            await updateController(controller)
         }
     }
     
@@ -55,83 +97,39 @@ final class PagingViewModel: ObservableObject {
             logger.info("Signing out \(controller)")
             try await API().signOut(initials: controller.initials)
             await MainActor.run {
-                onBreak.removeAll(where: { $0.initials == controller.initials })
-                pagedBack.removeAll(where: { $0.initials == controller.initials })
-                onPosition.removeAll(where: { $0.initials == controller.initials })
+                signedIn.removeAll { $0.initials == controller.initials }
             }
         }
     }
     
-    func shortPoll() async throws {
-        logger.info("shortPoll()")
-        let controllers = try await API().getSignedInControllers()
-        await MainActor.run {
-            self.onPosition = controllers.filter { $0.status == .ON_POSITION }
-            self.pagedBack = controllers.filter { $0.status == .PAGED_BACK }
-            self.onBreak = controllers.filter { $0.status == .AVAILABLE }
-            sortPagedBack()
-        }
-    }
-    
-    @MainActor
-    func processBeBack(forController controller: Controller) {
-        onBreak.removeAll(where: { $0.initials == controller.initials })
-        pagedBack.removeAll(where: { $0.initials == controller.initials })
-        pagedBack.append(controller)
-        sortPagedBack()
-    }
-    
     func submitBeBack(_ beBack: BeBack, forController controller: Controller) async throws {
-        var controller = controller
-        
-        // Determine if beBack should keep ack status
-        var ack = false
-        if controller.beBack?.stringValue == beBack.stringValue {
-            ack = controller.beBack?.acknowledged ?? false
-        }
-        
-        controller.status = .PAGED_BACK
-        controller.beBack = beBack
-        controller.beBack?.acknowledged = ack
-        
-        
-        try await API().submitBeBack(forController: controller)
-        await processBeBack(forController: controller)
+        let controller = try await API().submit(
+            beBack: beBack,
+            forController: controller
+        )
+        await updateController(controller)
     }
     
     func moveControllerToOnPosition(_ controller: Controller) async throws {
-        let controller = Controller.newControllerFrom(controller, withStatus: .ON_POSITION)
-        try await API().moveOnPosition(initials: controller.initials)
-        await MainActor.run {
-            pagedBack.removeAll(where: { $0.initials == controller.initials })
-            onBreak.removeAll(where: { $0.initials == controller.initials })
-            onPosition.append(controller)
-        }
+        let controller = try await API().moveOnPosition(initials: controller.initials)
+        await updateController(controller)
     }
     
     func moveControllerToOnBreak(_ controller: Controller) async throws {
-        let controller = Controller.newControllerFrom(controller, withStatus: .AVAILABLE)
-        try await API().moveOffPosition(initials: controller.initials)
-        await MainActor.run {
-            onPosition.removeAll(where: { $0.initials == controller.initials })
-            onBreak.append(controller)
-        }
+        let controller = try await API().moveOffPosition(initials: controller.initials)
+        await updateController(controller)
     }
     
     func removeBeBack(forController controller: Controller) async throws {
-        let controller = Controller.newControllerFrom(controller, withStatus: .AVAILABLE)
-        try await API().removeBeBack(initials: controller.initials)
-        await MainActor.run {
-            pagedBack.removeAll(where: { $0.initials == controller.initials })
-            onBreak.insert(controller, at: 0)
-        }
+        let controller = try await API().removeBeBack(initials: controller.initials)
+        await updateController(controller)
     }
     
     func ackBeBack(forController controller: Controller) async throws {
         try await API().ackBeBack(forController: controller)
         var controller = controller
         controller.beBack?.acknowledged = true
-        await processBeBack(forController: controller)
+        await updateController(controller)
     }
     
     let beBackMinutes = [
