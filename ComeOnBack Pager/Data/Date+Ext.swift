@@ -18,21 +18,24 @@ extension Date {
     
     func relative() -> String {
         let delta = Int(self.timeIntervalSinceNow) * -1
-        if delta > ONEDAY {
-            return ("\(delta / ONEDAY)d")
+        let days = delta / ONEDAY
+        let hours = delta / ONEHOUR
+        let minutes = (delta - (hours * ONEHOUR)) / 60
+
+        if days > 0 {
+            return ("\(days)d \(hours)h")
         }
 
-        if delta > ONEHOUR {
-            return ("\(delta / ONEHOUR)h \(delta % 60)m")
+        if hours > 0 {
+            return ("\(hours)h \(minutes)m")
         }
 
-        if delta > ONEMINUTE {
-            return ("\(delta / ONEMINUTE)m")
+        if minutes > 0 {
+            return ("\(minutes)m")
         }
 
         if delta >= 0 {
             return ("<1m")
-            //return ("\(delta)s")
         }
         
         return ("Unknown")
