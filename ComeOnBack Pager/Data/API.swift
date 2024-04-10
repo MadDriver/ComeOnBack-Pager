@@ -50,7 +50,9 @@ class API {
     func buildRequest(forEndpoint endPoint: endPoint, method: HTTPMethod, queryItems: [URLQueryItem] = [], json: [String: Any]? = nil) throws -> URLRequest  {
         var request = URLRequest(url: try endPoint.getURL())
         request.httpMethod = method.rawValue
-        request.url?.append(queryItems: queryItems)
+        if !queryItems.isEmpty {
+            request.url?.append(queryItems: queryItems)
+        }
         
         if let json = json {
             guard let jsonData = try? JSONSerialization.data(withJSONObject: json) else {
