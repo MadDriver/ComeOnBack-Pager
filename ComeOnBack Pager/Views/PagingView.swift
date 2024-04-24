@@ -39,10 +39,13 @@ struct PagingView: View {
     @State var selectedBeBackMinutes: String?
     @State var timePicker: TimeASAPPicker = .normal
     
-    @State var buttonIsDisabled: Bool = true
+    @State var pageButtonPresssed: Bool = false
     
     var controller: Controller
-    var isSubmittable: Bool { beBackTimeString != nil }
+    var isSubmittable: Bool {
+        !pageButtonPresssed &&
+        beBackTimeString != nil
+    }
     var beBackText: String {
         let verb = controller.registered ? "Page" : "Assign"
         if beBackTimeString == nil { return "\(verb) \(controller.initials)" }
@@ -251,13 +254,14 @@ extension PagingView {
             return
         }
         
+        pageButtonPresssed = true
         Task {
             do {
                 let beBack = try BeBack(timeString: beBackTime, forPosition: beBackPosition)
                 try await pagingVM.submitBeBack(beBack, forController: controller)
                 await MainActor.run { dismiss() }
             } catch APIError.invalidParameters {
-                logger.error("Invalid parameters in pageBack()")
+                logger.error("Invalid parameters in pageBack(, )")
             } catch APIError.invalidServerResponse {
                 logger.error("Invalid server response in pageBack()")
             } catch BeBackError.initializationError {
@@ -265,6 +269,7 @@ extension PagingView {
             } catch {
                 logger.error("Unexpected error in pageBack(): \(error)")
             }
+            await MainActor.run { pageButtonPresssed = false }
         }
     }
     
