@@ -34,7 +34,7 @@ class API {
         case registerPager = "registerpager"
         case beBack = "beback"
         case acknowledge = "acknowledgebeback"
-        case facility = ""
+        case facility = "controllers"
         case signIn = "signin"
         case signOut = "signout"
         case signedIn = "signedin"
