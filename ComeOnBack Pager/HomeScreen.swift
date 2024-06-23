@@ -20,6 +20,10 @@ struct HomeScreen: View {
     @State var signInViewIsActive = false
     @State var signOutViewIsActive = false
     @State var isLoading = false
+    
+    @State private var fetchError: APIError = .invalidServerResponse
+    @State private var isShowingAlert = false
+    
     let timer = Timer.publish(every: 30.0, on: .main, in: .common).autoconnect()
         
     var body: some View {
@@ -69,6 +73,8 @@ struct HomeScreen: View {
                 do {
                     try await pagingVM.shortPoll()
                 } catch {
+                    fetchError = .invalidServerResponse
+                    isShowingAlert = true
                     logger.error("\(error)")
                 }
             }
@@ -80,12 +86,16 @@ struct HomeScreen: View {
                     isLoading = false
                 }
             } catch {
+                fetchError = .invalidServerResponse
+                isShowingAlert = true
                 logger.error("Error getting controller list: \(error)")
             }
             
             do {
                 try await pagingVM.shortPoll()
             } catch {
+                fetchError = .invalidServerResponse
+                isShowingAlert = true
                 logger.error("\(error)")
             }
             
@@ -95,6 +105,12 @@ struct HomeScreen: View {
                 try? await pagingVM.shortPoll()
             }
         }
+        .alert(isPresented: $isShowingAlert, error: fetchError) { fetchError in
+            // Default
+        } message: { fetchError in
+            Text(fetchError.failureReason)
+        }
+
     }// body
     
     func signInControllers() {
