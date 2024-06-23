@@ -1,12 +1,42 @@
 import Foundation
 import OSLog
 
-enum APIError: Error {
+enum APIError: LocalizedError {
     case invalidServerResponse
     case invalidParameters
     case facilityIDNotSet
     case invalidFacilityID
     case missingBeBack
+    
+    var errorDescription: String? {
+        switch self {
+        case .invalidServerResponse:
+            "Invalid Server Response"
+        case .invalidParameters:
+            "Invalid Parameters"
+        case .facilityIDNotSet:
+            "Facility ID Not Set"
+        case .invalidFacilityID:
+            "Invalid Facility ID"
+        case .missingBeBack:
+            "Missing Be Back"
+        }
+    }
+    
+    var failureReason: String {
+        switch self {
+        case .invalidServerResponse:
+            "There was an invalid server response.  Make sure device is connected to the internet."
+        case .invalidParameters:
+            "There were invalid parameters being used"
+        case .facilityIDNotSet:
+            "The facility ID has not been set."
+        case .invalidFacilityID:
+            "The facility ID being used is invalid"
+        case .missingBeBack:
+            "There is no be back."
+        }
+    }
 }
 
 enum CodingError: Error {
