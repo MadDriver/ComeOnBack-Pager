@@ -50,13 +50,13 @@ enum HTTPMethod: String {
 }
 
 enum APIServer: String {
-    case local = "http://127.0.0.1:5000"
-    case production = "https://atcpager.com"
+    case local = "http://127.0.0.1:8001/api"
+    case production = "https://atcpager.com/api"
 }
 
 class API {
     private let logger = Logger(subsystem: Logger.subsystem, category: "API")
-    static let server = APIServer.production
+    static let server = APIServer.local
     static let clientAPIVersion = "v1"
     static var facilityID: String? = nil
     
@@ -98,13 +98,13 @@ class API {
         return request
     }
     
-    func parseController(fromData data: Data) throws -> Controller {
-        let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .iso8601
-        return try decoder.decode(Controller.self, from: data)
-    }
+//    func parseController(fromData data: Data) throws -> Controller {
+//        let decoder = JSONDecoder()
+//        decoder.dateDecodingStrategy = .iso8601
+//        return try decoder.decode(Controller.self, from: data)
+//    }
     
-    func submit(beBack: BeBack, forController controller: Controller) async throws -> Controller {
+    func submit(beBack: BeBack, forController controller: Controller) async throws {
         logger.info("submitBeBack(\(beBack), forController: \(controller)")
         
         var json: [String: Any] = ["initials": controller.initials,
@@ -122,8 +122,6 @@ class API {
             logger.debug("Got server response: \(returnString)")
             throw APIError.invalidServerResponse
         }
-        
-        return try parseController(fromData: data)
     }
     
     func ackBeBack(forController controller: Controller) async throws {
@@ -170,7 +168,7 @@ class API {
         }
     }
     
-    func removeBeBack(initials: String) async throws -> Controller {
+    func removeBeBack(initials: String) async throws {
         logger.info("Removing BeBack for \(initials)")
         let json = ["initials": initials]
         var request = try buildRequest(forEndpoint: .beBack, method: .POST, json: json)
@@ -183,11 +181,9 @@ class API {
             logger.debug("Got server response: \(returnString)")
             throw APIError.invalidServerResponse
         }
-        
-        return try parseController(fromData: data)
     }
     
-    func signIn(initials: String) async throws -> Controller {
+    func signIn(initials: String) async throws {
         logger.info("Signing in \(initials)")
         let json = ["initials": initials]
         let request = try buildRequest(forEndpoint: .signIn, method: .POST, json: json)
@@ -199,7 +195,6 @@ class API {
             logger.debug("Got server response: \(returnString)")
             throw APIError.invalidServerResponse
         }
-        return try parseController(fromData: data)
     }
     
     func signOut(initials: String) async throws {
@@ -217,7 +212,7 @@ class API {
         }
     }
     
-    func moveOnPosition(initials: String) async throws -> Controller {
+    func moveOnPosition(initials: String) async throws {
         logger.info("Moving on position \(initials)")
         let json = ["initials": initials]
         let request = try buildRequest(forEndpoint: .moveOnPosition, method: .POST, json: json)
@@ -229,11 +224,9 @@ class API {
             logger.debug("Got server response: \(returnString)")
             throw APIError.invalidServerResponse
         }
-        
-        return try parseController(fromData: data)
     }
     
-    func moveOffPosition(initials: String) async throws -> Controller {
+    func moveOffPosition(initials: String) async throws {
         logger.info("Moving off position \(initials)")
         let json = ["initials": initials]
         let request = try buildRequest(forEndpoint: .moveOffPosition, method: .POST, json: json)
@@ -245,8 +238,6 @@ class API {
             logger.debug("Got server response: \(returnString)")
             throw APIError.invalidServerResponse
         }
-
-        return try parseController(fromData: data)
     }
     
     func getFacility() async throws -> Facility {

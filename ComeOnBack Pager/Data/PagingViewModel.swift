@@ -69,67 +69,49 @@ final class PagingViewModel: ObservableObject {
     
     @MainActor
     func shortPoll() async throws {
-    }
-    
-    @MainActor
-    func updateController(_ controller: Controller) async {
-        // This is a hack to force swiftui to redraw this controller.
-        // It fixes a bug where updating the ack of the beBack would not force a redraw.
-        // There's probably a cleaner way to fix this.
-        // ~LG 2024-03-29
-        var controller = controller
-        controller.id = UUID()
-        
-        signedIn.removeAll { $0.initials == controller.initials}
-        signedIn.append(controller)
+        signedIn = try await API().getSignedInControllers()
     }
     
     func signIn(controllers: [Controller]) async throws {
         for controller in controllers {
-            logger.info("Signing in \(controller)")
-            let controller = try await API().signIn(initials: controller.initials)
-            await updateController(controller)
+            try await API().signIn(initials: controller.initials)
+            try await self.shortPoll()
         }
     }
     
     func signOut(controllers: [Controller]) async throws {
         for controller in controllers {
-            logger.info("Signing out \(controller)")
             try await API().signOut(initials: controller.initials)
-            await MainActor.run {
-                signedIn.removeAll { $0.initials == controller.initials }
-            }
+            try await self.shortPoll()
         }
     }
     
     func submitBeBack(_ beBack: BeBack, forController controller: Controller) async throws {
-        let controller = try await API().submit(
+        try await API().submit(
             beBack: beBack,
             forController: controller
         )
-        await updateController(controller)
+        try await self.shortPoll()
     }
     
     func moveControllerToOnPosition(_ controller: Controller) async throws {
-        let controller = try await API().moveOnPosition(initials: controller.initials)
-        await updateController(controller)
+        try await API().moveOnPosition(initials: controller.initials)
+        try await self.shortPoll()
     }
     
     func moveControllerToOnBreak(_ controller: Controller) async throws {
-        let controller = try await API().moveOffPosition(initials: controller.initials)
-        await updateController(controller)
+        try await API().moveOffPosition(initials: controller.initials)
+        try await self.shortPoll()
     }
     
     func removeBeBack(forController controller: Controller) async throws {
-        let controller = try await API().removeBeBack(initials: controller.initials)
-        await updateController(controller)
+        try await API().removeBeBack(initials: controller.initials)
+        try await self.shortPoll()
     }
     
     func ackBeBack(forController controller: Controller) async throws {
         try await API().ackBeBack(forController: controller)
-        var controller = controller
-        controller.beBack?.acknowledged = true
-        await updateController(controller)
+        try await self.shortPoll()
     }
     
     let beBackMinutes = [
