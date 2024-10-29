@@ -20,7 +20,8 @@ final class PagingViewModel: ObservableObject {
         let newFacility = try await API().getFacility()
         facility = newFacility
         areas = newFacility.areas
-        allControllers = newFacility.controllers
+        allControllers = newFacility.areas.flatMap { $0.controllers }
+        logger.info("Got \(self.allControllers.count) controllers")
     }
     
     func getController(withInitials initials: String) -> Controller? {
@@ -68,7 +69,6 @@ final class PagingViewModel: ObservableObject {
     
     @MainActor
     func shortPoll() async throws {
-        signedIn = try await API().getSignedInControllers()
     }
     
     @MainActor

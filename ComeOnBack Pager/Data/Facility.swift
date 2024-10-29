@@ -9,7 +9,6 @@ import Foundation
 struct Facility: Hashable, Codable {
     var name: String
     var areas: [Area]
-    var controllers: [Controller]
 }
 
 extension Facility {
