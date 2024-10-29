@@ -57,14 +57,14 @@ enum APIServer: String {
 class API {
     private let logger = Logger(subsystem: Logger.subsystem, category: "API")
     static let server = APIServer.production
-    static let clientAPIVersion = 0.12
+    static let clientAPIVersion = "v1"
     static var facilityID: String? = nil
     
     enum endPoint: String {
         case registerPager = "registerpager"
         case beBack = "beback"
         case acknowledge = "acknowledgebeback"
-        case facility = "controllers"
+        case facility = ""
         case signIn = "signin"
         case signOut = "signout"
         case signedIn = "signedin"
@@ -73,7 +73,7 @@ class API {
         
         func getURL() throws -> URL {
             guard let facilityID = facilityID else { throw APIError.facilityIDNotSet }
-            return URL(string: "\(server.rawValue)/\(facilityID)/\(self.rawValue)")!
+            return URL(string: "\(server.rawValue)/\(API.clientAPIVersion)/\(facilityID)/\(self.rawValue)")!
         }
     }
     
