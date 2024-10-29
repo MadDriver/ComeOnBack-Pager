@@ -17,4 +17,8 @@ extension Facility {
             area.name == controller.areaString
         }
     }
+    
+    var allControllers: [Controller] {
+        return self.areas.flatMap { $0.controllers }
+    }
 }

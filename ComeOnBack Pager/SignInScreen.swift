@@ -37,19 +37,21 @@ struct SignInScreen: View {
     var body: some View {
         NavigationStack {  // I believe to make it "searchable" it needs to be in a nav stack.  More research needed
             VStack {
-                if pagingVM.areas.count > 1 {
-                    HStack {
-                        Picker("Select Area", selection: $filteredArea) {
-                            ForEach(pagingVM.areas) { area in
-                                Text("\(area.name)")
-                                    .tag(area as Area?)
+                if let facility = pagingVM.facility {
+                    if facility.areas.count > 1 {
+                        HStack {
+                            Picker("Select Area", selection: $filteredArea) {
+                                ForEach(facility.areas) { area in
+                                    Text("\(area.name)")
+                                        .tag(area as Area?)
+                                }
                             }
-                        }
-                        .pickerStyle(.segmented)
-                        
-                        Button("Clear") { filteredArea = nil }
-                    } //HStack
-                } // if pagingVM.areas.count > 1
+                            .pickerStyle(.segmented)
+                            
+                            Button("Clear") { filteredArea = nil }
+                        } //HStack
+                    } // if facility.areas.count > 1
+                } // facility = pagingVM.facility
                 ScrollView {
                     LazyVGrid(columns: columns, spacing: 20) {
                         ForEach(controllers) { controller in

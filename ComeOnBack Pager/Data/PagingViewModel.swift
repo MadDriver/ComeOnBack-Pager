@@ -11,25 +11,38 @@ import OSLog
 final class PagingViewModel: ObservableObject {
     private let logger = Logger(subsystem: Logger.subsystem, category: "PagingViewModel")
     @Published var facility: Facility? = nil
-    @Published var allControllers: [Controller] = []
-    @Published var areas: [Area] = []
     @Published var signedIn: [Controller] = []
     
+    // MARK: - Lifecycle
+    private var hourlyTimer: Timer?
+    init() {
+        // Run a timer every 5 minutes that updates the list of all controllers in this facility
+        hourlyTimer = Timer.scheduledTimer(withTimeInterval: 60 * 5, repeats: true) { [weak self] _ in
+            Task { [weak self] in
+                try? await self?.updateAllControllers()
+            }
+        }
+    }
+    
+    deinit {
+        hourlyTimer?.invalidate()
+    }
+    
+    // MARK: - Updaters
     @MainActor
     func updateAllControllers() async throws {
-        let newFacility = try await API().getFacility()
-        facility = newFacility
-        areas = newFacility.areas
-        allControllers = newFacility.areas.flatMap { $0.controllers }
-        logger.info("Got \(self.allControllers.count) controllers")
+        facility = try await API().getFacility()
     }
     
-    func getController(withInitials initials: String) -> Controller? {
-        return allControllers.first { $0.initials == initials}
+    @MainActor
+    func shortPoll() async throws {
+        signedIn = try await API().getSignedInControllers()
     }
     
+    // MARK: - Computed Properties
     var notSignedIn: [Controller] {
-        allControllers.filter { allController in
+        guard let facility = facility else { return [] }
+        return facility.allControllers.filter { allController in
             !signedIn.contains { $0.initials == allController.initials}
         }
     }
@@ -67,9 +80,9 @@ final class PagingViewModel: ObservableObject {
         }.sorted()
     }
     
-    @MainActor
-    func shortPoll() async throws {
-        signedIn = try await API().getSignedInControllers()
+    // MARK: - Controller Functions
+    func getController(withInitials initials: String) -> Controller? {
+        return facility?.allControllers.first { $0.initials == initials}
     }
     
     func signIn(controllers: [Controller]) async throws {
@@ -114,18 +127,7 @@ final class PagingViewModel: ObservableObject {
         try await self.shortPoll()
     }
     
-    let beBackMinutes = [
-        "10", "15", "30", "45"
-    ]
-    
-    let positionRows = [
-        GridItem(), GridItem(), GridItem(), GridItem()
-    ]
-    
-    let beBackTimeRows = [
-        GridItem(), GridItem()
-    ]
-    
+    // MARK: - Utility Functions
     func roundUpToNext5Minutes(minutes: Int) -> Int? {
         let calendar = Calendar.current
         let dateToEdit = calendar.date(byAdding: .minute, value: minutes, to: Date())!

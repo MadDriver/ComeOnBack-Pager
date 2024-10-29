@@ -25,6 +25,15 @@ enum TimeASAPPicker: CaseIterable, Identifiable {
 }
 
 struct PagingView: View {
+    let beBackMinutes = [
+        "10", "15", "30", "45"
+    ]
+    
+    let positionRows = [
+        GridItem(), GridItem(), GridItem(), GridItem()
+    ]
+    
+    
     private let logger = Logger(subsystem: Logger.subsystem, category: "PagingView")
     
     @Environment(\.dismiss) var dismiss
@@ -162,7 +171,7 @@ struct PagingView: View {
             .frame(width: 400, height: 400)
         
         HStack {
-            ForEach(pagingVM.beBackMinutes, id: \.self) { minute in
+            ForEach(beBackMinutes, id: \.self) { minute in
                 Text("\(minute) mins")
                     .fontWeight(.bold)
                     .frame(width: 100, height: 50)
@@ -184,7 +193,7 @@ struct PagingView: View {
            let area = facility.getArea(forController: controller)
         {
             VStack {
-                LazyHGrid(rows: pagingVM.positionRows, spacing: 20) {
+                LazyHGrid(rows: positionRows, spacing: 20) {
                     ForEach(area.positions, id: \.self) { position in
                         if let position = position {
                             Text(position)
