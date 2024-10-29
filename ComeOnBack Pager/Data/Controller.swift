@@ -46,12 +46,6 @@ extension Controller: CustomStringConvertible {
     
 }
 
-extension Controller: Equatable {
-    static func == (lhs: Controller, rhs: Controller) -> Bool {
-        lhs.initials == rhs.initials
-    }
-}
-
 extension Controller: Comparable {
     static func < (lhs: Controller, rhs: Controller) -> Bool {
         guard let lhsDate = lhs.atTime, let rhsDate = rhs.atTime else {
