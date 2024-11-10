@@ -8,6 +8,7 @@ enum ControllerStatus: String, Codable {
     case ON_POSITION
     case OTHER_DUTIES
     case SIGNED_IN
+    case NOT_SIGNED_IN
 }
 
 struct Controller: Hashable, Identifiable  {

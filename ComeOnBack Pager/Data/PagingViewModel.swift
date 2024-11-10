@@ -86,17 +86,13 @@ final class PagingViewModel: ObservableObject {
     }
     
     func signIn(controllers: [Controller]) async throws {
-        for controller in controllers {
-            try await API().signIn(initials: controller.initials)
-            try await self.shortPoll()
-        }
+        try await API().signIn(controllers)
+        try await self.shortPoll()
     }
     
     func signOut(controllers: [Controller]) async throws {
-        for controller in controllers {
-            try await API().signOut(initials: controller.initials)
-            try await self.shortPoll()
-        }
+        try await API().signOut(controllers)
+        try await self.shortPoll()
     }
     
     func submitBeBack(_ beBack: BeBack, forController controller: Controller) async throws {

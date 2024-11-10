@@ -39,6 +39,19 @@ enum APIError: LocalizedError {
     }
 }
 
+
+struct SignInResponse: Codable {
+    // Ignores the results field
+    let total: Int
+    let successful: Int
+}
+
+struct SignOutResponse: Codable {
+    // Ignores the results field
+    let successful: Int
+    let total: Int
+}
+
 enum CodingError: Error {
     case decodingError(error: String)
 }
@@ -183,33 +196,39 @@ class API {
         }
     }
     
-    func signIn(initials: String) async throws {
-        logger.info("Signing in \(initials)")
+    func signIn(_ controllers: [Controller]) async throws {
+        logger.info("Signing in \(controllers.count) controllers")
+
+        let initials = controllers.map { $0.initials }
         let json = ["initials": initials]
         let request = try buildRequest(forEndpoint: .signIn, method: .POST, json: json)
+
         let (data, response) = try await URLSession.shared.data(for: request)
-        
+
         guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
             logger.error("Invalid server response in signIn(\(initials))")
             let returnString = String(data: data, encoding: .utf8) ?? "could not decode return data"
             logger.debug("Got server response: \(returnString)")
             throw APIError.invalidServerResponse
         }
+
+        let serverResponse = try JSONDecoder().decode(SignInResponse.self, from: data)
+        logger.debug("Successful sign in: \(serverResponse.successful) out of \(serverResponse.total)")
     }
     
-    func signOut(initials: String) async throws {
-        logger.info("Signing out \(initials)")
-        let json = ["initials": initials]
+    func signOut(_ controllers: [Controller]) async throws {
+        let json = ["initials": controllers.map { $0.initials }]
         let request = try buildRequest(forEndpoint: .signOut, method: .POST, json: json)
+
         let (data, response) = try await URLSession.shared.data(for: request)
-        
-        
+
         guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-            logger.error("Invalid server response in signOut\(initials)")
-            let returnString = String(data: data, encoding: .utf8) ?? "could not decode return data"
-            logger.debug("Got server response: \(returnString)")
+            //let _ = try JSONDecoder().decode(SignOutResponse.self, from: data)
             throw APIError.invalidServerResponse
         }
+
+        let serverResponse = try JSONDecoder().decode(SignOutResponse.self, from: data)
+        logger.debug("Successful sign out: \(serverResponse.successful) out of \(serverResponse.total)")
     }
     
     func moveOnPosition(initials: String) async throws {
