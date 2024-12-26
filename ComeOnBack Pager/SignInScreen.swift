@@ -86,6 +86,9 @@ struct SignInScreen: View {
             .padding(.top)
         } // Nav Stack
         .searchable(text: $searchInitials)
+        .task {
+            try? await pagingVM.updateAllControllers()
+        }
     }
     
     func signInControllers() {
