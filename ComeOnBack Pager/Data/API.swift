@@ -69,7 +69,7 @@ enum APIServer: String {
 
 class API {
     private let logger = Logger(subsystem: Logger.subsystem, category: "API")
-    static let server = APIServer.local
+    static let server = APIServer.production
     static let clientAPIVersion = "v1"
     static var facilityID: String? = nil
     
