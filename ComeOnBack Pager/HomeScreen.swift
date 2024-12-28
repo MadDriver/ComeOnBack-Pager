@@ -17,7 +17,8 @@ struct HomeScreen: View {
     @ObservedObject var pagingVM = PagingViewModel()
     @ObservedObject var displaySettings = DisplaySettings()
     
-    @AppStorage("user_theme") private var userTheme: Theme = .dark
+//    @AppStorage("user_theme") private var userTheme: Theme = .dark
+    @AppStorage("isDarkMode") private var isDarkMode: Bool = true
     
     @State var signInViewIsActive = false
     @State var signOutViewIsActive = false
@@ -55,11 +56,13 @@ struct HomeScreen: View {
                     
                     Spacer()
                     
-                    Image(systemName: "moonphase.last.quarter.inverse")
-                        .frame(width: 50, height: 50)
-                        .onTapGesture {
-                            changeTheme.toggle()
-                        }
+                    darkModeToggle
+                    
+//                    Image(systemName: "moonphase.last.quarter.inverse")
+//                        .frame(width: 50, height: 50)
+//                        .onTapGesture {
+//                            changeTheme.toggle()
+//                        }
                     
                     Button("SIGN OUT", action: signOutControllers)
                         .buttonStyle(.borderedProminent)
@@ -71,23 +74,23 @@ struct HomeScreen: View {
             
             
         } // Nav Stack
-        .preferredColorScheme(userTheme.colorScheme)
+        .preferredColorScheme(isDarkMode == true ? .dark : .light)
         .fullScreenCover(isPresented: $signInViewIsActive) {
             SignInScreen()
         }
         .fullScreenCover(isPresented: $signOutViewIsActive) {
             SignOutScreen()
         }
-        .sheet(isPresented: $changeTheme, content: {
-            if #available(iOS 16.4, *) {
-                ThemeChangerScreen()
-                    .presentationDetents([.height(500)])
-                    .presentationBackground(.clear)
-            } else {
-                ThemeChangerScreen()
-                    .presentationDetents([.height(500)])
-            }
-        })
+//        .sheet(isPresented: $changeTheme, content: {
+//            if #available(iOS 16.4, *) {
+//                ThemeChangerScreen()
+//                    .presentationDetents([.height(500)])
+//                    .presentationBackground(.clear)
+//            } else {
+//                ThemeChangerScreen()
+//                    .presentationDetents([.height(500)])
+//            }
+//        })
         .environmentObject(pagingVM)
         .environmentObject(displaySettings)
         .onReceive(timer) { _ in
@@ -142,7 +145,14 @@ struct HomeScreen: View {
     func signOutControllers() {
         signOutViewIsActive = true
     }
+    
+    var darkModeToggle: some View {
+        Toggle("Dark Mode", systemImage: "moonphase.last.quarter.inverse", isOn: $isDarkMode)
+            .toggleStyle(.button)
+            .labelStyle(.iconOnly)
+    }
 }
+
 
 //struct Home_Previews: PreviewProvider {
 //    static var previews: some View {
