@@ -10,7 +10,7 @@ import SwiftUI
 struct ThemeChangerScreen: View {
     
     @Environment(\.colorScheme) private var scheme
-    @AppStorage("user_theme") private var userTheme: Theme = .systemDefault
+    @AppStorage("user_theme") private var userTheme: Theme = .dark
     @Namespace private var animation
     
     var body: some View {
@@ -61,14 +61,11 @@ struct ThemeChangerScreen: View {
 
 enum Theme: String, CaseIterable {
     
-    case systemDefault = "Default"
     case light = "Light"
     case dark = "Dark"
     
     func color(_ scheme: ColorScheme) -> Color {
         switch self {
-        case .systemDefault:
-            return scheme == .dark ? .red : .purple
         case .light:
             return .purple
         case .dark:
@@ -78,8 +75,6 @@ enum Theme: String, CaseIterable {
     
     var colorScheme: ColorScheme? {
         switch self {
-        case .systemDefault:
-            return nil
         case .light:
             return .light
         case .dark:

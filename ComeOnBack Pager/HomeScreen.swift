@@ -17,7 +17,7 @@ struct HomeScreen: View {
     @ObservedObject var pagingVM = PagingViewModel()
     @ObservedObject var displaySettings = DisplaySettings()
     
-    @AppStorage("user_theme") private var userTheme: Theme = .systemDefault
+    @AppStorage("user_theme") private var userTheme: Theme = .dark
     
     @State var signInViewIsActive = false
     @State var signOutViewIsActive = false
@@ -26,6 +26,7 @@ struct HomeScreen: View {
     @State private var fetchError: APIError = .invalidServerResponse
     @State private var isShowingAlert = false
     @State private var changeTheme: Bool = false
+    @State private var brightness = 1.0
     
     let timer = Timer.publish(every: 30.0, on: .main, in: .common).autoconnect()
         
