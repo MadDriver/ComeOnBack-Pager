@@ -15,14 +15,17 @@ class DisplaySettings: ObservableObject {
 struct HomeScreen: View {
     private let logger = Logger(subsystem: Logger.subsystem, category: "Home View")
     @ObservedObject var pagingVM = PagingViewModel()
-    
     @ObservedObject var displaySettings = DisplaySettings()
+    
+    @AppStorage("user_theme") private var userTheme: Theme = .systemDefault
+    
     @State var signInViewIsActive = false
     @State var signOutViewIsActive = false
     @State var isLoading = false
     
     @State private var fetchError: APIError = .invalidServerResponse
     @State private var isShowingAlert = false
+    @State private var changeTheme: Bool = false
     
     let timer = Timer.publish(every: 30.0, on: .main, in: .common).autoconnect()
         
@@ -39,6 +42,13 @@ struct HomeScreen: View {
                                 .frame(width: geometry.size.width * 0.67)
                         } // HStack
                     } // GeoReader
+                    
+                    Image(systemName: "moonphase.last.quarter.inverse")
+                        .frame(width: 50, height: 50)
+                        .onTapGesture {
+                            changeTheme.toggle()
+                        }
+                    
                 } // V Stack
                 
                 HStack {
@@ -59,13 +69,23 @@ struct HomeScreen: View {
             
             
         } // Nav Stack
-        
+        .preferredColorScheme(userTheme.colorScheme)
         .fullScreenCover(isPresented: $signInViewIsActive) {
             SignInScreen()
         }
         .fullScreenCover(isPresented: $signOutViewIsActive) {
             SignOutScreen()
         }
+        .sheet(isPresented: $changeTheme, content: {
+            if #available(iOS 16.4, *) {
+                ThemeChangerScreen()
+                    .presentationDetents([.height(500)])
+                    .presentationBackground(.clear)
+            } else {
+                ThemeChangerScreen()
+                    .presentationDetents([.height(500)])
+            }
+        })
         .environmentObject(pagingVM)
         .environmentObject(displaySettings)
         .onReceive(timer) { _ in
