@@ -43,11 +43,6 @@ struct HomeScreen: View {
                         } // HStack
                     } // GeoReader
                     
-                    Image(systemName: "moonphase.last.quarter.inverse")
-                        .frame(width: 50, height: 50)
-                        .onTapGesture {
-                            changeTheme.toggle()
-                        }
                     
                 } // V Stack
                 
@@ -58,6 +53,12 @@ struct HomeScreen: View {
                         .disabled(isLoading)
                     
                     Spacer()
+                    
+                    Image(systemName: "moonphase.last.quarter.inverse")
+                        .frame(width: 50, height: 50)
+                        .onTapGesture {
+                            changeTheme.toggle()
+                        }
                     
                     Button("SIGN OUT", action: signOutControllers)
                         .buttonStyle(.borderedProminent)
