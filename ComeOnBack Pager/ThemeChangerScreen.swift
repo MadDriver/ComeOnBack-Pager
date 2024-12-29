@@ -11,8 +11,11 @@ struct ThemeChangerScreen: View {
     
     @Environment(\.colorScheme) private var scheme
     @AppStorage("user_theme") private var userTheme: Theme = .dark
+    @AppStorage("user_brightness_setting") private var userBrightness: Double = 1.0
     @Namespace private var animation
     
+    @Binding var screenBrightness: Double
+        
     var body: some View {
         VStack(spacing: 15) {
             
@@ -43,20 +46,36 @@ struct ThemeChangerScreen: View {
                             userTheme = theme
                         }
                 }
-            }
+            } // HStack
             .padding(3)
             .background(.gray.opacity(0.2), in: .capsule)
             .padding(.top, 20)
-        }
+            
+            VStack(spacing: -5) {
+                Text("Brightness")
+                    .font(.title2.bold())
+                    .foregroundStyle(Color.black)
+                Slider(value: $screenBrightness, in: 0.0...1.0)
+                    .frame(width: 300)
+                    .padding()
+            }
+            .padding(.top, 20)
+            
+            
+            
+        } // VStack
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .frame(height: 500)
         .background(Color.white)
         .clipShape(.rect(cornerRadius: 30))
+
+        
+        
     }
 }
 
 #Preview {
-    ThemeChangerScreen()
+    ThemeChangerScreen(screenBrightness: .constant(1.0))
 }
 
 enum Theme: String, CaseIterable {
