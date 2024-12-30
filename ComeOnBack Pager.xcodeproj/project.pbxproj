@@ -14,6 +14,8 @@
 		374D8C5D29BB880C002A690D /* Controller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 374D8C5C29BB880C002A690D /* Controller.swift */; };
 		374D8C5F29BCC2D7002A690D /* PagingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 374D8C5E29BCC2D7002A690D /* PagingView.swift */; };
 		374D8C6129BCF73B002A690D /* PagingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 374D8C6029BCF73B002A690D /* PagingViewModel.swift */; };
+		375AA4DC2D20730C00F61754 /* ThemeChangerScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 375AA4DB2D20730C00F61754 /* ThemeChangerScreen.swift */; };
+		375AA4DE2D2095D300F61754 /* ThemeChangeToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 375AA4DD2D2095D300F61754 /* ThemeChangeToggle.swift */; };
 		3766D38F2A5B05E7002B64BA /* SignOutScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3766D38E2A5B05E7002B64BA /* SignOutScreen.swift */; };
 		3766D3912A5B9132002B64BA /* EmptyControllerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3766D3902A5B9132002B64BA /* EmptyControllerView.swift */; };
 		378B1AAB2A5E31920053332A /* ClockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 378B1AAA2A5E31920053332A /* ClockView.swift */; };
@@ -40,6 +42,8 @@
 		374D8C5C29BB880C002A690D /* Controller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Controller.swift; sourceTree = "<group>"; };
 		374D8C5E29BCC2D7002A690D /* PagingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagingView.swift; sourceTree = "<group>"; };
 		374D8C6029BCF73B002A690D /* PagingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagingViewModel.swift; sourceTree = "<group>"; };
+		375AA4DB2D20730C00F61754 /* ThemeChangerScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeChangerScreen.swift; sourceTree = "<group>"; };
+		375AA4DD2D2095D300F61754 /* ThemeChangeToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeChangeToggle.swift; sourceTree = "<group>"; };
 		3766D38E2A5B05E7002B64BA /* SignOutScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignOutScreen.swift; sourceTree = "<group>"; };
 		3766D3902A5B9132002B64BA /* EmptyControllerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyControllerView.swift; sourceTree = "<group>"; };
 		378B1AAA2A5E31920053332A /* ClockView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockView.swift; sourceTree = "<group>"; };
@@ -92,6 +96,7 @@
 				CE934E112A52F64A00FFE5BE /* Data */,
 				374D8C5829BA7FE5002A690D /* HomeScreen.swift */,
 				37A0135729CE7F080083FD3C /* SignInScreen.swift */,
+				375AA4DB2D20730C00F61754 /* ThemeChangerScreen.swift */,
 				3766D38E2A5B05E7002B64BA /* SignOutScreen.swift */,
 				CEC9476D2AA9FFFD00476C0A /* FacilityPickerScreen.swift */,
 				CE9E84792A43A7CC00141062 /* Views */,
@@ -121,6 +126,7 @@
 			children = (
 				3766D3902A5B9132002B64BA /* EmptyControllerView.swift */,
 				378B1AAA2A5E31920053332A /* ClockView.swift */,
+				375AA4DD2D2095D300F61754 /* ThemeChangeToggle.swift */,
 				CE934E182A54BE9C00FFE5BE /* OnPositionView.swift */,
 				37A0135329CE79A70083FD3C /* OnPositionCellView.swift */,
 				CE934E162A54ABD700FFE5BE /* AvailableView.swift */,
@@ -210,8 +216,10 @@
 				374D8C6129BCF73B002A690D /* PagingViewModel.swift in Sources */,
 				37A0135829CE7F080083FD3C /* SignInScreen.swift in Sources */,
 				378B1AAB2A5E31920053332A /* ClockView.swift in Sources */,
+				375AA4DE2D2095D300F61754 /* ThemeChangeToggle.swift in Sources */,
 				3766D3912A5B9132002B64BA /* EmptyControllerView.swift in Sources */,
 				CE934E172A54ABD700FFE5BE /* AvailableView.swift in Sources */,
+				375AA4DC2D20730C00F61754 /* ThemeChangerScreen.swift in Sources */,
 				CEEE252D2B97EAA600196070 /* Facility.swift in Sources */,
 				CE88038E2ABCBA4600A7E830 /* Date+Ext.swift in Sources */,
 				374D8C4B29BA7E5B002A690D /* ComeOnBackPagerApp.swift in Sources */,
