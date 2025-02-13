@@ -48,9 +48,9 @@ struct OnPositionCellView: View {
 struct OnPositionCellView_Previews: PreviewProvider {
     static var previews: some View {
         VStack {
-            OnPositionCellView(controller: Controller.mock_data[0])
-            OnPositionCellView(controller: Controller.mock_data[1])
-            OnPositionCellView(controller: Controller.mock_data[2])
+            ForEach(Controller.mock_data, id: \.initials) { controller in
+                OnPositionCellView(controller: controller)
+            }
         }
     }
 }

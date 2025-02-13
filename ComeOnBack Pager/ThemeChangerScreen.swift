@@ -22,12 +22,12 @@ struct ThemeChangerScreen: View {
             Text("Choose a Style")
                 .font(.title2.bold())
                 .padding(.top, 25)
-                .foregroundStyle(Color.black)
                 .bold()
             
             HStack(spacing: 0) {
                 ForEach(Theme.allCases, id: \.rawValue) { theme in
                     Text(theme.rawValue)
+                        .font(.title2.bold())
                         .padding(.vertical, 10)
                         .frame(width: 100)
                         .foregroundStyle(Color.black)
@@ -54,22 +54,24 @@ struct ThemeChangerScreen: View {
             VStack(spacing: -5) {
                 Text("Brightness")
                     .font(.title2.bold())
-                    .foregroundStyle(Color.black)
                 Slider(value: $screenBrightness, in: 0.0...1.0)
                     .frame(width: 300)
                     .padding()
+                    .onAppear {
+                        let thumbImage = UIImage(systemName: "sun.max.fill")
+                        UISlider.appearance().setThumbImage(thumbImage, for: .normal)
+                    }
             }
             .padding(.top, 20)
             
             
             
         } // VStack
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .frame(height: 500)
-        .background(Color.white)
+//        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .frame(width: 400, height: 500)
+        .background(Color(.themeChangeBackground))
         .clipShape(.rect(cornerRadius: 30))
 
-        
         
     }
 }
@@ -101,4 +103,3 @@ enum Theme: String, CaseIterable {
         }
     }
 }
-
