@@ -26,7 +26,7 @@ enum TimeASAPPicker: CaseIterable, Identifiable {
 
 struct PagingView: View {
     let beBackMinutes = [
-        "10", "15", "30", "45"
+        "10", "15", "30", "40"
     ]
     
     let positionRows = [
