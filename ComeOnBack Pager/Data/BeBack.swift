@@ -56,6 +56,31 @@ struct BeBack: Identifiable, Hashable {
     var asap: Bool { sentinel == "ASAP" }
 }
 
+// Content equality (the stored `id` is a fresh UUID per decode and `date` is derived
+// from `atTime`; both are excluded so an unchanged be-back compares equal across the
+// 4s refetch and SwiftUI can skip untouched rows).
+extension BeBack {
+    static func == (lhs: BeBack, rhs: BeBack) -> Bool {
+        lhs.atTime == rhs.atTime
+            && lhs.sentinel == rhs.sentinel
+            && lhs.forPosition == rhs.forPosition
+            && lhs.acknowledged == rhs.acknowledged
+            && lhs.training == rhs.training
+            && lhs.role == rhs.role
+            && lhs.partnerInitials == rhs.partnerInitials
+    }
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(atTime)
+        hasher.combine(sentinel)
+        hasher.combine(forPosition)
+        hasher.combine(acknowledged)
+        hasher.combine(training)
+        hasher.combine(role)
+        hasher.combine(partnerInitials)
+    }
+}
+
 extension BeBack: CustomStringConvertible {
     var description: String {
         let position = forPosition.map { " for \($0)" } ?? ""

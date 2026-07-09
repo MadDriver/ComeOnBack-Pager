@@ -71,16 +71,11 @@ extension Controller: Decodable {
     }
 }
 
-// Identity + equality by initials (see `id`).
-extension Controller: Hashable {
-    static func == (lhs: Controller, rhs: Controller) -> Bool {
-        lhs.initials == rhs.initials
-    }
-
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(initials)
-    }
-}
+// Full-value equality (synthesized). Identity for lists is `id` (initials) — stable
+// across the 4s refetch — but equality MUST cover the mutable state: SwiftUI uses
+// `Equatable` to skip row updates, so an initials-only `==` froze rows at their
+// first-render state (a new be-back never appeared on the board).
+extension Controller: Hashable {}
 
 extension Controller: CustomStringConvertible {
     var description: String {

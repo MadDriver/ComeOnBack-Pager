@@ -60,9 +60,14 @@ struct PagingView: View {
     }
     var beBackText: String {
         let verb = controller.registered ? "Page" : "Assign"
-        if beBackTimeString == nil { return "\(verb) \(controller.initials)" }
-        if beBackPosition == nil { return "\(verb) \(controller.initials) at \(beBackTimeString ?? "  ")" }
-        return "\(verb) \(controller.initials) at \(beBackTimeString ?? "  ") for \(beBackPosition ?? "  ")"
+        guard let time = beBackTimeString else { return "\(verb) \(controller.initials)" }
+        // "at" reads right only for clock times — sentinels flow directly
+        // ("Page BB ASAP", not "Page BB at ASAP").
+        let timePhrase = (try? BasicTime(time)) != nil ? "at \(time)" : time
+        guard let position = beBackPosition else {
+            return "\(verb) \(controller.initials) \(timePhrase)"
+        }
+        return "\(verb) \(controller.initials) \(timePhrase) for \(position)"
     }
     
     var body: some View {
