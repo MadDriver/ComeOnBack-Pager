@@ -114,6 +114,122 @@ final class PagingViewModel: ObservableObject {
         signedIn.filter { $0.status == .ON_POSITION }.sorted()
     }
 
+    // MARK: - Training teams + interleaved board items (R2)
+
+    var trainingTeams: [TrainingTeam] { facility?.trainingTeams ?? [] }
+    var plannedPositions: [PlannedPosition] { facility?.plannedPositions ?? [] }
+
+    private var controllersByInitials: [String: Controller] {
+        Dictionary(allControllers.map { ($0.initials, $0) }, uniquingKeysWith: { first, _ in first })
+    }
+
+    /// Team units keyed by *each* member's initials (both point at the same unit).
+    /// A team whose members aren't both on the current roster is skipped (tolerate the
+    /// momentary roster/team skew a poll can expose — mirrors `board.ts:buildTeamUnits`).
+    private var unitsByMember: [String: TeamUnit] {
+        let byInitials = controllersByInitials
+        var map: [String: TeamUnit] = [:]
+        for team in trainingTeams {
+            guard let ojti = byInitials[team.ojti], let trainee = byInitials[team.trainee] else { continue }
+            let unit = TeamUnit(team: team, ojti: ojti, trainee: trainee)
+            map[team.ojti] = unit
+            map[team.trainee] = unit
+        }
+        return map
+    }
+
+    /// One resolved unit per team (for the pairing UI's "already teamed" filtering).
+    var teamUnits: [TeamUnit] {
+        var seen = Set<Int>()
+        return unitsByMember.values.filter { seen.insert($0.team.id).inserted }
+    }
+
+    /// The team a controller belongs to (by initials), if any.
+    func team(forInitials initials: String) -> TrainingTeam? {
+        trainingTeams.first { $0.ojti == initials || $0.trainee == initials }
+    }
+
+    /// The AVAILABLE (right) side: the paged callup queue (singles/teams + unassigned
+    /// plan holes, interleaved ASAP→SOON→HH:MM) followed by the not-paged available
+    /// controllers/teams by sign-on time. Ports `board.ts:buildQueue`+`buildAvailable`,
+    /// merged into the pager's single AVAILABLE list.
+    var availableItems: [AvailableRow] {
+        let units = unitsByMember
+        var planByInitials: [String: PlannedPosition] = [:]
+        var planByTeam: [Int: PlannedPosition] = [:]
+        var holes: [PlannedPosition] = []
+        for plan in plannedPositions {
+            if let initials = plan.controllerInitials { planByInitials[initials] = plan }
+            else if let teamId = plan.teamId { planByTeam[teamId] = plan }
+            else { holes.append(plan) }
+        }
+
+        // Callup queue: paged singles/teams (carrying any assigned plan) + holes.
+        var queue: [AvailableRow] = []
+        var seenTeams = Set<Int>()
+        for controller in allControllers where controller.status == .PAGED_BACK && controller.beBack != nil {
+            if let unit = units[controller.initials] {
+                guard seenTeams.insert(unit.team.id).inserted else { continue }
+                queue.append(.team(unit, plan: planByTeam[unit.team.id]))
+            } else {
+                queue.append(.single(controller, plan: planByInitials[controller.initials]))
+            }
+        }
+        queue.append(contentsOf: holes.map { AvailableRow.hole($0) })
+        queue.sort { timeRank($0.queueTime) < timeRank($1.queueTime) }
+
+        // Available: not paged, not on position. A team shows only when both members
+        // are available (else its members appear as singles).
+        var available: [AvailableRow] = []
+        seenTeams.removeAll()
+        for controller in allControllers where controller.status == .AVAILABLE || controller.status == .SIGNED_IN {
+            if let unit = units[controller.initials] {
+                guard seenTeams.insert(unit.team.id).inserted else { continue }
+                let partner = unit.ojti.initials == controller.initials ? unit.trainee : unit.ojti
+                guard partner.status == .AVAILABLE || partner.status == .SIGNED_IN else {
+                    seenTeams.remove(unit.team.id)  // let the partner-less member fall through as a single
+                    available.append(.single(controller, plan: nil))
+                    continue
+                }
+                available.append(.team(unit, plan: nil))
+            } else {
+                available.append(.single(controller, plan: nil))
+            }
+        }
+        available.sort { ($0.atTime ?? .distantFuture) < ($1.atTime ?? .distantFuture) }
+
+        return queue + available
+    }
+
+    /// The ON POSITION (left) side: current reality only. A team plugged in together
+    /// (both ON_POSITION) collapses to one row; otherwise members show individually.
+    var onPositionItems: [OnPositionRow] {
+        let units = unitsByMember
+        var items: [OnPositionRow] = []
+        var seenTeams = Set<Int>()
+        for controller in onPosition {
+            if let unit = units[controller.initials],
+               unit.ojti.status == .ON_POSITION, unit.trainee.status == .ON_POSITION {
+                guard seenTeams.insert(unit.team.id).inserted else { continue }
+                items.append(.team(unit))
+            } else {
+                items.append(.single(controller))
+            }
+        }
+        return items
+    }
+
+    /// An unassigned plan whose position matches a just-created direct page — the
+    /// reconciliation prompt (design spec §9.2). At most one plan per position, so the
+    /// match is unambiguous.
+    func matchingUnassignedPlan(forPosition: String?) -> PlannedPosition? {
+        guard let forPosition else { return nil }
+        return plannedPositions.first { plan in
+            plan.status == "planned" && plan.controllerInitials == nil && plan.teamId == nil
+                && plan.position.uppercased() == forPosition.uppercased()
+        }
+    }
+
     // MARK: - Lookups + writes (each write refetches so the board reflects server truth)
 
     func getController(withInitials initials: String) -> Controller? {
@@ -157,6 +273,77 @@ final class PagingViewModel: ObservableObject {
     func ackBeBack(forController controller: Controller) async throws {
         try await api.ackBeBack(initials: controller.initials)
         await refresh()
+    }
+
+    // MARK: - Team writes (R2)
+
+    func createTeam(ojti: Controller, trainee: Controller) async throws {
+        try await api.createTeam(ojti: ojti.initials, trainee: trainee.initials)
+        await refresh()
+    }
+
+    func splitTeam(_ unit: TeamUnit) async throws {
+        try await api.splitTeam(id: unit.team.id)
+        await refresh()
+    }
+
+    func pageTeam(_ unit: TeamUnit, beBack: BeBack) async throws {
+        try await api.pageTeam(id: unit.team.id, time: beBack.stringValue, forPosition: beBack.forPosition)
+        await refresh()
+    }
+
+    func cancelTeamPage(_ unit: TeamUnit) async throws {
+        try await api.cancelTeamPage(id: unit.team.id)
+        await refresh()
+    }
+
+    func moveTeamOnPosition(_ unit: TeamUnit, position: String?) async throws {
+        try await api.moveTeamOnPosition(id: unit.team.id, position: position)
+        await refresh()
+    }
+
+    func moveTeamOffPosition(_ unit: TeamUnit) async throws {
+        try await api.moveTeamOffPosition(id: unit.team.id)
+        await refresh()
+    }
+
+    // MARK: - Planned-position writes (R2)
+
+    /// Create a plan; a `.conflict` throw means one already exists for the position
+    /// (the caller offers "Overwrite?" and retries with `overwrite: true`).
+    func createPlanned(position: String, time: String, overwrite: Bool) async throws {
+        try await api.createPlanned(position: position, time: time, overwrite: overwrite)
+        await refresh()
+    }
+
+    func assignPlanned(
+        _ plan: PlannedPosition, controllerInitials: String? = nil, teamId: Int? = nil,
+        adoptExistingBeBack: Bool = false
+    ) async throws {
+        try await api.assignPlanned(
+            id: plan.id, controllerInitials: controllerInitials, teamId: teamId,
+            adoptExistingBeBack: adoptExistingBeBack
+        )
+        await refresh()
+    }
+
+    func cancelPlanned(_ plan: PlannedPosition) async throws {
+        try await api.cancelPlanned(id: plan.id)
+        await refresh()
+    }
+
+    // MARK: - Canned messages (R2)
+
+    func listMessages() async throws -> [CannedMessage] {
+        try await api.listMessages()
+    }
+
+    /// Send a canned message; refetch so the board reflects any resulting state, and
+    /// return the per-recipient outcomes for the result screen.
+    func sendMessage(messageId: Int, initials: [String]) async throws -> [SendResult] {
+        let results = try await api.sendMessage(messageId: messageId, initials: initials)
+        await refresh()
+        return results
     }
 
     // MARK: - Utility

@@ -22,6 +22,9 @@ struct HomeScreen: View {
 
     @State private var signInViewIsActive = false
     @State private var signOutViewIsActive = false
+    @State private var messagesViewIsActive = false
+    @State private var pairTeamViewIsActive = false
+    @State private var planViewIsActive = false
     @State private var changeTheme = false
     @State private var screenBrightness = 1.0
 
@@ -43,7 +46,7 @@ struct HomeScreen: View {
                     HeaderView()
                     GeometryReader { geometry in
                         HStack(spacing: 0) {
-                            OnPositionView(controllers: pagingVM.onPosition)
+                            OnPositionView(items: pagingVM.onPositionItems)
                                 .frame(width: geometry.size.width * 0.33)
                             AvailableView()
                                 .frame(width: geometry.size.width * 0.67)
@@ -54,7 +57,13 @@ struct HomeScreen: View {
                 HStack {
                     Button("SIGN IN") { signInViewIsActive = true }
                         .buttonStyle(.borderedProminent)
-                        .padding()
+
+                    Button("MESSAGES") { messagesViewIsActive = true }
+                        .buttonStyle(.bordered)
+                    Button("TEAMS") { pairTeamViewIsActive = true }
+                        .buttonStyle(.bordered)
+                    Button("PLAN") { planViewIsActive = true }
+                        .buttonStyle(.bordered)
 
                     Spacer()
 
@@ -64,8 +73,8 @@ struct HomeScreen: View {
 
                     Button("SIGN OUT") { signOutViewIsActive = true }
                         .buttonStyle(.borderedProminent)
-                        .padding()
                 }
+                .padding()
             } // ZStack
         } // NavStack
         .preferredColorScheme(userTheme.colorScheme)
@@ -74,6 +83,15 @@ struct HomeScreen: View {
         }
         .fullScreenCover(isPresented: $signOutViewIsActive) {
             SignOutScreen()
+        }
+        .fullScreenCover(isPresented: $messagesViewIsActive) {
+            MessagesView()
+        }
+        .fullScreenCover(isPresented: $pairTeamViewIsActive) {
+            PairTeamView()
+        }
+        .fullScreenCover(isPresented: $planViewIsActive) {
+            PlanView()
         }
         .sheet(isPresented: $changeTheme) {
             if #available(iOS 16.4, *) {

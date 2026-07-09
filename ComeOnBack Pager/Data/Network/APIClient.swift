@@ -46,6 +46,11 @@ protocol AccessTokenProviding: Sendable {
 // (cross-actor access adds the `await`); `validAccessToken(previous:)` matches directly.
 extension AuthManager: AccessTokenProviding {}
 
+/// The `{"results": […]}` wrapper the send-message route returns.
+private struct SendResultsEnvelope: Decodable {
+    let results: [SendResult]
+}
+
 /// The result of a conditional facility-status GET.
 enum StatusResult {
     /// A 200: the fresh facility payload and its new ETag (nil if the server sent none).
@@ -136,6 +141,88 @@ final class APIClient: @unchecked Sendable {
     /// unregistered controller (M0 console route).
     func ackBeBack(initials: String) async throws {
         _ = try await send(path: "controllers/\(pathSafe(initials))/beback/acknowledge", method: "POST")
+    }
+
+    // MARK: - R2 console surface: canned messages
+
+    /// `GET /messages` — the canned-message definitions for the send UI.
+    func listMessages() async throws -> [CannedMessage] {
+        let data = try await send(path: "messages", method: "GET")
+        return try decode([CannedMessage].self, from: data)
+    }
+
+    /// `POST /messages/send {"messageId", "initials":[…]}` — fire-and-forget; returns
+    /// the per-recipient outcomes (`sent` / `no_devices`).
+    func sendMessage(messageId: Int, initials: [String]) async throws -> [SendResult] {
+        let data = try await send(
+            path: "messages/send", method: "POST",
+            body: ["messageId": messageId, "initials": initials]
+        )
+        return try decode(SendResultsEnvelope.self, from: data).results
+    }
+
+    // MARK: - R2 console surface: training teams
+
+    /// `POST /teams {"ojti","trainee"}` — pair a team (201). 409 if either isn't
+    /// signed in / already teamed.
+    func createTeam(ojti: String, trainee: String) async throws {
+        _ = try await send(path: "teams", method: "POST", body: ["ojti": ojti, "trainee": trainee])
+    }
+
+    /// `DELETE /teams/{id}` — split; member statuses unchanged.
+    func splitTeam(id: Int) async throws {
+        _ = try await send(path: "teams/\(id)", method: "DELETE")
+    }
+
+    /// `POST /teams/{id}/beback {time, forPosition?}` — page both members (201).
+    func pageTeam(id: Int, time: String, forPosition: String?) async throws {
+        var body: [String: Any] = ["time": time]
+        if let forPosition { body["forPosition"] = forPosition }
+        _ = try await send(path: "teams/\(id)/beback", method: "POST", body: body)
+    }
+
+    /// `DELETE /teams/{id}/beback` — cancel the team's page.
+    func cancelTeamPage(id: Int) async throws {
+        _ = try await send(path: "teams/\(id)/beback", method: "DELETE")
+    }
+
+    /// `POST /teams/{id}/position {position?}` — move both members on position.
+    func moveTeamOnPosition(id: Int, position: String?) async throws {
+        let body: [String: Any] = position.map { ["position": $0] } ?? [:]
+        _ = try await send(path: "teams/\(id)/position", method: "POST", body: body)
+    }
+
+    /// `DELETE /teams/{id}/position` — move both members off position.
+    func moveTeamOffPosition(id: Int) async throws {
+        _ = try await send(path: "teams/\(id)/position", method: "DELETE")
+    }
+
+    // MARK: - R2 console surface: planned positions
+
+    /// `POST /positions/planned {position, time, overwrite?}` — create (201). A 409
+    /// (`.conflict`) means one already exists for the position — retry with overwrite.
+    func createPlanned(position: String, time: String, overwrite: Bool) async throws {
+        var body: [String: Any] = ["position": position, "time": time]
+        if overwrite { body["overwrite"] = true }
+        _ = try await send(path: "positions/planned", method: "POST", body: body)
+    }
+
+    /// `POST /positions/planned/{id}/assign` — assign a controller **or** a team (exactly
+    /// one) and page them in one action; `adoptExistingBeBack` reconciles a direct page.
+    func assignPlanned(
+        id: Int, controllerInitials: String? = nil, teamId: Int? = nil,
+        adoptExistingBeBack: Bool = false
+    ) async throws {
+        var body: [String: Any] = [:]
+        if let controllerInitials { body["controllerInitials"] = controllerInitials }
+        if let teamId { body["teamId"] = teamId }
+        if adoptExistingBeBack { body["adoptExistingBeBack"] = true }
+        _ = try await send(path: "positions/planned/\(id)/assign", method: "POST", body: body)
+    }
+
+    /// `DELETE /positions/planned/{id}` — cancel the entry (cascades any page it made).
+    func cancelPlanned(id: Int) async throws {
+        _ = try await send(path: "positions/planned/\(id)", method: "DELETE")
     }
 
     // MARK: - Authenticated request choke point
@@ -291,11 +378,16 @@ final class APIClient: @unchecked Sendable {
     }
 
     private func decodeFacility(_ data: Data) throws -> Facility {
+        try decode(Facility.self, from: data)
+    }
+
+    /// Decode a 2xx body into `T`, mapping any failure to `.decoding`. Fresh decoder
+    /// per call: `APIClient` is concurrency-safe and a shared `JSONDecoder` is NOT safe
+    /// across concurrent `.decode()`. Dates parse leniently inside the models, so no
+    /// date strategy is set here.
+    private func decode<T: Decodable>(_ type: T.Type, from data: Data) throws -> T {
         do {
-            // Fresh decoder per call: `APIClient` is concurrency-safe and a shared
-            // `JSONDecoder` is NOT safe across concurrent `.decode()`. Dates are parsed
-            // leniently inside `Controller` itself, so no date strategy is set here.
-            return try JSONDecoder().decode(Facility.self, from: data)
+            return try JSONDecoder().decode(T.self, from: data)
         } catch {
             throw APIError.decoding
         }

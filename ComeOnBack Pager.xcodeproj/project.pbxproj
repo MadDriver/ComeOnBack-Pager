@@ -22,6 +22,14 @@
 		DCB2815720864AEEBC6820D5 /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B54775FCC944E90863929EE /* APIClient.swift */; };
 		7DC1558EEC384DF5BB935382 /* TrainingTeam.swift in Sources */ = {isa = PBXBuildFile; fileRef = D895923746A1480681AF3D03 /* TrainingTeam.swift */; };
 		9DEBF5789BFD48DA9E6C92B7 /* PlannedPosition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49E4521989E84D23955FE925 /* PlannedPosition.swift */; };
+		9AFE52690E2C460427E5C3FF /* CannedMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBE3FAA3F80ACEFCC28AD757 /* CannedMessage.swift */; };
+		17E6FEC62481C421D004E2D5 /* BoardItems.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9902DE439E6107802B950CB1 /* BoardItems.swift */; };
+		529E59D02138BD4D488BE645 /* TeamCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4B4DB2642CA36600916EA6B /* TeamCellView.swift */; };
+		E6C8E7DE367D982AAD044815 /* HoleCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67037EF8EB1EC32133612B8C /* HoleCellView.swift */; };
+		F94AF7E5E8034391F58971F7 /* MessagesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4A1D3BBB3BB9D0E647511D8 /* MessagesView.swift */; };
+		D5D2C90EF1963C0595B854DB /* PairTeamView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2A11B2598695E540F62CE69 /* PairTeamView.swift */; };
+		1EC3DF16614986F135870879 /* PlanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C7A0FBE4BC8991CDF78A7A6 /* PlanView.swift */; };
+		837DA0CACDA2985416A61835 /* AssignPlanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE29D5CA978447633D9B09B5 /* AssignPlanView.swift */; };
 		645DB86A395E4932BD896ED5 /* EnrollmentScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7033318727264A3896AC1BB1 /* EnrollmentScreen.swift */; };
 		59EB6D590CC5412C88AFCF9B /* UpgradeRequiredScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA42DD543794B45A285E936 /* UpgradeRequiredScreen.swift */; };
 		374D8C4B29BA7E5B002A690D /* ComeOnBackPagerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 374D8C4A29BA7E5B002A690D /* ComeOnBackPagerApp.swift */; };
@@ -64,6 +72,14 @@
 		9B54775FCC944E90863929EE /* APIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
 		D895923746A1480681AF3D03 /* TrainingTeam.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingTeam.swift; sourceTree = "<group>"; };
 		49E4521989E84D23955FE925 /* PlannedPosition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlannedPosition.swift; sourceTree = "<group>"; };
+		EBE3FAA3F80ACEFCC28AD757 /* CannedMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CannedMessage.swift; sourceTree = "<group>"; };
+		9902DE439E6107802B950CB1 /* BoardItems.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardItems.swift; sourceTree = "<group>"; };
+		C4B4DB2642CA36600916EA6B /* TeamCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamCellView.swift; sourceTree = "<group>"; };
+		67037EF8EB1EC32133612B8C /* HoleCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoleCellView.swift; sourceTree = "<group>"; };
+		F4A1D3BBB3BB9D0E647511D8 /* MessagesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesView.swift; sourceTree = "<group>"; };
+		F2A11B2598695E540F62CE69 /* PairTeamView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PairTeamView.swift; sourceTree = "<group>"; };
+		9C7A0FBE4BC8991CDF78A7A6 /* PlanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanView.swift; sourceTree = "<group>"; };
+		FE29D5CA978447633D9B09B5 /* AssignPlanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssignPlanView.swift; sourceTree = "<group>"; };
 		7033318727264A3896AC1BB1 /* EnrollmentScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnrollmentScreen.swift; sourceTree = "<group>"; };
 		4EA42DD543794B45A285E936 /* UpgradeRequiredScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpgradeRequiredScreen.swift; sourceTree = "<group>"; };
 		374D8C4729BA7E5B002A690D /* ComeOnBack Pager.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ComeOnBack Pager.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -157,6 +173,10 @@
 				3766D38E2A5B05E7002B64BA /* SignOutScreen.swift */,
 				7033318727264A3896AC1BB1 /* EnrollmentScreen.swift */,
 				4EA42DD543794B45A285E936 /* UpgradeRequiredScreen.swift */,
+				F4A1D3BBB3BB9D0E647511D8 /* MessagesView.swift */,
+				F2A11B2598695E540F62CE69 /* PairTeamView.swift */,
+				9C7A0FBE4BC8991CDF78A7A6 /* PlanView.swift */,
+				FE29D5CA978447633D9B09B5 /* AssignPlanView.swift */,
 				CE9E84792A43A7CC00141062 /* Views */,
 				374D8C4E29BA7E5D002A690D /* Assets.xcassets */,
 				CE146CF42A54EE8D0096B1B6 /* Info.plist */,
@@ -175,6 +195,8 @@
 				CEEE252C2B97EAA600196070 /* Facility.swift */,
 				D895923746A1480681AF3D03 /* TrainingTeam.swift */,
 				49E4521989E84D23955FE925 /* PlannedPosition.swift */,
+				EBE3FAA3F80ACEFCC28AD757 /* CannedMessage.swift */,
+				9902DE439E6107802B950CB1 /* BoardItems.swift */,
 				374D8C6029BCF73B002A690D /* PagingViewModel.swift */,
 				CE934E142A5462C000FFE5BE /* BeBack.swift */,
 				CE88038D2ABCBA4600A7E830 /* Date+Ext.swift */,
@@ -194,6 +216,8 @@
 				374D8C5A29BB86EB002A690D /* AvailableCellView.swift */,
 				374D8C5E29BCC2D7002A690D /* PagingView.swift */,
 				CE934E1C2A54C8C500FFE5BE /* HeaderView.swift */,
+				C4B4DB2642CA36600916EA6B /* TeamCellView.swift */,
+				67037EF8EB1EC32133612B8C /* HoleCellView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -282,6 +306,14 @@
 				DCB2815720864AEEBC6820D5 /* APIClient.swift in Sources */,
 				7DC1558EEC384DF5BB935382 /* TrainingTeam.swift in Sources */,
 				9DEBF5789BFD48DA9E6C92B7 /* PlannedPosition.swift in Sources */,
+				9AFE52690E2C460427E5C3FF /* CannedMessage.swift in Sources */,
+				17E6FEC62481C421D004E2D5 /* BoardItems.swift in Sources */,
+				529E59D02138BD4D488BE645 /* TeamCellView.swift in Sources */,
+				E6C8E7DE367D982AAD044815 /* HoleCellView.swift in Sources */,
+				F94AF7E5E8034391F58971F7 /* MessagesView.swift in Sources */,
+				D5D2C90EF1963C0595B854DB /* PairTeamView.swift in Sources */,
+				1EC3DF16614986F135870879 /* PlanView.swift in Sources */,
+				837DA0CACDA2985416A61835 /* AssignPlanView.swift in Sources */,
 				645DB86A395E4932BD896ED5 /* EnrollmentScreen.swift in Sources */,
 				59EB6D590CC5412C88AFCF9B /* UpgradeRequiredScreen.swift in Sources */,
 				3766D38F2A5B05E7002B64BA /* SignOutScreen.swift in Sources */,

@@ -8,7 +8,9 @@ struct AvailableCellView: View {
     @State private var processingPhoneTap = false
     
     var controller: Controller
-    
+    /// The planned position this be-back fills, if any — shown as a "plan:" badge.
+    var plan: PlannedPosition? = nil
+
     private var phoneColor: Color {
         if let beBack = controller.beBack {
             return beBack.acknowledged ? .green : .red
@@ -70,7 +72,16 @@ struct AvailableCellView: View {
                     }
                 }
                 .frame(width: 50)
-                
+
+                ZStack {
+                    if let plan {
+                        Text("plan: \(plan.position)")
+                            .font(.caption).bold()
+                            .foregroundColor(.orange)
+                    }
+                }
+                .frame(width: 70)
+
                 ZStack {
                     if let beBack = controller.beBack, controller.registered {
                         if beBack.acknowledged == true {
