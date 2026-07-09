@@ -13,9 +13,12 @@ struct ThemeChangerScreen: View {
     @AppStorage("user_theme") private var userTheme: Theme = .dark
     @AppStorage("user_brightness_setting") private var userBrightness: Double = 1.0
     @Namespace private var animation
-    
+
     @Binding var screenBrightness: Double
-        
+    /// Unobtrusive "sign out / re-enroll" affordance — revokes + clears this
+    /// workstation's console session (drops back to the enrollment screen).
+    var onSignOut: () -> Void = {}
+
     var body: some View {
         VStack(spacing: 15) {
             
@@ -60,9 +63,10 @@ struct ThemeChangerScreen: View {
                     .padding()
             }
             .padding(.top, 20)
-            
-            
-            
+
+            Button("Sign out / re-enroll", role: .destructive, action: onSignOut)
+                .padding(.top, 10)
+
         } // VStack
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .frame(height: 500)

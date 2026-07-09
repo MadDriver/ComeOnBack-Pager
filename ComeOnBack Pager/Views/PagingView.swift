@@ -11,15 +11,18 @@ import OSLog
 enum TimeASAPPicker: CaseIterable, Identifiable {
     case normal
     case asap
-    
+    case soon
+
     var id: Self { self }
-    
+
     var description: String {
         switch self {
         case .normal:
             return "Normal"
         case .asap:
             return "ASAP"
+        case .soon:
+            return "SOON"
         }
     }
 }
@@ -85,6 +88,8 @@ struct PagingView: View {
                         rightClockView
                     case .asap:
                         asapView
+                    case .soon:
+                        soonView
                     }
                 } // VStack
                 .frame(height: 500)
@@ -116,12 +121,14 @@ struct PagingView: View {
         .padding()
         .navigationBarBackButtonHidden()
         .background(Color.black.opacity(0.1))
-        .onChange(of: timePicker) { picker in
+        .onChange(of: timePicker) { _ in
             switch timePicker {
             case .normal:
                 newMinuteSelected(minute: controller.beBack?.atTime?.minutes)
             case .asap:
                 beBackTimeString = "ASAP"
+            case .soon:
+                beBackTimeString = "SOON"
             }
         }
         .onAppear {
@@ -129,6 +136,8 @@ struct PagingView: View {
             beBackPosition = controller.beBack?.forPosition
             if beBackTimeString == "ASAP" {
                 timePicker = .asap
+            } else if beBackTimeString == "SOON" {
+                timePicker = .soon
             } else {
                 clockBeBackMinutes = controller.beBack?.atTime?.minutes
             }
@@ -160,6 +169,17 @@ struct PagingView: View {
             Circle()
                 .fill(.red)
             Text("ASAP")
+                .font(.title).bold()
+        }
+        .padding()
+    }
+
+    @ViewBuilder
+    private var soonView: some View {
+        ZStack {
+            Circle()
+                .fill(.orange)
+            Text("SOON")
                 .font(.title).bold()
         }
         .padding()
@@ -266,15 +286,9 @@ extension PagingView {
         pageButtonPresssed = true
         Task {
             do {
-                let beBack = try BeBack(timeString: beBackTime, forPosition: beBackPosition)
+                let beBack = BeBack(timeString: beBackTime, forPosition: beBackPosition)
                 try await pagingVM.submitBeBack(beBack, forController: controller)
                 await MainActor.run { dismiss() }
-            } catch APIError.invalidParameters {
-                logger.error("Invalid parameters in pageBack(, )")
-            } catch APIError.invalidServerResponse {
-                logger.error("Invalid server response in pageBack()")
-            } catch BeBackError.initializationError {
-                logger.error("Could not create BeBack with timeString\(beBackTime)")
             } catch {
                 logger.error("Unexpected error in pageBack(): \(error)")
             }
@@ -288,16 +302,16 @@ extension PagingView {
 struct PagingView_Previews: PreviewProvider {
     static var previews: some View {
         PagingView(controller: Controller.mock_data[0])
-            .environmentObject(PagingViewModel())
+            .environmentObject(PagingViewModel.preview)
             .previewInterfaceOrientation(.landscapeLeft)
             .previewDevice("iPad (10th generation)")
         PagingView(controller: Controller.mock_data[1])
-            .environmentObject(PagingViewModel())
+            .environmentObject(PagingViewModel.preview)
             .previewInterfaceOrientation(.landscapeLeft)
             .previewDevice("iPad (10th generation)")
             .previewDisplayName("Not Registered")
         PagingView(controller: Controller.mock_data[2])
-            .environmentObject(PagingViewModel())
+            .environmentObject(PagingViewModel.preview)
             .previewInterfaceOrientation(.landscapeLeft)
             .previewDevice("iPad (10th generation)")
             .previewDisplayName("Not Registered")

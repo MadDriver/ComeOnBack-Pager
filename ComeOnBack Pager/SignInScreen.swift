@@ -87,7 +87,7 @@ struct SignInScreen: View {
         } // Nav Stack
         .searchable(text: $searchInitials)
         .task {
-            try? await pagingVM.updateAllControllers()
+            await pagingVM.refresh()
         }
     }
     
@@ -122,6 +122,6 @@ struct SignInScreen: View {
 struct SignInView_Previews: PreviewProvider {
     static var previews: some View {
         SignInScreen()
-            .environmentObject(PagingViewModel())
+            .environmentObject(PagingViewModel.preview)
     }
 }

@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Combine
 import OSLog
 
 struct TimeClock: Equatable {
