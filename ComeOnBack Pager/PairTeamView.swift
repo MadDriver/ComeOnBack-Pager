@@ -46,18 +46,19 @@ struct PairTeamView: View {
                         Button(action: pair) {
                             HStack {
                                 if working { ProgressView().tint(.white) }
-                                Text("PAIR \(ojti ?? "—") + \(trainee ?? "—")")
+                                Text("Pair \(ojti ?? "—") + \(trainee ?? "—")")
                             }
                             .frame(maxWidth: .infinity, minHeight: 56)
                         }
                         .buttonStyle(.borderedProminent)
+                        .controlSize(.large)
                         .disabled(working || ojti == nil || trainee == nil)
                         .padding(.horizontal)
                     }
 
                     if !pagingVM.teamUnits.isEmpty {
                         Divider().padding(.vertical)
-                        Text("CURRENT TEAMS").fontWeight(.heavy).padding(.horizontal)
+                        SectionHeader("Current teams").padding(.horizontal)
                         ForEach(pagingVM.teamUnits) { unit in
                             HStack {
                                 Text(unit.label).bold()
@@ -84,17 +85,14 @@ struct PairTeamView: View {
 
     @ViewBuilder
     private func section(title: String, pool: [Controller], selection: Binding<String?>, exclude: String?) -> some View {
-        Text(title).fontWeight(.heavy).padding(.horizontal)
-        LazyVGrid(columns: columns, spacing: 12) {
+        SectionHeader(title).padding(.horizontal)
+        LazyVGrid(columns: columns, spacing: Spacing.md) {
             ForEach(pool.filter { $0.initials != exclude }) { controller in
                 let selected = selection.wrappedValue == controller.initials
                 Button {
                     selection.wrappedValue = selected ? nil : controller.initials
                 } label: {
-                    Text(controller.initials).bold()
-                        .frame(maxWidth: .infinity).frame(height: 50)
-                        .background(selected ? Color.blue.opacity(0.6) : Color.primary.opacity(0.12))
-                        .cornerRadius(12)
+                    SelectableChip(label: controller.initials, selected: selected)
                 }
                 .buttonStyle(.plain)
             }

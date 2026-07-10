@@ -64,23 +64,20 @@ struct PlanView: View {
     @ViewBuilder
     private var form: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 16) {
-                Text("POSITION").fontWeight(.heavy)
-                LazyVGrid(columns: positionColumns, spacing: 12) {
+            VStack(alignment: .leading, spacing: Spacing.lg) {
+                SectionHeader("Position")
+                LazyVGrid(columns: positionColumns, spacing: Spacing.md) {
                     ForEach(knownPositions, id: \.self) { pos in
                         Button {
                             position = (position == pos) ? nil : pos
                         } label: {
-                            Text(pos).bold()
-                                .frame(maxWidth: .infinity).frame(height: 50)
-                                .background(position == pos ? Color.yellow : Color.red.opacity(0.4))
-                                .cornerRadius(12)
+                            SelectableChip(label: pos, selected: position == pos)
                         }
                         .buttonStyle(.plain)
                     }
                 }
 
-                Text("TIME").fontWeight(.heavy)
+                SectionHeader("Time")
                 Picker("Time", selection: $timePicker) {
                     ForEach(TimeASAPPicker.allCases) { Text($0.description) }
                 }
@@ -94,19 +91,21 @@ struct PlanView: View {
                 }
 
                 if timePicker == .normal {
-                    HStack {
+                    HStack(spacing: Spacing.lg) {
                         ClockView(selectedMinute: clockMinutes, onMinuteSelected: minuteSelected)
-                            .frame(width: 320, height: 320)
-                        VStack {
+                            .frame(maxWidth: 320)
+                            .aspectRatio(1, contentMode: .fit)
+                        VStack(spacing: Spacing.sm) {
                             ForEach(beBackMinutes, id: \.self) { minute in
-                                Text("\(minute) mins").fontWeight(.bold)
-                                    .frame(width: 100, height: 44)
-                                    .background(selectedPreset == minute ? Color.yellow : Color.blue.opacity(0.5))
-                                    .onTapGesture {
-                                        guard let mins = Int(minute) else { return }
-                                        minuteSelected(pagingVM.roundUpToNext5Minutes(minutes: mins))
-                                        selectedPreset = minute
-                                    }
+                                Button {
+                                    guard let mins = Int(minute) else { return }
+                                    minuteSelected(pagingVM.roundUpToNext5Minutes(minutes: mins))
+                                    selectedPreset = minute
+                                } label: {
+                                    SelectableChip(label: "\(minute) min", selected: selectedPreset == minute, minHeight: 44)
+                                }
+                                .buttonStyle(.plain)
+                                .frame(width: 100)
                             }
                         }
                     }
@@ -123,11 +122,12 @@ struct PlanView: View {
                 Button(action: { create(overwrite: false) }) {
                     HStack {
                         if working { ProgressView().tint(.white) }
-                        Text("CREATE PLAN")
+                        Text("Create plan")
                     }
                     .frame(maxWidth: .infinity, minHeight: 56)
                 }
                 .buttonStyle(.borderedProminent)
+                .controlSize(.large)
                 .disabled(!isSubmittable)
             }
             .padding()

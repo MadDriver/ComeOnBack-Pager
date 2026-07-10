@@ -89,26 +89,30 @@ struct SignOutScreen: View {
             } // HStack
             
             ScrollView {
-                ForEach(controllers) { controller in
-                    let signInTime = controller.signInTime?.relative() ?? ""
-                    Text("\(controller.initials) - \(signInTime)")
-                        .frame(width: 250, height: 50)
-                        .background(controllerIsInSignOutArray(controller: controller) ? Color.red : Color.primary.opacity(0.5))
-                        .onTapGesture {
-                            if controllerIsInSignOutArray(controller: controller) {
-                                controllersToSignOut.removeAll { $0.initials == controller.initials }
-                            } else {
-                                controllersToSignOut.append(controller)
+                VStack(spacing: Spacing.sm) {
+                    ForEach(controllers) { controller in
+                        let signInTime = controller.signInTime?.relative() ?? ""
+                        SelectableChip(label: "\(controller.initials) — \(signInTime)",
+                                       selected: controllerIsInSignOutArray(controller: controller))
+                            .frame(width: 250)
+                            .onTapGesture {
+                                if controllerIsInSignOutArray(controller: controller) {
+                                    controllersToSignOut.removeAll { $0.initials == controller.initials }
+                                } else {
+                                    controllersToSignOut.append(controller)
+                                }
                             }
-                        }
                     } // forEach
+                }
             } // ScrollView
-            
+
             HStack(spacing: 200) {
-                Button("CANCEL", role: .cancel, action: dismissSignOutSheet)
+                Button("Cancel", role: .cancel, action: dismissSignOutSheet)
                     .buttonStyle(.bordered)
-                Button("SIGN OUT", action: signOutControllers)
+                    .controlSize(.large)
+                Button("Sign out", action: signOutControllers)
                     .buttonStyle(.borderedProminent)
+                    .controlSize(.large)
             } //HStack
         } // VStack
     } // Body
