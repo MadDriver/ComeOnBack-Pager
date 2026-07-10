@@ -79,13 +79,13 @@ struct MessagesView: View {
                                     if let phone = message.phoneNumber {
                                         Label(phone, systemImage: "phone.fill")
                                             .font(.caption)
-                                            .foregroundStyle(selected ? Color.white.opacity(0.85) : Color.secondary)
+                                            .foregroundStyle(selected ? Color.onAccent.opacity(0.85) : Color.secondary)
                                     }
                                     Spacer()
                                 }
                                 .padding()
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                                .foregroundStyle(selected ? Color.white : Color.primary)
+                                .foregroundStyle(selected ? Color.onAccent : Color.primary)
                                 .background(selected ? Color.accentColor : Color.tileFill)
                                 .clipShape(RoundedRectangle(cornerRadius: Radius.card, style: .continuous))
                             }

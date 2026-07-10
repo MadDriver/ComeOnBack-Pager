@@ -38,9 +38,17 @@ neutral choice. `.monospacedDigit()` isn't needed here (labels are initials/posi
 
 ### Accent color
 `Assets.xcassets/AccentColor.colorset` was **empty** (everything resolved to system
-blue). Filled with scope cyan: light `#0891B2`, dark `#06B6D4`. Selected chips use
-`.white` text on this fill per the shared brief (matches the web console for
-cross-surface consistency).
+blue). Filled with scope cyan: light `#0891B2`, dark `#06B6D4`.
+
+Text on the accent fill uses an adaptive `AccentContent` color, surfaced as the
+`Color.onAccent` token: **white** in light mode (on `#0891B2`, passes AA-large) and
+**dark ink `#0B1220`** in dark mode (on the brighter `#06B6D4`, ~7.7:1 — bright accents
+in dark mode take dark text). This replaces the earlier hardcoded `.white`, which was
+~2.4:1 on the dark accent. Applied everywhere custom accent fills carry text
+(`SelectableChip`, the MessagesView message row, the theme pill); system
+`.borderedProminent` buttons manage their own tint and are left alone. The web console
+mirrors this (primary-content = dark ink in the dark theme) for cross-surface
+consistency.
 
 ## Before → after by problem
 

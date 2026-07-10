@@ -28,7 +28,7 @@ struct SelectableChip: View {
         .frame(maxWidth: .infinity)
         .frame(minHeight: minHeight)
         .padding(.horizontal, Spacing.sm)
-        .foregroundStyle(selected ? Color.white : Color.primary)
+        .foregroundStyle(selected ? Color.onAccent : Color.primary)
         .background(fill)
         .clipShape(RoundedRectangle(cornerRadius: Radius.chip, style: .continuous))
         .contentShape(Rectangle())

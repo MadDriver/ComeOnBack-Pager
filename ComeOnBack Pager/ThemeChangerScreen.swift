@@ -26,7 +26,7 @@ struct ThemeChangerScreen: View {
                                 .fontWeight(.semibold)
                                 .padding(.vertical, Spacing.sm)
                                 .frame(maxWidth: .infinity)
-                                .foregroundStyle(userTheme == theme ? Color.white : Color.primary)
+                                .foregroundStyle(userTheme == theme ? Color.onAccent : Color.primary)
                                 .background {
                                     if userTheme == theme {
                                         Capsule()
