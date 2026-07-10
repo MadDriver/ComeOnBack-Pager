@@ -16,40 +16,38 @@ struct TeamCellView: View {
     var plan: PlannedPosition? = nil
 
     var body: some View {
-        HStack(spacing: 16) {
-            Text("TEAM")
-                .font(.caption2).bold()
-                .padding(.horizontal, 6).padding(.vertical, 2)
-                .background(Color.accentColor.opacity(0.25))
-                .cornerRadius(4)
+        HStack(spacing: BoardColumns.spacing) {
+            Color.clear.frame(width: BoardColumns.action)
 
-            HStack(spacing: 4) {
-                Text(unit.ojti.initials).bold()
-                Text("OJTI").font(.caption2).foregroundColor(.secondary)
-                Text("+")
-                Text(unit.trainee.initials).bold()
-                Text("TRN").font(.caption2).foregroundColor(.secondary)
+            HStack(spacing: Spacing.sm) {
+                TeamBadge()
+                Text(unit.label).fontWeight(.semibold)
+                    .lineLimit(1).minimumScaleFactor(0.7)
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
 
-            if let beBack = unit.beBack {
-                Text(displayTime(beBack.stringValue))
-                    .frame(width: 55)
-                if let forPosition = beBack.forPosition {
-                    Text(forPosition).frame(width: 50)
-                }
-                Image(systemName: beBack.acknowledged ? "checkmark.square" : "xmark")
-                    .foregroundColor(beBack.acknowledged ? .green : .red).bold()
+            Group {
+                if let beBack = unit.beBack { Text(displayTime(beBack.stringValue)) }
             }
+            .font(.body.monospacedDigit())
+            .frame(width: BoardColumns.time)
 
-            if let plan {
-                Text("plan: \(plan.position)")
-                    .font(.caption).bold()
-                    .foregroundColor(.orange)
+            Group {
+                if let forPosition = unit.beBack?.forPosition { Text(forPosition) }
             }
+            .frame(width: BoardColumns.position)
 
-            Spacer()
+            Group {
+                if let plan { PlanBadge(position: plan.position) }
+            }
+            .frame(width: BoardColumns.plan, alignment: .leading)
+
+            Group {
+                if let beBack = unit.beBack { AckIcon(acknowledged: beBack.acknowledged) }
+            }
+            .frame(width: BoardColumns.status)
         }
-        .frame(height: 40)
+        .frame(height: BoardColumns.rowHeight)
     }
 }
 

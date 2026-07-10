@@ -34,6 +34,16 @@ struct BoardColumnHeader: View {
     }
 }
 
+/// The small "TEAM" tag shown on training-team rows (both board sides).
+struct TeamBadge: View {
+    var body: some View {
+        Text("TEAM")
+            .font(.caption2).bold()
+            .padding(.horizontal, Spacing.sm).padding(.vertical, 2)
+            .background(Color.accentColor.opacity(0.22), in: Capsule())
+    }
+}
+
 /// The orange "plan: XX" badge shared by the controller and team rows.
 struct PlanBadge: View {
     let position: String
