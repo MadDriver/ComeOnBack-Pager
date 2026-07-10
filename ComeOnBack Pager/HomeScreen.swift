@@ -54,6 +54,7 @@ struct HomeScreen: View {
                     } // HStack
                 } // GeoReader
             } // VStack
+            .toolbar(.hidden, for: .navigationBar)
         } // NavStack
         .preferredColorScheme(userTheme.colorScheme)
         .fullScreenCover(isPresented: $signInViewIsActive) {

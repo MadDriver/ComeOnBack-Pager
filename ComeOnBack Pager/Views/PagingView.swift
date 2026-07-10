@@ -44,11 +44,6 @@ struct PagingView: View {
         "10", "15", "30", "40"
     ]
 
-    let positionRows = [
-        GridItem(), GridItem(), GridItem(), GridItem()
-    ]
-
-
     private let logger = Logger(subsystem: Logger.subsystem, category: "PagingView")
 
     @Environment(\.dismiss) var dismiss
@@ -117,16 +112,10 @@ struct PagingView: View {
         .frame(maxHeight: .infinity)
         .padding()
         .navigationBarBackButtonHidden()
-        .background(Color.black.opacity(0.1))
-        .overlay(alignment: .topTrailing) {
-            Button {
-                dismiss()
-            } label: {
-                Image(systemName: "x.circle")
-                    .font(.system(size: 48))
-                    .padding()
+        .toolbar {
+            ToolbarItem(placement: .cancellationAction) {
+                Button("Close") { dismiss() }
             }
-            .buttonStyle(.plain)
         }
         .confirmationDialog(
             adoptPromptTitle,
@@ -146,22 +135,23 @@ struct PagingView: View {
 
     @ViewBuilder
     private var pagingBody: some View {
-        VStack {
-            HStack {
-                VStack {
-                    Text("\(beBackText)")
-                        .font(.title).bold()
-                        .padding(.bottom)
-                    leftSideOfHStack
-                }
-                VStack {
+        VStack(spacing: Spacing.lg) {
+            Text(beBackText)
+                .font(.title2).bold()
+                .lineLimit(2).minimumScaleFactor(0.7)
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+            HStack(alignment: .top, spacing: Spacing.xl) {
+                positionGrid
+                    .frame(maxWidth: .infinity, alignment: .topLeading)
+
+                VStack(spacing: Spacing.md) {
                     Picker("Time Picker type", selection: $timePicker) {
                         ForEach(TimeASAPPicker.allCases) { option in
                             Text(option.description)
                         }
                     }
                     .pickerStyle(SegmentedPickerStyle())
-                    .frame(width: 200)
 
                     switch timePicker {
                     case .normal:
@@ -171,32 +161,20 @@ struct PagingView: View {
                     case .soon:
                         soonView
                     }
+                    Spacer(minLength: 0)
                 } // VStack
-                .frame(height: 500)
-
+                .frame(maxWidth: .infinity)
             } // HStack
 
-            Button(action: pageBack) {
-                Text(registered ? "PAGE" : "ASSIGN")
-                    .foregroundColor(isSubmittable ? .black : .black.opacity(0.4))
-                    .frame(width: 500, height: 100)
-                    .font(.title).bold()
-                    .background(isSubmittable ? Color.blue.opacity(0.8) : Color.gray)
-                    .cornerRadius(20)
-                    .padding()
-            }
-            .disabled(!isSubmittable)
+            pageButton
 
             if isTeam {
                 teamSecondaryActions
             } else if !registered {
-                HStack {
-                    Image(systemName: "phone")
-                        .foregroundColor(.red).bold()
-                    Text("\(label) is not registered. You must page them via the phone system.")
-                    Image(systemName: "phone")
-                        .foregroundColor(.red).bold()
-                }
+                Label("\(label) is not registered — page them via the phone system.",
+                      systemImage: "phone.fill")
+                    .foregroundColor(.pendingOrange)
+                    .font(.callout)
             }
         } // VStack
         .onChange(of: timePicker) { _ in
@@ -223,62 +201,76 @@ struct PagingView: View {
         .overlay(alignment: .bottomTrailing) {
             if lead.status == .PAGED_BACK {
                 Button(role: .destructive, action: cancelPage) {
-                    Label("Cancel Page", systemImage: "trash")
+                    Label("Cancel page", systemImage: "trash")
                 }
+                .buttonStyle(.bordered)
                 .padding()
             }
         }
+    }
+
+    private var pageButton: some View {
+        Button(action: pageBack) {
+            Text(registered ? "Page" : "Assign")
+                .font(.title3.bold())
+                .frame(maxWidth: .infinity, minHeight: 56)
+        }
+        .buttonStyle(.borderedProminent)
+        .controlSize(.large)
+        .disabled(!isSubmittable)
     }
 
     /// Teams-only: move on position (with the selected position) and split, alongside
     /// the primary page button.
     @ViewBuilder
     private var teamSecondaryActions: some View {
-        HStack(spacing: 40) {
+        HStack(spacing: Spacing.xl) {
             Button {
                 runTeamAction { unit in try await pagingVM.moveTeamOnPosition(unit, position: beBackPosition) }
             } label: {
-                Label("Move On Position", systemImage: "arrowshape.left")
+                Label("Move on position", systemImage: "arrowshape.left")
             }
             .buttonStyle(.bordered)
+            .controlSize(.large)
             .disabled(teamActionInFlight)
 
             Button(role: .destructive) {
                 runTeamAction { unit in try await pagingVM.splitTeam(unit) }
             } label: {
-                Label("Split Team", systemImage: "person.2.slash")
+                Label("Split team", systemImage: "person.2.slash")
             }
             .buttonStyle(.bordered)
+            .controlSize(.large)
             .disabled(teamActionInFlight)
         }
-        .padding(.bottom)
     }
 
     /// Teams-only: shown when the team is plugged in together — move off / split.
     @ViewBuilder
     private var teamOnPositionView: some View {
-        VStack(spacing: 30) {
+        VStack(spacing: Spacing.xl) {
             Text(label)
                 .font(.largeTitle).bold()
             Text("On position\(lead.position.map { " \($0)" } ?? "")")
                 .font(.title2)
+                .foregroundStyle(.secondary)
             Button {
                 runTeamAction { unit in try await pagingVM.moveTeamOffPosition(unit) }
             } label: {
-                Text("MOVE OFF POSITION")
-                    .frame(width: 400, height: 90)
-                    .font(.title).bold()
-                    .background(Color.blue.opacity(0.8))
-                    .foregroundColor(.black)
-                    .cornerRadius(20)
+                Text("Move off position")
+                    .font(.title3.bold())
+                    .frame(maxWidth: 400, minHeight: 64)
             }
+            .buttonStyle(.borderedProminent)
+            .controlSize(.large)
             .disabled(teamActionInFlight)
             Button(role: .destructive) {
                 runTeamAction { unit in try await pagingVM.splitTeam(unit) }
             } label: {
-                Label("Split Team", systemImage: "person.2.slash")
+                Label("Split team", systemImage: "person.2.slash")
             }
             .buttonStyle(.bordered)
+            .controlSize(.large)
             .disabled(teamActionInFlight)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -295,81 +287,65 @@ struct PagingView: View {
 
     @ViewBuilder
     private var asapView: some View {
-        ZStack {
-            Circle()
-                .fill(.red)
-            Text("ASAP")
-                .font(.title).bold()
-        }
-        .padding()
+        sentinelCircle(text: "ASAP", fill: .red)
     }
 
     @ViewBuilder
     private var soonView: some View {
+        sentinelCircle(text: "SOON", fill: .pendingOrange)
+    }
+
+    private func sentinelCircle(text: String, fill: Color) -> some View {
         ZStack {
-            Circle()
-                .fill(.orange)
-            Text("SOON")
-                .font(.title).bold()
+            Circle().fill(fill)
+            Text(text).font(.title).bold().foregroundColor(.white)
         }
-        .padding()
+        .frame(maxWidth: 220)
+        .aspectRatio(1, contentMode: .fit)
+        .frame(maxWidth: .infinity)
+        .padding(.top, Spacing.sm)
     }
 
     @ViewBuilder
     private var rightClockView: some View {
         ClockView(selectedMinute: clockBeBackMinutes, onMinuteSelected: newMinuteSelected)
-            .frame(width: 400, height: 400)
+            .frame(maxWidth: 360)
+            .aspectRatio(1, contentMode: .fit)
 
-        HStack {
+        HStack(spacing: Spacing.sm) {
             ForEach(beBackMinutes, id: \.self) { minute in
-                Text("\(minute) mins")
-                    .fontWeight(.bold)
-                    .frame(width: 100, height: 50)
-                    .background(selectedBeBackMinutes == minute ? Color.yellow : Color.blue.opacity(0.5))
-                    .border(Color.red, width: selectedBeBackMinutes == minute ? 2.5 : 0)
-                    .onTapGesture {
-                        guard let minutesAsInt = Int(minute) else { return }
-                        newMinuteSelected(minute: pagingVM.roundUpToNext5Minutes(minutes: minutesAsInt))
-                        self.selectedBeBackMinutes = minute
-                    }
+                Button {
+                    guard let minutesAsInt = Int(minute) else { return }
+                    newMinuteSelected(minute: pagingVM.roundUpToNext5Minutes(minutes: minutesAsInt))
+                    self.selectedBeBackMinutes = minute
+                } label: {
+                    SelectableChip(label: "\(minute) min", selected: selectedBeBackMinutes == minute, minHeight: 44)
+                }
+                .buttonStyle(.plain)
             }
         }
-        .padding()
     }
 
+    /// The position picker — an adaptive grid of chips that grows/scrolls instead of
+    /// the old fixed 4-row grid clipped at 250pt.
     @ViewBuilder
-    private var leftSideOfHStack: some View {
+    private var positionGrid: some View {
         if let facility = pagingVM.facility,
            let area = facility.getArea(forController: lead)
         {
-            VStack {
-                LazyHGrid(rows: positionRows, spacing: 20) {
-                    ForEach(area.positions, id: \.self) { position in
-                        if let position = position {
-                            Text(position)
-                                .font(.system(size: 20, weight: .bold))
-                                .frame(width: 100, height: 50)
-                                .background(beBackPosition == position ? Color.yellow : Color.red.opacity(0.5))
-                                .border(Color.blue, width: beBackPosition == position ? 2.5 : 0)
-                                .onTapGesture {
-                                    if beBackPosition == position {
-                                        beBackPosition = nil
-                                    } else {
-                                        beBackPosition = position
-                                    }
-                                }
-                        } else {
-                            // Position is nil, placeholder text box.
-                            Text("")
+            VStack(alignment: .leading, spacing: Spacing.sm) {
+                SectionHeader("Position")
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 84), spacing: Spacing.sm)], spacing: Spacing.sm) {
+                    ForEach(area.positions.compactMap { $0 }, id: \.self) { position in
+                        Button {
+                            beBackPosition = (beBackPosition == position) ? nil : position
+                        } label: {
+                            SelectableChip(label: position, selected: beBackPosition == position)
                         }
+                        .buttonStyle(.plain)
                     }
                 }
-                .frame(maxWidth: .infinity)
-                .frame(height:250)
-
-
-            } // VStack
-            .padding(.top)
+            }
         } // if let facility, area
     }
 }
