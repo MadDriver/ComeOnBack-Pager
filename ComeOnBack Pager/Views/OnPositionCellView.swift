@@ -21,7 +21,7 @@ struct OnPositionCellView: View {
                 
                 if performingTapGesture {
                     ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle(tint: .blue))
+                        .progressViewStyle(CircularProgressViewStyle(tint: Color.accentColor))
                         .frame(maxWidth: .infinity, alignment: .trailing)
                 } else {
                     Image(systemName: "arrowshape.right")

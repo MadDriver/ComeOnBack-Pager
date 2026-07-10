@@ -326,7 +326,7 @@ struct PagingView: View {
         }
     }
 
-    /// The position picker — an adaptive grid of chips that grows/scrolls instead of
+    /// The position picker — an adaptive grid of chips that grows to fit instead of
     /// the old fixed 4-row grid clipped at 250pt.
     @ViewBuilder
     private var positionGrid: some View {

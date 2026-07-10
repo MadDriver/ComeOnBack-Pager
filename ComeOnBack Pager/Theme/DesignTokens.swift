@@ -34,7 +34,7 @@ extension Color {
     /// Pending / plan / unassigned / not-yet-acknowledged.
     static let pendingOrange = Color.orange
     // Destructive / error is `Color.red`, used directly and only for genuine danger.
-    /// Text/icons that sit on the accent fill. White in light mode (on #0891B2),
+    /// Text/icons that sit on the accent fill. White in light mode (on #0E7490),
     /// dark ink in dark mode (bright accents in dark mode take dark text) — keeps
     /// selected chips legible in both schemes. System `.borderedProminent` buttons
     /// manage their own tint and don't use this.

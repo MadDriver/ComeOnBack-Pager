@@ -21,8 +21,14 @@ struct TeamCellView: View {
 
             HStack(spacing: Spacing.sm) {
                 TeamBadge()
-                Text(unit.label).fontWeight(.semibold)
-                    .lineLimit(1).minimumScaleFactor(0.7)
+                HStack(alignment: .firstTextBaseline, spacing: 2) {
+                    Text(unit.ojti.initials).fontWeight(.semibold)
+                    Text("OJTI").font(.caption2).foregroundColor(.secondary).baselineOffset(4)
+                    Text("+").foregroundColor(.secondary)
+                    Text(unit.trainee.initials).fontWeight(.semibold)
+                    Text("TRN").font(.caption2).foregroundColor(.secondary).baselineOffset(4)
+                }
+                .lineLimit(1).minimumScaleFactor(0.7)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
