@@ -38,10 +38,10 @@ neutral choice. `.monospacedDigit()` isn't needed here (labels are initials/posi
 
 ### Accent color
 `Assets.xcassets/AccentColor.colorset` was **empty** (everything resolved to system
-blue). Filled with scope cyan: light `#0891B2`, dark `#06B6D4`.
+blue). Filled with scope cyan: light `#0E7490` (cyan-700), dark `#06B6D4`.
 
 Text on the accent fill uses an adaptive `AccentContent` color, surfaced as the
-`Color.onAccent` token: **white** in light mode (on `#0891B2`, passes AA-large) and
+`Color.onAccent` token: **white** in light mode (on `#0E7490`, ~5.3:1, passes AA) and
 **dark ink `#0B1220`** in dark mode (on the brighter `#06B6D4`, ~7.7:1 — bright accents
 in dark mode take dark text). This replaces the earlier hardcoded `.white`, which was
 ~2.4:1 on the dark accent. Applied everywhere custom accent fills carry text
