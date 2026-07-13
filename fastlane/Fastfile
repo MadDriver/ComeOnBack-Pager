@@ -5,13 +5,19 @@ APP_SCHEME     = "ComeOnBackPager"
 TEAM_ID        = "9XKN747L88"
 APP_IDENTIFIER = "co.amalgamated.ComeOnBackPager"
 APP_TARGET     = "ComeOnBack Pager"           # target/display name has a space
-PROJECT        = "ComeOnBack Pager.xcodeproj" # generated — never committed
 APP_NAME       = "ComeOnBack Pager"
+
+# Anchor every path to the repo root, NOT the process CWD — fastlane's working
+# directory for Fastfile Ruby changed between 2.236 and 2.237, which broke the
+# first CI run. FastlaneFolder.path is stable across versions.
+ROOT         = File.expand_path("..", FastlaneCore::FastlaneFolder.path)
+PROJECT_PATH = File.join(ROOT, "ComeOnBack Pager.xcodeproj")   # generated — never committed
+BUILD_DIR    = File.join(ROOT, "build")
 
 # Version facts come from project.yml (not the generated pbxproj) so lanes work
 # before generation and read the committed truth.
 def marketing_version
-  yml = File.read("project.yml")   # fastlane runs from the repo root
+  yml = File.read(File.join(ROOT, "project.yml"))
   yml[/MARKETING_VERSION:\s*"?([^"\s]+)"?/, 1] or
     UI.user_error!("Couldn't read MARKETING_VERSION from project.yml")
 end
@@ -20,9 +26,8 @@ platform :ios do
   # The .xcodeproj is generated (XcodeGen). Every build lane regenerates first so a
   # fresh checkout — CI or local — never depends on a stale/absent project.
   private_lane :generate_project do
-    # sh() runs in fastlane/ — hop to the repo root where project.yml lives
-    sh("cd .. && command -v xcodegen >/dev/null || { echo 'xcodegen not found (brew install xcodegen)'; exit 1; }")
-    sh("cd .. && xcodegen generate")
+    sh("command -v xcodegen >/dev/null || { echo 'xcodegen not found (brew install xcodegen)'; exit 1; }")
+    sh("cd #{ROOT.shellescape} && xcodegen generate")
   end
 
   # App Store Connect API-key auth from env (ASC_KEY_CONTENT = raw .p8 PEM, no file on
@@ -164,12 +169,12 @@ platform :ios do
     generate_project
     # apply_match_signing flips the target to manual signing IN THIS CHECKOUT only.
     # Snapshot/restore the (generated) pbxproj so every path leaves the tree clean.
-    pbxproj = "#{PROJECT}/project.pbxproj"   # File ops run from the repo root
+    pbxproj = File.join(PROJECT_PATH, "project.pbxproj")
     pbxproj_before = File.read(pbxproj)
     begin
       apply_match_signing
       build_app(
-        project:        PROJECT,
+        project:        PROJECT_PATH,
         scheme:         APP_SCHEME,
         export_method:  "app-store",
         export_options: {
@@ -179,7 +184,7 @@ platform :ios do
             APP_IDENTIFIER => ENV["sigh_#{APP_IDENTIFIER}_appstore_profile-name"],
           },
         },
-        output_directory: "build",
+        output_directory: BUILD_DIR,
         output_name:      "ComeOnBackPager.ipa",
         clean:            true,
       )
@@ -220,7 +225,7 @@ platform :ios do
       readonly:       ENV["CI"] == "true",
     )
     update_code_signing_settings(
-      path:                  PROJECT,
+      path:                  PROJECT_PATH,
       targets:               [APP_TARGET],
       build_configurations:  ["Release"],
       use_automatic_signing: false,
@@ -236,7 +241,7 @@ platform :ios do
   private_lane :build_appstore_ipa do
     generate_project
     build_app(
-      project:        PROJECT,
+      project:        PROJECT_PATH,
       scheme:         APP_SCHEME,
       export_method:  "app-store",
       export_options: {
@@ -245,7 +250,7 @@ platform :ios do
       },
       xcargs:           "-allowProvisioningUpdates",
       export_xcargs:    "-allowProvisioningUpdates",
-      output_directory: "build",
+      output_directory: BUILD_DIR,
       output_name:      "ComeOnBackPager.ipa",
       clean:            true,
     )

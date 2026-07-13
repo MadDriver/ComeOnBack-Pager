@@ -48,18 +48,44 @@ xcodebuild -project "ComeOnBack Pager.xcodeproj" -scheme ComeOnBackPager \
 No test target yet — CI (`.github/workflows/ci.yml`, macos-15 / released Xcode 16) is
 an unsigned compile check: generate + the sim build above.
 
-## Deploy to the D01 iPads
+## Deploy
 
-No App Store / TestFlight — the pager installs directly onto the workstation iPads
-(paired with this Mac; USB once, Wi-Fi after):
+**Production installs come from the App Store (unlisted distribution)** — see Releasing
+below. For the fast dev loop, direct install to a paired iPad (dev-cert signed, ~1-year
+expiry) still works:
 
 ```bash
 scripts/deploy-ipad.sh              # list paired devices
 scripts/deploy-ipad.sh <name|udid>  # generate → Release device build → devicectl install
 ```
 
-Dev-cert signed installs expire after ~1 year — reinstall before then (single facility,
-user on-site, so a scheduled refresh beats distribution infrastructure).
+## Releasing (fastlane + App Store, unlisted)
+
+Mirrors the ios repo. ASC app record: **'Come On Back Pager'** (Apple ID `6463467578`,
+SKU = bundle id, pre-existing). Distribution is **unlisted** (install by link, never
+searchable) — one-time Apple request form, user-side. ASC creds come from 1Password
+via `scripts/pager-release.sh`; signing for CI is **match** (shared certs repo
+`lunoho/comeonback-ios-certs`, pager profile added 2026-07-13). All five Actions
+secrets are set on `MadDriver/ComeOnBack-Pager`.
+
+```bash
+scripts/pager-release.sh verify_asc   # default: ASC auth smoke test
+scripts/pager-release.sh beta         # local archive → TestFlight (automatic signing)
+scripts/pager-release.sh prepare      # push metadata+screenshots, attach TF build, precheck, STOP
+scripts/pager-release.sh submit       # fire App Store Review (the single irreversible step)
+scripts/pager-release.sh certs        # one-time/rotation: match bootstrap (read-write)
+```
+
+- **Normal flow is CI**: push tag `v<MARKETING_VERSION>` → `release.yml` → match-signed
+  build → TestFlight (runner Xcode is release-grade; local beta-Xcode binaries are
+  store-ineligible). Promote via `appstore.yml` (`step=prepare`, then `step=submit`
+  with `confirm=SUBMIT`) or the local lanes above.
+- Version bumps: `MARKETING_VERSION`/`CURRENT_PROJECT_VERSION` in `project.yml`; the
+  release tag must match MARKETING_VERSION (guard in release.yml).
+- Metadata lives in `fastlane/metadata/**`; review notes need a fresh demo enrollment
+  code at submission time (`fastlane/metadata/review_information/notes.txt`).
+- `submit`/`prepare` stop-gates match the ios repo (precheck between; manual Release
+  click in ASC after approval; `automatic_release:false`).
 
 ## Conventions
 
