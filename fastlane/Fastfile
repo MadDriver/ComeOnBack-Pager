@@ -133,7 +133,9 @@ platform :ios do
       force:                 true,
       precheck_include_in_app_purchases: false,
     )
-    precheck(app_identifier: APP_IDENTIFIER, default_rule_level: :error)
+    # include_in_app_purchases must be off under API-key auth (precheck limitation)
+    precheck(app_identifier: APP_IDENTIFIER, default_rule_level: :error,
+             include_in_app_purchases: false)
     UI.success("Version #{version}/#{build} prepared + precheck passed. Review in ASC, then: " \
                "scripts/pager-release.sh submit")
   end
