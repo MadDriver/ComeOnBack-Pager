@@ -135,8 +135,10 @@ struct PairTeamView: View {
     }
 }
 
+#if DEBUG
 struct PairTeamView_Previews: PreviewProvider {
     static var previews: some View {
         PairTeamView().environmentObject(PagingViewModel.preview)
     }
 }
+#endif

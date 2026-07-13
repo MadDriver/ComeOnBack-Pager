@@ -208,8 +208,10 @@ struct ContentUnavailableFallback: View {
     }
 }
 
+#if DEBUG
 struct MessagesView_Previews: PreviewProvider {
     static var previews: some View {
         MessagesView().environmentObject(PagingViewModel.preview)
     }
 }
+#endif

@@ -50,9 +50,11 @@ struct AvailableView: View {
     }
 }
 
+#if DEBUG
 struct AvailableView_Previews: PreviewProvider {
     static var previews: some View {
         AvailableView()
             .environmentObject(PagingViewModel.preview)
     }
 }
+#endif

@@ -475,6 +475,7 @@ extension PagingView {
     }
 }
 
+#if DEBUG
 struct PagingView_Previews: PreviewProvider {
     static var previews: some View {
         PagingView(target: .controller(Controller.mock_data[0]))
@@ -488,3 +489,4 @@ struct PagingView_Previews: PreviewProvider {
             .previewDisplayName("Not Registered")
     }
 }
+#endif

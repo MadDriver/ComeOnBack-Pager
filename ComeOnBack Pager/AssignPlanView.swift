@@ -135,6 +135,7 @@ struct AssignPlanView: View {
     }
 }
 
+#if DEBUG
 struct AssignPlanView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationStack {
@@ -146,3 +147,4 @@ struct AssignPlanView_Previews: PreviewProvider {
         }
     }
 }
+#endif

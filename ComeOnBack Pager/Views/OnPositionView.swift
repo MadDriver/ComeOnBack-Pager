@@ -59,9 +59,11 @@ struct OnPositionTeamCellView: View {
     }
 }
 
+#if DEBUG
 struct OnPositionView_Previews: PreviewProvider {
     static var previews: some View {
         OnPositionView(items: Controller.mock_data.map { .single($0) })
             .environmentObject(PagingViewModel.preview)
     }
 }
+#endif

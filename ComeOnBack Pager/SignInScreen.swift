@@ -119,9 +119,11 @@ struct SignInScreen: View {
     
 }
 
+#if DEBUG
 struct SignInView_Previews: PreviewProvider {
     static var previews: some View {
         SignInScreen()
             .environmentObject(PagingViewModel.preview)
     }
 }
+#endif

@@ -188,8 +188,10 @@ struct PlanView: View {
     }
 }
 
+#if DEBUG
 struct PlanView_Previews: PreviewProvider {
     static var previews: some View {
         PlanView().environmentObject(PagingViewModel.preview)
     }
 }
+#endif
