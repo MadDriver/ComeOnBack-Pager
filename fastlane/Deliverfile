@@ -1,0 +1,16 @@
+# Deliverfile — shared defaults for upload_to_app_store (deliver).
+#
+# app_identifier + team come from the Appfile. Auth is App Store Connect API key,
+# configured in the Fastfile (configure_asc_api_key) from 1Password — no key on disk.
+#
+# Distribution is UNLISTED (install by link only) — requested once via Apple's
+# unlisted-app form after the app record exists; deliver config is identical.
+
+force(true)                            # never show the interactive HTML preview (agentic)
+precheck_include_in_app_purchases(false)
+
+# Non-interactive submission questionnaire: no IDFA. Export compliance is answered in
+# Info.plist (ITSAppUsesNonExemptEncryption = false).
+submission_information({
+  add_id_info_uses_idfa: false,
+})

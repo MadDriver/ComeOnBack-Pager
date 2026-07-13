@@ -1,0 +1,91 @@
+name: App Store submit
+
+# MANUAL, GATED promotion of an already-uploaded TestFlight build to App Store Review.
+# Never automatic — workflow_dispatch only. No rebuild: it attaches an existing TF build
+# (skip_binary_upload) via the prepare/submit fastlane lanes. Two steps, on purpose, so
+# a human reads the precheck verdict between them:
+#   step=prepare  → push metadata + attach the build + precheck, then STOP
+#   step=submit   → fire App Store Review (requires confirm=SUBMIT)
+# Rollout stays manual: after Apple approves you click Release in ASC
+# (automatic_release:false). Mirrors the ios repo's appstore.yml.
+
+on:
+  workflow_dispatch:
+    inputs:
+      step:
+        description: 'prepare (metadata + attach build + precheck, stops) or submit (fire review)'
+        type: choice
+        options: [prepare, submit]
+        required: true
+      build:
+        description: 'TestFlight build number to attach (prepare step; blank = latest for the version)'
+        type: string
+        required: false
+      version:
+        description: 'Marketing version (blank = MARKETING_VERSION in project.yml)'
+        type: string
+        required: false
+      confirm:
+        description: 'Type SUBMIT to confirm (submit step only)'
+        type: string
+        required: false
+
+permissions:
+  contents: read
+
+# Never let two submissions race the App Store version.
+concurrency:
+  group: appstore-submit
+  cancel-in-progress: false
+
+jobs:
+  appstore:
+    runs-on: macos-15
+    env:
+      ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+      ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+      ASC_KEY_CONTENT: ${{ secrets.ASC_KEY_CONTENT }}
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - name: Guard — ASC secrets present
+        run: |
+          if [ -z "$ASC_KEY_ID" ] || [ -z "$ASC_ISSUER_ID" ] || [ -z "$ASC_KEY_CONTENT" ]; then
+            echo "::error::ASC_* secrets are not set — cannot reach App Store Connect."
+            exit 1
+          fi
+
+      - name: Guard — confirm submit
+        if: inputs.step == 'submit' && inputs.confirm != 'SUBMIT'
+        run: |
+          echo "::error::Submitting to App Store Review is irreversible — re-run with confirm=SUBMIT."
+          exit 1
+
+      # Non-beta Xcode 26 so the submit lane's ensure_release_toolchain guard passes.
+      # Nothing is built here (deliver only).
+      - name: Select Xcode 26
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '26'
+
+      - name: Set up Ruby + bundler
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+
+      - name: Prepare (metadata + attach build + precheck, no submit)
+        if: inputs.step == 'prepare'
+        env:
+          IN_BUILD: ${{ inputs.build }}
+          IN_VERSION: ${{ inputs.version }}
+        run: |
+          ARGS=""
+          [ -n "$IN_BUILD" ] && ARGS="$ARGS build:$IN_BUILD"
+          [ -n "$IN_VERSION" ] && ARGS="$ARGS version:$IN_VERSION"
+          echo "Running: fastlane prepare screenshots:false $ARGS"
+          bundle exec fastlane prepare screenshots:false $ARGS
+
+      - name: Submit for App Store Review
+        if: inputs.step == 'submit'
+        run: bundle exec fastlane submit

@@ -1,0 +1,11 @@
+ComeOnBack Pager is the facility console for the Come On Back ATC paging platform. Running on a shared workstation iPad, it gives the controller-in-charge a live picture of the operation — who is available, who is on position, and who has been paged — with one-tap paging to bring controllers back.
+
+FEATURES
+
+• Live facility board: available, on-position, and paged controllers at a glance
+• One-tap pages with ASAP or timed be-back requests
+• Canned messages for common instructions
+• Training teams and planned position assignments
+• Acknowledgements sync instantly with controllers' Come On Back apps
+
+ComeOnBack Pager is for air traffic facilities using the Come On Back platform. Enrollment requires a facility console code issued by your facility administrator — the app is not usable without one.

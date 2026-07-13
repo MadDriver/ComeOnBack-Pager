@@ -50,3 +50,8 @@ timeline.xctimeline
 LocalLoginComponents.swift
 ## XcodeGen — the project is generated from project.yml ##
 ComeOnBack Pager.xcodeproj/
+
+## fastlane artifacts ##
+fastlane/report.xml
+fastlane/README.md
+fastlane/test_output/

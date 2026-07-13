@@ -1,0 +1,19 @@
+# fastlane match — portable App Store signing for CI, sharing the SAME certs repo (and
+# the same Apple Distribution certificate) as the ios app repo. match reuses the existing
+# cert and adds the pager's App Store provisioning profile alongside the ios ones.
+#
+# The generated project stays on AUTOMATIC signing; the CI lane (beta_ci) flips the
+# target to manual with the match profile at build time only (Fastfile
+# apply_match_signing). HTTPS git_url so CI auth is one env var
+# (MATCH_GIT_BASIC_AUTHORIZATION = base64 of "user:token").
+
+git_url("https://github.com/lunoho/comeonback-ios-certs.git")
+storage_mode("git")
+
+type("appstore")
+
+app_identifier(["co.amalgamated.ComeOnBackPager"])
+team_id("9XKN747L88")
+
+# readonly is set per-invocation in the Fastfile: true in CI (never mutate the portal
+# from a runner), false locally for the one-time `certs` bootstrap lane.
