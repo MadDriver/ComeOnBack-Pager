@@ -3,8 +3,9 @@
 # app_identifier + team come from the Appfile. Auth is App Store Connect API key,
 # configured in the Fastfile (configure_asc_api_key) from 1Password — no key on disk.
 #
-# Distribution is UNLISTED (install by link only) — requested once via Apple's
-# unlisted-app form after the app record exists; deliver config is identical.
+# Distribution is UNLISTED (install by link only). Apple's required order: submit to
+# App Review FIRST, then file the unlisted-app request form (review notes declare the
+# unlisted intent; automatic_release:false keeps an approval unpublished meanwhile).
 
 force(true)                            # never show the interactive HTML preview (agentic)
 precheck_include_in_app_purchases(false)
