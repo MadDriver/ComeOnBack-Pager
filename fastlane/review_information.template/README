@@ -1,4 +1,0 @@
-Move this dir to fastlane/metadata/review_information/ and add contact files
-(first_name.txt last_name.txt phone_number.txt email_address.txt demo_user.txt
-demo_password.txt) before `submit` — ASC requires the full contact set. Mint a
-fresh demo enrollment code into notes.txt at the same time.

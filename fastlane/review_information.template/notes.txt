@@ -1,9 +1,0 @@
-ComeOnBack Pager is a console app for air traffic control facilities using the Come On Back platform (companion app: Come On Back, same developer account). It runs on a shared workstation iPad and is gated by a facility enrollment code instead of a user login.
-
-TO REVIEW: on first launch the app shows an enrollment screen. Enter the demo enrollment code below to enroll the app against our production facility as a demonstration console. The code is single-use and will be revoked after review.
-
-DEMO ENROLLMENT CODE: [GENERATED AT SUBMISSION TIME — scripts in the atcauth admin console]
-
-After enrollment you will see the live facility board. You can page a controller from the Available column and observe the be-back countdown; pages sent from the demo console only affect our demonstration data.
-
-This app is intended for unlisted distribution (limited audience: air traffic facilities on our platform).

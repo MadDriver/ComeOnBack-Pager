@@ -55,3 +55,6 @@ ComeOnBack Pager.xcodeproj/
 fastlane/report.xml
 fastlane/README.md
 fastlane/test_output/
+
+## App Review contact + demo code — PUBLIC repo, keep local-only ##
+fastlane/metadata/review_information/
