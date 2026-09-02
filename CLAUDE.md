@@ -57,7 +57,14 @@ expiry) still works:
 ```bash
 scripts/deploy-ipad.sh              # list paired devices
 scripts/deploy-ipad.sh <name|udid>  # generate → Release device build → devicectl install
+CONFIG=Debug scripts/deploy-ipad.sh <name|udid>   # Debug build (LAN testing)
 ```
+
+Server URLs for Debug live in `Configs/Debug.xcconfig` (localhost by default) and reach
+Swift via the Info.plist. To test a device build against a dev stack on the LAN, copy
+`Configs/Local.xcconfig.example` to `Configs/Local.xcconfig` (gitignored), set your IP,
+and install with `CONFIG=Debug`. Simulator builds keep localhost. Each device also needs
+a one-time CA trust — see `docs/lan-device-testing.md` in the workspace repo.
 
 ## Releasing (fastlane + App Store, unlisted)
 

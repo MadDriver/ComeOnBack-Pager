@@ -1,0 +1,10 @@
+// Copy to `Local.xcconfig` (gitignored) and set your Mac's LAN IP to run a build on a
+// real iPad against the dev stack. Start the stack with `stack-up.sh --lan`; each
+// device also needs a one-time CA trust — see `docs/lan-device-testing.md` in the
+// comeonback workspace repo.
+//
+// `[sdk=iphoneos*]` scopes these to device builds only, so simulator builds keep the
+// `localhost` defaults from Debug.xcconfig and both work without further edits.
+
+COB_AUTH_BASE_URL[sdk=iphoneos*] = https:/$()/192.168.1.50:8444
+COB_API_BASE_URL[sdk=iphoneos*] = https:/$()/192.168.1.50:8443

@@ -1,0 +1,23 @@
+// Debug.xcconfig — server endpoints for the Debug configuration.
+//
+// The defaults point at the dev stack running on this Mac (`stack/main`), which is
+// what a simulator build needs. To aim a *device* build at that stack over the LAN,
+// copy `Local.xcconfig.example` to `Local.xcconfig` (gitignored) and fill in your
+// LAN IP — the `#include?` at the bottom lets it override what is set here.
+//
+// The `$()` inside each URL is an empty build-setting reference. It splits up the
+// `//` so xcconfig's comment parser does not swallow the rest of the line.
+
+COB_AUTH_BASE_URL = http:/$()/localhost:8086
+COB_API_BASE_URL = http:/$()/localhost:8085
+
+// Swift reads both through the Info.plist (see LocalEnvironment). The plist
+// references these settings by name; INFOPLIST_KEY_* is not an option, because the
+// build system only maps a fixed set of known suffixes and silently drops the rest.
+
+// Debug-only, so it can never reach an App Store binary: iOS requires this string
+// before the app may reach a server on the local network.
+INFOPLIST_KEY_NSLocalNetworkUsageDescription = Connects to the local development server for testing.
+
+// Keep last: a developer's local overrides win over the defaults above.
+#include? "Local.xcconfig"

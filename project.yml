@@ -17,6 +17,10 @@ targets:
         excludes:
           # local-only dev scratch file (gitignored); never part of the build
           - LocalLoginComponents.swift
+    configFiles:
+      # Debug-only server endpoints. A gitignored Configs/Local.xcconfig may override
+      # them for LAN device testing — see Configs/Local.xcconfig.example.
+      Debug: Configs/Debug.xcconfig
     settings:
       base:
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon

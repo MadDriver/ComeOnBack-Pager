@@ -18,9 +18,12 @@ import Foundation
 enum OAuthConfig {
     /// atcauth base URL per build configuration: prod ships against the public
     /// issuer, DEBUG points at the local dev stack (`stack/main`, atcauth on 8086).
+    /// A device build can be re-pointed at that stack over the LAN without touching
+    /// this file — see `Configs/Local.xcconfig.example`.
     static var baseURL: URL {
         #if DEBUG
-        return URL(string: "http://localhost:8086")!
+        return LocalEnvironment.url(forInfoDictionaryKey: "COBAuthBaseURL")
+            ?? URL(string: "http://localhost:8086")!
         #else
         return URL(string: "https://atcauth.com")!
         #endif
