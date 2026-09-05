@@ -7,9 +7,10 @@ APP_IDENTIFIER = "co.amalgamated.ComeOnBackPager"
 APP_TARGET     = "ComeOnBack Pager"           # target/display name has a space
 APP_NAME       = "ComeOnBack Pager"
 
-# Anchor every path to the repo root, NOT the process CWD — fastlane's working
-# directory for Fastfile Ruby changed between 2.236 and 2.237, which broke the
-# first CI run. FastlaneFolder.path is stable across versions.
+# Anchor every path to the repo root, NOT the process CWD: plain Ruby in a lane runs
+# with CWD = fastlane/, while actions run from the project root (unchanged across
+# fastlane 2.236-2.239 — the "2.237 changed the CWD" diagnosis was wrong). Absolute
+# paths make both cases unambiguous. FastlaneFolder.path is stable across versions.
 ROOT         = File.expand_path("..", FastlaneCore::FastlaneFolder.path)
 PROJECT_PATH = File.join(ROOT, "ComeOnBack Pager.xcodeproj")   # generated — never committed
 BUILD_DIR    = File.join(ROOT, "build")

@@ -1,9 +1,10 @@
 source "https://rubygems.org"
 
-# Pin fastlane so CI release builds are reproducible (bundler on the runner). Locally
-# this repo drives fastlane from Homebrew — macOS system Ruby is too old for the
-# modern fastlane dependency graph.
-# 2.237.0 changed the Fastfile working directory and broke repo-relative paths on CI;
-# pin to the 2.236.x line the ios releases shipped on. Paths in the Fastfile are
-# ROOT-anchored anyway, but the pin keeps CI deterministic.
-gem "fastlane", "~> 2.236.0"
+# Pin fastlane to the 2.239 line that CI runs; the committed Gemfile.lock is what
+# makes a CI run reproducible (`ruby/setup-ruby` + `bundle install`). Local lanes go
+# through Homebrew fastlane instead — `scripts/pager-release.sh` calls `fastlane`
+# directly, not `bundle exec` — so keep `brew upgrade fastlane` on this same line.
+# (The old 2.236.x pin rested on a wrong diagnosis that 2.237 changed the Fastfile's
+# working directory — it didn't; see fastlane/Fastfile. The real reason to move off
+# 2.236 is the CVE-2026-35611 fix that shipped in 2.237.)
+gem "fastlane", "~> 2.239.0"
