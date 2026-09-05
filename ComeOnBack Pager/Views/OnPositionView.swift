@@ -14,25 +14,29 @@ import SwiftUI
 struct OnPositionView: View {
     var items: [OnPositionRow]
     var body: some View {
-        VStack {
-            Text("ON POSITION")
-                .fontWeight(.heavy)
-            List {
-                if items.isEmpty {
-                    EmptyControllerView()
-                }
-                ForEach(items) { item in
-                    switch item {
-                    case .single(let controller):
-                        OnPositionCellView(controller: controller)
-                    case .team(let unit):
-                        NavigationLink {
-                            PagingView(target: .team(unit))
-                        } label: {
-                            OnPositionTeamCellView(unit: unit)
+        VStack(spacing: Spacing.sm) {
+            SectionHeader("On position")
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, Spacing.md)
+
+            if items.isEmpty {
+                EmptyControllerView()
+            } else {
+                List {
+                    ForEach(items) { item in
+                        switch item {
+                        case .single(let controller):
+                            OnPositionCellView(controller: controller)
+                        case .team(let unit):
+                            NavigationLink {
+                                PagingView(target: .team(unit))
+                            } label: {
+                                OnPositionTeamCellView(unit: unit)
+                            }
                         }
                     }
                 }
+                .listStyle(.plain)
             }
         }
     }
@@ -43,19 +47,16 @@ struct OnPositionView: View {
 struct OnPositionTeamCellView: View {
     var unit: TeamUnit
     var body: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: Spacing.sm) {
             Text(unit.ojti.atTime?.relative() ?? "")
-                .font(.caption).foregroundColor(.secondary)
-            Text("TEAM").font(.caption2).bold()
-                .padding(.horizontal, 5).padding(.vertical, 1)
-                .background(Color.accentColor.opacity(0.25)).cornerRadius(4)
-            Text(unit.label).bold()
+                .font(.caption.monospacedDigit()).foregroundColor(.secondary)
+            TeamBadge()
+            Text(unit.label).fontWeight(.semibold)
                 .lineLimit(1).minimumScaleFactor(0.6)
-            Spacer(minLength: 4)
+            Spacer(minLength: Spacing.xs)
             Image(systemName: "arrowshape.right")
         }
-        .padding()
-        .frame(height: 40)
+        .frame(height: BoardColumns.rowHeight)
     }
 }
 

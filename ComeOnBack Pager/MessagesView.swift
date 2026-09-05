@@ -66,24 +66,28 @@ struct MessagesView: View {
             ContentUnavailableFallback(text: "No canned messages defined. A facility admin can add them.")
         } else {
             VStack(alignment: .leading) {
-                Text("MESSAGE").fontWeight(.heavy).padding(.horizontal)
+                SectionHeader("Message").padding(.horizontal)
                 ScrollView {
-                    VStack(spacing: 8) {
+                    VStack(spacing: Spacing.sm) {
                         ForEach(messages) { message in
+                            let selected = selectedMessage?.id == message.id
                             Button {
                                 selectedMessage = message
                             } label: {
                                 HStack {
                                     Text(message.text)
                                     if let phone = message.phoneNumber {
-                                        Text("📞 \(phone)").font(.caption).foregroundColor(.secondary)
+                                        Label(phone, systemImage: "phone.fill")
+                                            .font(.caption)
+                                            .foregroundStyle(selected ? Color.onAccent.opacity(0.85) : Color.secondary)
                                     }
                                     Spacer()
                                 }
                                 .padding()
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                                .background(selectedMessage?.id == message.id ? Color.blue.opacity(0.3) : Color.primary.opacity(0.08))
-                                .cornerRadius(12)
+                                .foregroundStyle(selected ? Color.onAccent : Color.primary)
+                                .background(selected ? Color.accentColor : Color.tileFill)
+                                .clipShape(RoundedRectangle(cornerRadius: Radius.card, style: .continuous))
                             }
                             .buttonStyle(.plain)
                         }
@@ -91,7 +95,7 @@ struct MessagesView: View {
                     .padding(.horizontal)
 
                     HStack {
-                        Text("RECIPIENTS").fontWeight(.heavy)
+                        SectionHeader("Recipients")
                         Spacer()
                         Button("All") { picked = Set(recipients.map { $0.initials }) }
                         Button("None") { picked = [] }
@@ -116,16 +120,12 @@ struct MessagesView: View {
         return Button {
             if selected { picked.remove(controller.initials) } else { picked.insert(controller.initials) }
         } label: {
-            VStack(spacing: 2) {
-                Text(controller.initials).bold()
-                if !controller.registered {
-                    Image(systemName: "phone").font(.caption2).foregroundColor(.red)
-                }
-            }
-            .frame(maxWidth: .infinity)
-            .frame(height: 50)
-            .background(selected ? Color.blue.opacity(0.6) : Color.primary.opacity(0.12))
-            .cornerRadius(12)
+            SelectableChip(
+                label: controller.initials,
+                icon: controller.registered ? nil : "phone.fill",
+                selected: selected,
+                role: controller.registered ? nil : .pendingOrange
+            )
         }
         .buttonStyle(.plain)
     }
@@ -133,11 +133,11 @@ struct MessagesView: View {
     @ViewBuilder
     private var sendBar: some View {
         let unregisteredCount = recipients.filter { picked.contains($0.initials) && !$0.registered }.count
-        VStack(spacing: 4) {
+        VStack(spacing: Spacing.xs) {
             if unregisteredCount > 0 {
                 Label("\(unregisteredCount) recipient\(unregisteredCount == 1 ? "" : "s") have no app — alert by phone.",
-                      systemImage: "phone")
-                    .font(.caption).foregroundColor(.red)
+                      systemImage: "phone.fill")
+                    .font(.caption).foregroundColor(.pendingOrange)
             }
             if let sendError {
                 Text(sendError).font(.caption).foregroundColor(.red)
@@ -147,11 +147,12 @@ struct MessagesView: View {
             } label: {
                 HStack {
                     if sending { ProgressView().tint(.white) }
-                    Text("SEND (\(picked.count))")
+                    Text("Send (\(picked.count))")
                 }
                 .frame(maxWidth: .infinity, minHeight: 56)
             }
             .buttonStyle(.borderedProminent)
+            .controlSize(.large)
             .disabled(sending || selectedMessage == nil || picked.isEmpty)
         }
         .padding()
@@ -165,14 +166,15 @@ struct MessagesView: View {
                 HStack {
                     Text(result.initials).bold().frame(width: 50, alignment: .leading)
                     if result.delivered {
-                        Label("sent", systemImage: "checkmark.circle.fill").foregroundColor(.green)
+                        Label("sent", systemImage: "checkmark.circle.fill").foregroundColor(.ackGreen)
                     } else {
-                        Label("no app — alert by phone", systemImage: "phone").foregroundColor(.orange)
+                        Label("no app — alert by phone", systemImage: "phone.fill").foregroundColor(.pendingOrange)
                     }
                 }
             }
             Button("Done") { dismiss() }
                 .buttonStyle(.borderedProminent)
+                .controlSize(.large)
                 .padding()
         }
     }

@@ -11,14 +11,17 @@ struct OnPositionCellView: View {
         ZStack { // ZStack for a tapGesture for the entire row
             HStack {
                 Text(" \(controller.atTime?.relative() ?? "")")
+                    .font(.body.monospacedDigit())
+                    .foregroundColor(.secondary)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                
+
                 Text(controller.initials)
+                    .fontWeight(.semibold)
                     .frame(maxWidth: .infinity, alignment: .center)
                 
                 if performingTapGesture {
                     ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle(tint: .blue))
+                        .progressViewStyle(CircularProgressViewStyle(tint: Color.accentColor))
                         .frame(maxWidth: .infinity, alignment: .trailing)
                 } else {
                     Image(systemName: "arrowshape.right")

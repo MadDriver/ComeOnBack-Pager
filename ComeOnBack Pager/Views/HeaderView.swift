@@ -39,14 +39,13 @@ struct HeaderView: View {
     }
     
     var body: some View {
-        HStack {
-            Text("\(localTimeString)")
-                .font(.system(size: 32, weight: .bold))
+        HStack(spacing: Spacing.sm) {
+            Text(localTimeString)
                 .onTapGesture { displaySettings.useMilitaryTime.toggle() }
-            Text(" -- ")
+            Text("·").foregroundStyle(.secondary)
             Text("\(utcTimeString)z")
-                .font(.system(size: 32, weight: .bold))
         }
+        .font(.system(.title2).weight(.semibold).monospacedDigit())
         .onAppear {
             let _ = updateTimer
         }

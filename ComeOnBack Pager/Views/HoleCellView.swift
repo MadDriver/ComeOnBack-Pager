@@ -13,21 +13,29 @@ struct HoleCellView: View {
     var plan: PlannedPosition
 
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: BoardColumns.spacing) {
             Image(systemName: "calendar.badge.clock")
-                .foregroundColor(.orange)
+                .foregroundColor(.pendingOrange)
+                .frame(width: BoardColumns.action)
+
             Text(plan.position)
                 .font(.title3).bold()
-            Text("@ \(displayTime(plan.time))")
-            Spacer()
+                .lineLimit(1).minimumScaleFactor(0.7)
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+            Text(displayTime(plan.time))
+                .font(.body.monospacedDigit())
+                .frame(width: BoardColumns.time)
+
             Text("UNASSIGNED")
                 .font(.caption).bold()
-                .foregroundColor(.orange)
-                .padding(.horizontal, 8).padding(.vertical, 3)
-                .overlay(RoundedRectangle(cornerRadius: 6).stroke(Color.orange, lineWidth: 1))
+                .foregroundColor(.pendingOrange)
+                .padding(.horizontal, Spacing.sm).padding(.vertical, 3)
+                .overlay(Capsule().stroke(Color.pendingOrange, lineWidth: 1))
+                .frame(width: BoardColumns.position + BoardColumns.plan + BoardColumns.status + BoardColumns.spacing * 2,
+                       alignment: .trailing)
         }
-        .frame(height: 40)
-        .padding(.horizontal, 6)
+        .frame(height: BoardColumns.rowHeight)
     }
 }
 

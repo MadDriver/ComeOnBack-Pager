@@ -16,36 +16,48 @@ struct AvailableView: View {
     @EnvironmentObject var pagingVM: PagingViewModel
 
     var body: some View {
-        VStack {
-            Text("AVAILABLE")
-                .fontWeight(.heavy)
+        VStack(spacing: Spacing.sm) {
+            SectionHeader("Available")
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, Spacing.md)
+
             if pagingVM.availableItems.isEmpty {
                 EmptyControllerView()
-            }
-            List {
-                ForEach(pagingVM.availableItems) { item in
-                    switch item {
-                    case .single(let controller, let plan):
-                        NavigationLink {
-                            PagingView(target: .controller(controller))
-                        } label: {
-                            AvailableCellView(controller: controller, plan: plan)
-                        }
-                    case .team(let unit, let plan):
-                        NavigationLink {
-                            PagingView(target: .team(unit))
-                        } label: {
-                            TeamCellView(unit: unit, plan: plan)
-                        }
-                    case .hole(let plan):
-                        NavigationLink {
-                            AssignPlanView(plan: plan)
-                        } label: {
-                            HoleCellView(plan: plan)
-                        }
+            } else {
+                BoardColumnHeader()
+                List {
+                    ForEach(pagingVM.availableItems) { item in
+                        row(for: item)
+                            .listRowInsets(EdgeInsets(top: Spacing.xs, leading: Spacing.md,
+                                                      bottom: Spacing.xs, trailing: Spacing.md))
                     }
                 }
-            } // List
+                .listStyle(.plain)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func row(for item: AvailableRow) -> some View {
+        switch item {
+        case .single(let controller, let plan):
+            NavigationLink {
+                PagingView(target: .controller(controller))
+            } label: {
+                AvailableCellView(controller: controller, plan: plan)
+            }
+        case .team(let unit, let plan):
+            NavigationLink {
+                PagingView(target: .team(unit))
+            } label: {
+                TeamCellView(unit: unit, plan: plan)
+            }
+        case .hole(let plan):
+            NavigationLink {
+                AssignPlanView(plan: plan)
+            } label: {
+                HoleCellView(plan: plan)
+            }
         }
     }
 }

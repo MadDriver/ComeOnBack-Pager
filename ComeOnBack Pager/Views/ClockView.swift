@@ -44,7 +44,7 @@ struct ClockView: View {
                 ForEach(minutes.indices, id: \.self) { index in
                     Text("\(minutes[index])")
                         .frame(width: 60, height: 60)
-                        .background(selectedMinute == minutes[index] ? .blue: .clear)
+                        .background(selectedMinute == minutes[index] ? Color.accentColor : .clear)
                         .font(.system(size: 30))
                         .font(.caption.bold())
                         .clipShape(Circle())

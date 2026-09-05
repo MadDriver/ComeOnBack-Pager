@@ -40,35 +40,29 @@ struct AssignPlanView: View {
                     .foregroundColor(.secondary)
 
                 if !pagingVM.teamUnits.isEmpty {
-                    Text("TEAMS").fontWeight(.heavy)
-                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 130))], spacing: 12) {
+                    SectionHeader("Teams")
+                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 130))], spacing: Spacing.md) {
                         ForEach(pagingVM.teamUnits) { unit in
                             Button {
                                 pickedTeam = (pickedTeam == unit.team.id) ? nil : unit.team.id
                                 pickedController = nil
                             } label: {
-                                Text(unit.label).bold()
-                                    .frame(maxWidth: .infinity).frame(height: 50)
-                                    .background(pickedTeam == unit.team.id ? Color.blue.opacity(0.6) : Color.primary.opacity(0.12))
-                                    .cornerRadius(12)
+                                SelectableChip(label: unit.label, selected: pickedTeam == unit.team.id)
                             }
                             .buttonStyle(.plain)
                         }
                     }
                 }
 
-                Text("CONTROLLERS").fontWeight(.heavy)
-                LazyVGrid(columns: columns, spacing: 12) {
+                SectionHeader("Controllers")
+                LazyVGrid(columns: columns, spacing: Spacing.md) {
                     ForEach(singles) { controller in
                         let selected = pickedController == controller.initials
                         Button {
                             pickedController = selected ? nil : controller.initials
                             pickedTeam = nil
                         } label: {
-                            Text(controller.initials).bold()
-                                .frame(maxWidth: .infinity).frame(height: 50)
-                                .background(selected ? Color.blue.opacity(0.6) : Color.primary.opacity(0.12))
-                                .cornerRadius(12)
+                            SelectableChip(label: controller.initials, selected: selected)
                         }
                         .buttonStyle(.plain)
                     }
@@ -78,21 +72,23 @@ struct AssignPlanView: View {
                     Text(errorMessage).foregroundColor(.red)
                 }
 
-                HStack(spacing: 16) {
+                HStack(spacing: Spacing.lg) {
                     Button(action: assign) {
                         HStack {
                             if working { ProgressView().tint(.white) }
-                            Text("ASSIGN & PAGE")
+                            Text("Assign & page")
                         }
                         .frame(maxWidth: .infinity, minHeight: 56)
                     }
                     .buttonStyle(.borderedProminent)
+                    .controlSize(.large)
                     .disabled(!canAssign)
 
                     Button(role: .destructive, action: cancelPlan) {
-                        Text("Cancel Plan").frame(minHeight: 56).padding(.horizontal)
+                        Text("Cancel plan").frame(minHeight: 56).padding(.horizontal)
                     }
                     .buttonStyle(.bordered)
+                    .controlSize(.large)
                     .disabled(working)
                 }
             }
@@ -100,6 +96,12 @@ struct AssignPlanView: View {
         }
         .navigationTitle("Fill \(plan.position) @ \(displayTime(plan.time))")
         .navigationBarTitleDisplayMode(.inline)
+        .navigationBarBackButtonHidden(true)
+        .toolbar {
+            ToolbarItem(placement: .cancellationAction) {
+                Button("Cancel") { dismiss() }
+            }
+        }
     }
 
     private func assign() {

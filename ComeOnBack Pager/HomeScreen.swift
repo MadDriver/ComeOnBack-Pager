@@ -41,41 +41,20 @@ struct HomeScreen: View {
 
     var body: some View {
         NavigationStack {
-            ZStack(alignment: .topLeading) {
-                VStack {
-                    HeaderView()
-                    GeometryReader { geometry in
-                        HStack(spacing: 0) {
-                            OnPositionView(items: pagingVM.onPositionItems)
-                                .frame(width: geometry.size.width * 0.33)
-                            AvailableView()
-                                .frame(width: geometry.size.width * 0.67)
-                        } // HStack
-                    } // GeoReader
-                } // VStack
-
-                HStack {
-                    Button("SIGN IN") { signInViewIsActive = true }
-                        .buttonStyle(.borderedProminent)
-
-                    Button("MESSAGES") { messagesViewIsActive = true }
-                        .buttonStyle(.bordered)
-                    Button("TEAMS") { pairTeamViewIsActive = true }
-                        .buttonStyle(.bordered)
-                    Button("PLAN") { planViewIsActive = true }
-                        .buttonStyle(.bordered)
-
-                    Spacer()
-
-                    Image(systemName: "moonphase.last.quarter.inverse")
-                        .frame(width: 50, height: 50)
-                        .onTapGesture { changeTheme.toggle() }
-
-                    Button("SIGN OUT") { signOutViewIsActive = true }
-                        .buttonStyle(.borderedProminent)
-                }
-                .padding()
-            } // ZStack
+            VStack(spacing: 0) {
+                topBar
+                Divider()
+                GeometryReader { geometry in
+                    HStack(spacing: 0) {
+                        OnPositionView(items: pagingVM.onPositionItems)
+                            .frame(width: geometry.size.width * 0.33)
+                        Divider()
+                        AvailableView()
+                            .frame(maxWidth: .infinity)
+                    } // HStack
+                } // GeoReader
+            } // VStack
+            .toolbar(.hidden, for: .navigationBar)
         } // NavStack
         .preferredColorScheme(userTheme.colorScheme)
         .fullScreenCover(isPresented: $signInViewIsActive) {
@@ -94,14 +73,8 @@ struct HomeScreen: View {
             PlanView()
         }
         .sheet(isPresented: $changeTheme) {
-            if #available(iOS 16.4, *) {
-                themeSheet
-                    .presentationDetents([.height(560)])
-                    .presentationBackground(.clear)
-            } else {
-                themeSheet
-                    .presentationDetents([.height(560)])
-            }
+            ThemeChangerScreen(screenBrightness: $screenBrightness)
+                .presentationDetents([.medium, .large])
         }
         .environmentObject(pagingVM)
         .environmentObject(displaySettings)
@@ -123,10 +96,60 @@ struct HomeScreen: View {
         }
     } // body
 
-    private var themeSheet: some View {
-        ThemeChangerScreen(screenBrightness: $screenBrightness) {
-            changeTheme = false
-            Task { await sessionStore.logout() }
+    /// The console top bar: board identity + clock on the leading edge, the three peer
+    /// actions and the sign in/out controls trailing, and an overflow menu for
+    /// appearance + the destructive device re-enroll (P1, P8, P11).
+    private var topBar: some View {
+        HStack(spacing: Spacing.md) {
+            if let name = pagingVM.facility?.name, !name.isEmpty {
+                Text(name)
+                    .font(.headline)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+            }
+            HeaderView()
+
+            Spacer()
+
+            Button { messagesViewIsActive = true } label: {
+                Label("Messages", systemImage: "message")
+            }
+            .buttonStyle(.bordered)
+            Button { pairTeamViewIsActive = true } label: {
+                Label("Teams", systemImage: "person.2")
+            }
+            .buttonStyle(.bordered)
+            Button { planViewIsActive = true } label: {
+                Label("Plan", systemImage: "calendar.badge.clock")
+            }
+            .buttonStyle(.bordered)
+
+            Divider().frame(height: 28)
+
+            Button { signOutViewIsActive = true } label: {
+                Label("Sign out", systemImage: "arrow.right.square")
+            }
+            .buttonStyle(.bordered)
+            Button { signInViewIsActive = true } label: {
+                Label("Sign in", systemImage: "person.badge.plus")
+            }
+            .buttonStyle(.borderedProminent)
+
+            Menu {
+                Button { changeTheme = true } label: {
+                    Label("Appearance", systemImage: "circle.lefthalf.filled")
+                }
+                Divider()
+                Button(role: .destructive) {
+                    Task { await sessionStore.logout() }
+                } label: {
+                    Label("Sign out / re-enroll device", systemImage: "rectangle.portrait.and.arrow.right")
+                }
+            } label: {
+                Image(systemName: "ellipsis.circle").font(.title2)
+            }
         }
+        .padding(.horizontal, Spacing.lg)
+        .padding(.vertical, Spacing.sm)
     }
 }

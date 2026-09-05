@@ -8,73 +8,58 @@
 import SwiftUI
 
 struct ThemeChangerScreen: View {
-    
-    @Environment(\.colorScheme) private var scheme
+
+    @Environment(\.dismiss) private var dismiss
     @AppStorage("user_theme") private var userTheme: Theme = .dark
-    @AppStorage("user_brightness_setting") private var userBrightness: Double = 1.0
     @Namespace private var animation
 
     @Binding var screenBrightness: Double
-    /// Unobtrusive "sign out / re-enroll" affordance — revokes + clears this
-    /// workstation's console session (drops back to the enrollment screen).
-    var onSignOut: () -> Void = {}
 
     var body: some View {
-        VStack(spacing: 15) {
-            
-            Text("Choose a Style")
-                .font(.title2.bold())
-                .padding(.top, 25)
-                .foregroundStyle(Color.black)
-                .bold()
-            
-            HStack(spacing: 0) {
-                ForEach(Theme.allCases, id: \.rawValue) { theme in
-                    Text(theme.rawValue)
-                        .padding(.vertical, 10)
-                        .frame(width: 100)
-                        .foregroundStyle(Color.black)
-                        .background {
-                            ZStack {
-                                if userTheme == theme {
-                                    Capsule()
-                                        .fill(.white)
-                                        .matchedGeometryEffect(id: "ACTIVETAB", in: animation)
+        NavigationStack {
+            VStack(alignment: .leading, spacing: Spacing.xl) {
+                VStack(alignment: .leading, spacing: Spacing.sm) {
+                    SectionHeader("Theme")
+                    HStack(spacing: 0) {
+                        ForEach(Theme.allCases, id: \.rawValue) { theme in
+                            Text(theme.rawValue)
+                                .fontWeight(.semibold)
+                                .padding(.vertical, Spacing.sm)
+                                .frame(maxWidth: .infinity)
+                                .foregroundStyle(userTheme == theme ? Color.onAccent : Color.primary)
+                                .background {
+                                    if userTheme == theme {
+                                        Capsule()
+                                            .fill(Color.accentColor)
+                                            .matchedGeometryEffect(id: "ACTIVETAB", in: animation)
+                                    }
                                 }
-                            }
-                            .animation(.snappy, value: userTheme)
+                                .contentShape(.capsule)
+                                .onTapGesture {
+                                    withAnimation(.snappy) { userTheme = theme }
+                                }
                         }
-                        .contentShape(.rect)
-                        .onTapGesture {
-                            userTheme = theme
-                        }
+                    } // HStack
+                    .padding(Spacing.xs)
+                    .background(Color.tileFill, in: .capsule)
                 }
-            } // HStack
-            .padding(3)
-            .background(.gray.opacity(0.2), in: .capsule)
-            .padding(.top, 20)
-            
-            VStack(spacing: -5) {
-                Text("Brightness")
-                    .font(.title2.bold())
-                    .foregroundStyle(Color.black)
-                Slider(value: $screenBrightness, in: 0.0...1.0)
-                    .frame(width: 300)
-                    .padding()
+
+                VStack(alignment: .leading, spacing: Spacing.sm) {
+                    SectionHeader("Brightness")
+                    Slider(value: $screenBrightness, in: 0.0...1.0)
+                }
+
+                Spacer()
+            } // VStack
+            .padding(Spacing.xl)
+            .navigationTitle("Appearance")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Done") { dismiss() }
+                }
             }
-            .padding(.top, 20)
-
-            Button("Sign out / re-enroll", role: .destructive, action: onSignOut)
-                .padding(.top, 10)
-
-        } // VStack
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .frame(height: 500)
-        .background(Color.white)
-        .clipShape(.rect(cornerRadius: 30))
-
-        
-        
+        }
     }
 }
 

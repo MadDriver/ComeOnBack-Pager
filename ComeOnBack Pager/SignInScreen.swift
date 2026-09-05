@@ -53,13 +53,9 @@ struct SignInScreen: View {
                     } // if facility.areas.count > 1
                 } // facility = pagingVM.facility
                 ScrollView {
-                    LazyVGrid(columns: columns, spacing: 20) {
+                    LazyVGrid(columns: columns, spacing: Spacing.lg) {
                         ForEach(controllers) { controller in
-                            Text("\(controller.initials)")
-                                .frame(maxWidth: .infinity)
-                                .frame(height: 50)
-                                .background(isControllerInSignInArray(controller: controller) ? Color.red :  Color.primary.opacity(0.2))
-                                .cornerRadius(20)
+                            SelectableChip(label: controller.initials, selected: isControllerInSignInArray(controller: controller))
                                 .onTapGesture {
                                     if isControllerInSignInArray(controller: controller) {
                                         if let index = controllersToSignIn.firstIndex(of: controller) {
@@ -71,16 +67,18 @@ struct SignInScreen: View {
                                         logger.info("Signing in (\(controllersToSignIn) ")
                                     }
                                 }
-                            
+
                         }
                     }  // LazyVGrid
                 } // Scrollview
-                
+
                 HStack(spacing: 200) {
-                    Button("CANCEL", role: .cancel, action: dismissSignInSheet)
+                    Button("Cancel", role: .cancel, action: dismissSignInSheet)
                         .buttonStyle(.bordered)
-                    Button("SIGN IN", action: signInControllers)
+                        .controlSize(.large)
+                    Button("Sign in", action: signInControllers)
                         .buttonStyle(.borderedProminent)
+                        .controlSize(.large)
                 }
             } // V Stack
             .padding(.top)
