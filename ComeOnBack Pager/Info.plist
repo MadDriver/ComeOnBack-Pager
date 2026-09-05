@@ -9,6 +9,13 @@
 	     compat mode until the board gets a proper adaptive-resize migration. -->
 	<key>UIRequiresFullScreenIgnoredStartingWithVersion</key>
 	<string>99</string>
+	<!-- Debug-only server overrides. Configs/Debug.xcconfig defines these build
+	     settings; in Release they are unset, so both expand to the empty string and
+	     LocalEnvironment (itself Debug-only) treats empty as absent. -->
+	<key>COBAuthBaseURL</key>
+	<string>$(COB_AUTH_BASE_URL)</string>
+	<key>COBAPIBaseURL</key>
+	<string>$(COB_API_BASE_URL)</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>

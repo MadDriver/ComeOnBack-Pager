@@ -15,10 +15,12 @@ import Foundation
 enum APIConfig {
     /// Prod ships against the public API host; DEBUG points at the local dev stack
     /// (`stack/main`, comeonback-web on 8085). The simulator reaches the host via
-    /// `localhost`.
+    /// `localhost`; a device build reaches it over the LAN via
+    /// `Configs/Local.xcconfig` (see `Configs/Local.xcconfig.example`).
     static var baseURL: URL {
         #if DEBUG
-        return URL(string: "http://localhost:8085")!
+        return LocalEnvironment.url(forInfoDictionaryKey: "COBAPIBaseURL")
+            ?? URL(string: "http://localhost:8085")!
         #else
         return URL(string: "https://atcpager.com")!
         #endif

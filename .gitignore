@@ -58,3 +58,6 @@ fastlane/test_output/
 
 ## App Review contact + demo code — PUBLIC repo, keep local-only ##
 fastlane/metadata/review_information/
+
+## Per-developer Debug overrides (LAN device testing) — see Configs/Local.xcconfig.example ##
+Configs/Local.xcconfig
