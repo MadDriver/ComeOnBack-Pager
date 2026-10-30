@@ -24,29 +24,30 @@ struct AvailableCellView: View {
             moveButton
                 .frame(width: BoardColumns.action)
 
-            Text(controller.initials)
-                .fontWeight(.semibold)
-                .lineLimit(1).minimumScaleFactor(0.7)
-                .frame(maxWidth: .infinity, alignment: .leading)
+            ControllerLabel(initials: controller.initials, name: controller.name)
+                .controllerColumn()
 
-            Group {
+            ZStack {
                 if let beBack = controller.beBack { Text(beBack.stringValue) }
             }
-            .font(.body.monospacedDigit())
+            .font(.title3.weight(.semibold).monospacedDigit())
             .frame(width: BoardColumns.time)
 
-            Group {
+            ZStack {
                 if let forPosition = controller.beBack?.forPosition { Text(forPosition) }
             }
+            .font(.body.weight(.semibold))
             .frame(width: BoardColumns.position)
 
-            Group {
+            ZStack {
                 if let plan { PlanBadge(position: plan.position) }
             }
             .frame(width: BoardColumns.plan, alignment: .leading)
 
-            statusColumn
+            ZStack { statusColumn }
                 .frame(width: BoardColumns.status)
+
+            Spacer(minLength: 0)
         }
         .frame(height: BoardColumns.rowHeight)
     }

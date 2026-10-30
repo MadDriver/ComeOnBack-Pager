@@ -17,24 +17,23 @@ struct AvailableView: View {
 
     var body: some View {
         VStack(spacing: Spacing.sm) {
-            SectionHeader("Available")
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal, Spacing.md)
+            BoardSectionTitle(title: "Available", count: pagingVM.availableItems.count)
 
             if pagingVM.availableItems.isEmpty {
-                EmptyControllerView()
+                EmptyControllerView(message: "No one available")
             } else {
                 BoardColumnHeader()
                 List {
                     ForEach(pagingVM.availableItems) { item in
                         row(for: item)
-                            .listRowInsets(EdgeInsets(top: Spacing.xs, leading: Spacing.md,
-                                                      bottom: Spacing.xs, trailing: Spacing.md))
+                            .boardRowCard()
                     }
                 }
                 .listStyle(.plain)
+                .scrollContentBackground(.hidden)
             }
         }
+        .frame(maxHeight: .infinity, alignment: .top)
     }
 
     @ViewBuilder

@@ -46,8 +46,10 @@ struct HomeScreen: View {
                 Divider()
                 GeometryReader { geometry in
                     HStack(spacing: 0) {
+                        // 40/60: the AVAILABLE table no longer stretches to fill its
+                        // side, so the left column can afford wider, readable rows.
                         OnPositionView(items: pagingVM.onPositionItems)
-                            .frame(width: geometry.size.width * 0.33)
+                            .frame(width: geometry.size.width * 0.4)
                         Divider()
                         AvailableView()
                             .frame(maxWidth: .infinity)
