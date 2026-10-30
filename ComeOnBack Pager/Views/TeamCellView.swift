@@ -22,36 +22,39 @@ struct TeamCellView: View {
             HStack(spacing: Spacing.sm) {
                 TeamBadge()
                 HStack(alignment: .firstTextBaseline, spacing: 2) {
-                    Text(unit.ojti.initials).fontWeight(.semibold)
+                    Text(unit.ojti.initials).font(.title3.weight(.bold))
                     Text("OJTI").font(.caption2).foregroundColor(.secondary).baselineOffset(4)
                     Text("+").foregroundColor(.secondary)
-                    Text(unit.trainee.initials).fontWeight(.semibold)
+                    Text(unit.trainee.initials).font(.title3.weight(.bold))
                     Text("TRN").font(.caption2).foregroundColor(.secondary).baselineOffset(4)
                 }
                 .lineLimit(1).minimumScaleFactor(0.7)
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
+            .controllerColumn()
 
-            Group {
+            ZStack {
                 if let beBack = unit.beBack { Text(displayTime(beBack.stringValue)) }
             }
-            .font(.body.monospacedDigit())
+            .font(.title3.weight(.semibold).monospacedDigit())
             .frame(width: BoardColumns.time)
 
-            Group {
+            ZStack {
                 if let forPosition = unit.beBack?.forPosition { Text(forPosition) }
             }
+            .font(.body.weight(.semibold))
             .frame(width: BoardColumns.position)
 
-            Group {
+            ZStack {
                 if let plan { PlanBadge(position: plan.position) }
             }
             .frame(width: BoardColumns.plan, alignment: .leading)
 
-            Group {
+            ZStack {
                 if let beBack = unit.beBack { AckIcon(acknowledged: beBack.acknowledged) }
             }
             .frame(width: BoardColumns.status)
+
+            Spacer(minLength: 0)
         }
         .frame(height: BoardColumns.rowHeight)
     }

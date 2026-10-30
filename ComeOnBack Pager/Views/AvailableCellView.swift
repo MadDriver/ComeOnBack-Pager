@@ -24,29 +24,30 @@ struct AvailableCellView: View {
             moveButton
                 .frame(width: BoardColumns.action)
 
-            Text(controller.initials)
-                .fontWeight(.semibold)
-                .lineLimit(1).minimumScaleFactor(0.7)
-                .frame(maxWidth: .infinity, alignment: .leading)
+            ControllerLabel(initials: controller.initials, name: controller.name)
+                .controllerColumn()
 
-            Group {
+            ZStack {
                 if let beBack = controller.beBack { Text(beBack.stringValue) }
             }
-            .font(.body.monospacedDigit())
+            .font(.title3.weight(.semibold).monospacedDigit())
             .frame(width: BoardColumns.time)
 
-            Group {
+            ZStack {
                 if let forPosition = controller.beBack?.forPosition { Text(forPosition) }
             }
+            .font(.body.weight(.semibold))
             .frame(width: BoardColumns.position)
 
-            Group {
+            ZStack {
                 if let plan { PlanBadge(position: plan.position) }
             }
             .frame(width: BoardColumns.plan, alignment: .leading)
 
-            statusColumn
+            ZStack { statusColumn }
                 .frame(width: BoardColumns.status)
+
+            Spacer(minLength: 0)
         }
         .frame(height: BoardColumns.rowHeight)
     }
@@ -83,26 +84,37 @@ struct AvailableCellView: View {
         if let beBack = controller.beBack, controller.registered {
             AckIcon(acknowledged: beBack.acknowledged == true)
         } else if !controller.registered {
-            if processingPhoneTap {
-                ProgressView()
-            } else {
-                Image(systemName: "phone.fill")
-                    .foregroundColor(phoneColor).fontWeight(.semibold)
-                    .onTapGesture {
-                        guard controller.beBack != nil else { return }
-                        processingPhoneTap = true
-                        Task {
-                            do {
-                                logger.debug("Processing phone tap ack")
-                                try await pagingVM.ackBeBack(forController: controller)
-                                processingPhoneTap = false
-                            } catch {
-                                processingPhoneTap = false
-                                logger.error("Error ackBeBack \(error)")
-                            }
-                        }
+            // A real Button, like `moveButton`: an `.onTapGesture` here lost the tap to
+            // the row's NavigationLink, so ack-by-phone never fired.
+            Button(action: ackByPhone) {
+                Group {
+                    if processingPhoneTap {
+                        ProgressView()
+                    } else {
+                        Image(systemName: "phone.fill")
+                            .foregroundColor(phoneColor).fontWeight(.semibold)
                     }
+                }
+                .frame(width: BoardColumns.status, height: BoardColumns.rowHeight)
+                .contentShape(Rectangle())
             }
+            .buttonStyle(.plain)
+            // Nothing to acknowledge until they've been paged (gray phone).
+            .disabled(controller.beBack == nil || processingPhoneTap)
+        }
+    }
+
+    /// Acknowledge the be-back on behalf of a controller who was reached by phone.
+    private func ackByPhone() {
+        processingPhoneTap = true
+        Task {
+            do {
+                logger.debug("Processing phone tap ack")
+                try await pagingVM.ackBeBack(forController: controller)
+            } catch {
+                logger.error("Error ackBeBack \(error)")
+            }
+            processingPhoneTap = false
         }
     }
 }

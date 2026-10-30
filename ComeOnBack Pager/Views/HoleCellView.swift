@@ -21,10 +21,10 @@ struct HoleCellView: View {
             Text(plan.position)
                 .font(.title3).bold()
                 .lineLimit(1).minimumScaleFactor(0.7)
-                .frame(maxWidth: .infinity, alignment: .leading)
+                .controllerColumn()
 
             Text(displayTime(plan.time))
-                .font(.body.monospacedDigit())
+                .font(.title3.weight(.semibold).monospacedDigit())
                 .frame(width: BoardColumns.time)
 
             Text("UNASSIGNED")
@@ -33,7 +33,9 @@ struct HoleCellView: View {
                 .padding(.horizontal, Spacing.sm).padding(.vertical, 3)
                 .overlay(Capsule().stroke(Color.pendingOrange, lineWidth: 1))
                 .frame(width: BoardColumns.position + BoardColumns.plan + BoardColumns.status + BoardColumns.spacing * 2,
-                       alignment: .trailing)
+                       alignment: .leading)
+
+            Spacer(minLength: 0)
         }
         .frame(height: BoardColumns.rowHeight)
     }

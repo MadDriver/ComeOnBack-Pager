@@ -8,29 +8,35 @@ struct OnPositionCellView: View {
     var controller: Controller
     
     var body: some View {
-        ZStack { // ZStack for a tapGesture for the entire row
-            HStack {
-                Text(" \(controller.atTime?.relative() ?? "")")
-                    .font(.body.monospacedDigit())
-                    .foregroundColor(.secondary)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+        HStack(spacing: Spacing.md) {
+            ControllerLabel(initials: controller.initials, name: controller.name)
 
-                Text(controller.initials)
-                    .fontWeight(.semibold)
-                    .frame(maxWidth: .infinity, alignment: .center)
-                
+            Spacer(minLength: Spacing.xs)
+
+            VStack(alignment: .trailing, spacing: 0) {
+                if let position = controller.position, !position.isEmpty {
+                    Text(position).font(.body.weight(.semibold))
+                }
+                Text(controller.atTime?.relative() ?? "")
+                    .font(.caption.monospacedDigit())
+                    .foregroundStyle(.secondary)
+            }
+            .lineLimit(1)
+
+            Group {
                 if performingTapGesture {
                     ProgressView()
                         .progressViewStyle(CircularProgressViewStyle(tint: Color.accentColor))
-                        .frame(maxWidth: .infinity, alignment: .trailing)
                 } else {
                     Image(systemName: "arrowshape.right")
-                        .frame(maxWidth: .infinity, alignment: .trailing)
+                        .foregroundStyle(.secondary)
                 }
             }
-            .padding()
+            .frame(width: BoardColumns.status)
         }
-        .frame(height: 40)
+        .padding(.leading, Spacing.md)
+        .frame(height: BoardColumns.rowHeight)
+        .contentShape(Rectangle()) // the whole row is the move-off target
         .onTapGesture {
             if (performingTapGesture) { return }
             performingTapGesture = true
