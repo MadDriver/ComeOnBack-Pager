@@ -53,6 +53,7 @@ struct PlanView: View {
                 }
             }
             .navigationTitle("Plan a Position")
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Close") { dismiss() }
@@ -65,36 +66,43 @@ struct PlanView: View {
     private var form: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: Spacing.lg) {
-                SectionHeader("Position")
-                LazyVGrid(columns: positionColumns, spacing: Spacing.md) {
-                    ForEach(knownPositions, id: \.self) { pos in
-                        Button {
-                            position = (position == pos) ? nil : pos
-                        } label: {
-                            SelectableChip(label: pos, selected: position == pos)
+                VStack(alignment: .leading, spacing: Spacing.sm) {
+                    SectionHeader("Position")
+                    LazyVGrid(columns: positionColumns, spacing: Spacing.sm) {
+                        ForEach(knownPositions, id: \.self) { pos in
+                            Button {
+                                position = (position == pos) ? nil : pos
+                            } label: {
+                                SelectableChip(label: pos, selected: position == pos, minHeight: 44)
+                            }
+                            .buttonStyle(.plain)
                         }
-                        .buttonStyle(.plain)
                     }
                 }
 
-                SectionHeader("Time")
-                Picker("Time", selection: $timePicker) {
-                    ForEach(TimeASAPPicker.allCases) { Text($0.description) }
-                }
-                .pickerStyle(.segmented)
-                .onChange(of: timePicker) { _ in
-                    switch timePicker {
-                    case .normal: minuteSelected(clockMinutes)
-                    case .asap: timeString = "ASAP"
-                    case .soon: timeString = "SOON"
+                VStack(alignment: .leading, spacing: Spacing.sm) {
+                    SectionHeader("Time")
+                    Picker("Time", selection: $timePicker) {
+                        ForEach(TimeASAPPicker.allCases) { Text($0.description) }
+                    }
+                    .pickerStyle(.segmented)
+                    .onChange(of: timePicker) { _ in
+                        switch timePicker {
+                        case .normal: minuteSelected(clockMinutes)
+                        case .asap: timeString = "ASAP"
+                        case .soon: timeString = "SOON"
+                        }
                     }
                 }
 
                 if timePicker == .normal {
-                    HStack(spacing: Spacing.lg) {
+                    HStack(spacing: Spacing.xl) {
+                        // aspectRatio before frame: ClockView is a GeometryReader, so with
+                        // the frame first it claimed a full-width square inside the
+                        // ScrollView and pushed itself far below the picker.
                         ClockView(selectedMinute: clockMinutes, onMinuteSelected: minuteSelected)
-                            .frame(maxWidth: 320)
                             .aspectRatio(1, contentMode: .fit)
+                            .frame(maxWidth: 360)
                         VStack(spacing: Spacing.sm) {
                             ForEach(beBackMinutes, id: \.self) { minute in
                                 Button {
@@ -112,7 +120,7 @@ struct PlanView: View {
                     .frame(maxWidth: .infinity)
                 } else {
                     Text(timePicker.description).font(.largeTitle).bold()
-                        .frame(maxWidth: .infinity).padding()
+                        .frame(maxWidth: .infinity).padding(.vertical, Spacing.sm)
                 }
 
                 if let errorMessage {
