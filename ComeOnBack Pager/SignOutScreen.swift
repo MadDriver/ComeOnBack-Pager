@@ -30,7 +30,10 @@ struct SignOutScreen: View {
     
     @State var selectedSignOutFilterOption: SignOutFilterOptions = .all
     @State var selectedSignOutSortOption: SignOutSortOptions = .time
-    
+    let columns = [
+        GridItem(.adaptive(minimum: 175))
+    ]
+
     private func sortedBySignIn(lhs: Controller, rhs: Controller) -> Bool {
         guard let lhsTime = lhs.signInTime, let rhsTime = rhs.signInTime else {
             logger.error("Could not sort controllers without signInTime")
@@ -89,12 +92,12 @@ struct SignOutScreen: View {
             } // HStack
             
             ScrollView {
-                VStack(spacing: Spacing.sm) {
+                // Same adaptive grid as SignInScreen, so both screens lay initials out alike.
+                LazyVGrid(columns: columns, spacing: Spacing.lg) {
                     ForEach(controllers) { controller in
                         let signInTime = controller.signInTime?.relative() ?? ""
                         SelectableChip(label: "\(controller.initials) — \(signInTime)",
                                        selected: controllerIsInSignOutArray(controller: controller))
-                            .frame(width: 250)
                             .onTapGesture {
                                 if controllerIsInSignOutArray(controller: controller) {
                                     controllersToSignOut.removeAll { $0.initials == controller.initials }
